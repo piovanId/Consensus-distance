@@ -2,4 +2,4 @@
 
 Authors: 
 - Davide Piovani
-- Andrae Mariotti
+- Andrea Mariotti
