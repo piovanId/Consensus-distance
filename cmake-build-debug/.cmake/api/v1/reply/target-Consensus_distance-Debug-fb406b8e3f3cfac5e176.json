@@ -55,7 +55,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g"
+					"fragment" : "-g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk -mmacosx-version-min=11.6"
 				},
 				{
 					"backtrace" : 3,
@@ -69,7 +69,7 @@
 			[
 				{
 					"backtrace" : 4,
-					"path" : "/home/andrea/include"
+					"path" : "/Users/gi-loaner-05/include"
 				}
 			],
 			"language" : "CXX",
@@ -102,30 +102,26 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/home/andrea/lib/libgbwtgraph.a",
+				"fragment" : "/Users/gi-loaner-05/lib/libgbwtgraph.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/home/andrea/lib/libgbwt.a",
+				"fragment" : "/Users/gi-loaner-05/lib/libgbwt.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/home/andrea/lib/libhandlegraph.a",
+				"fragment" : "/Users/gi-loaner-05/lib/libhandlegraph.a",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/home/andrea/lib/libsdsl.a",
+				"fragment" : "/Users/gi-loaner-05/lib/libsdsl.a",
 				"role" : "libraries"
 			},
 			{
-				"fragment" : "/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so",
-				"role" : "libraries"
-			},
-			{
-				"fragment" : "/usr/lib/x86_64-linux-gnu/libpthread.a",
+				"fragment" : "/usr/local/Cellar/gcc/11.3.0_1/lib/gcc/11/libgomp.dylib",
 				"role" : "libraries"
 			}
 		],

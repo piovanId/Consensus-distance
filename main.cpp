@@ -44,7 +44,7 @@ std::vector<path_handle_t>* get_graph_path_handles(GBWTGraph &g){
 
 }*/
 
-std::vector<std::pair<handle_t*,int>> get_prefix_sum_array(GBWTGraph gbwtGraph){
+std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_prefix_sum_array(GBWTGraph gbwtGraph){
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *paths_steps_length = new std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>();
 
     //VA ELIMINATA LA MEMORIA QUA dopo che lo usi
@@ -62,26 +62,8 @@ std::vector<std::pair<handle_t*,int>> get_prefix_sum_array(GBWTGraph gbwtGraph){
     }
 
 
-    // Create a map iterator and point to beginning of map
-    auto iterator = (*paths_steps_length).begin();
 
-    // Iterate over the map using Iterator till end.
-    while (iterator != (*paths_steps_length).end())
-    {
-        // Accessing KEY from element pointed by it.
-        std::string path_name = gbwtGraph.get_path_name(iterator->first);
-        // Accessing VALUE from element pointed by it.
-        std::vector<std::pair<handle_t ,int>> nodes = *(iterator->second);
-        std::cout << path_name << " :: ";
-        for(int i=0; i< nodes.size(); ++i){
-            std::cout<< " (id: " << gbwtGraph.get_id(nodes[i].first) << ", " << nodes[i].second << ") ";
-        }
-
-
-        std::cout << std::endl;
-        // Increment the Iterator to point to next entry
-        iterator++;
-    }
+    return paths_steps_length;
 }
 
 
@@ -94,15 +76,36 @@ int main() {
 
 
 
-    auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
-    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
+    //auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
+    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
 
     const gbwt::GBWT& index = *(gfa_parse.first);
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
 
-    get_prefix_sum_array(graph);
+    auto c =get_prefix_sum_array(graph);
 
 
+
+    // Create a map iterator and point to beginning of map
+    auto iterator = (*c).begin();
+
+    // Iterate over the map using Iterator till end.
+    while (iterator != (*c).end())
+    {
+        // Accessing KEY from element pointed by it.
+        std::string path_name = graph.get_path_name(iterator->first);
+        // Accessing VALUE from element pointed by it.
+        std::vector<std::pair<handle_t ,int>> nodes = *(iterator->second);
+        std::cout << path_name << " :: ";
+        for(int i=0; i< nodes.size(); ++i){
+            std::cout<< " (id: " << graph.get_id(nodes[i].first) << ", " << nodes[i].second << ") ";
+        }
+
+
+        std::cout << std::endl;
+        // Increment the Iterator to point to next entry
+        iterator++;
+    }
 
 
     return 0;
