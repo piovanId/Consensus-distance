@@ -1,4 +1,5 @@
 # ninja log v5
-0	691	1655246991398696299	CMakeFiles/Consensus_distance.dir/library.cpp.o	63d91d5b0b4c1c9d
-1	2788	1655246993489246359	CMakeFiles/Consensus_distance.dir/test/test.cpp.o	6f744a3c84c5fc5c
-2789	3030	1655246993741170000	libConsensus_distance.a	f8d08f5f27d4bae2
+1	552	1655309359194612726	CMakeFiles/Consensus_distance.dir/main.cpp.o	62ec8e009bc5eb66
+554	623	1655309359264248970	Consensus_distance	74043e6248766231
+3	3651	1655309372246518575	CMakeFiles/Consensus_distance.dir/main.cpp.o	62ec8e009bc5eb66
+3653	3779	1655309372371400683	Consensus_distance	74043e6248766231

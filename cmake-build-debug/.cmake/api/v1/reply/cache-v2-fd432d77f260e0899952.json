@@ -1187,19 +1187,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[TRUE][TRUE][c ][v4.5()]"
-		},
-		{
-			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_C",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Details about finding OpenMP_C"
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "[-fopenmp][/usr/local/Cellar/gcc/11.3.0_1/lib/gcc/11/libgomp.dylib][v4.5()]"
+			"value" : "[TRUE][c ][v4.5()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_CXX",
@@ -1215,18 +1203,6 @@
 		},
 		{
 			"name" : "OpenMP_COMPILE_RESULT_CXX_fopenmp",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Result of TRY_COMPILE"
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "TRUE"
-		},
-		{
-			"name" : "OpenMP_COMPILE_RESULT_C_fopenmp",
 			"properties" : 
 			[
 				{
@@ -1282,63 +1258,7 @@
 			"value" : "201511"
 		},
 		{
-			"name" : "OpenMP_C_FLAGS",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "C compiler flags for OpenMP parallelization"
-				}
-			],
-			"type" : "STRING",
-			"value" : "-fopenmp"
-		},
-		{
-			"name" : "OpenMP_C_LIB_NAMES",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "C compiler libraries for OpenMP parallelization"
-				}
-			],
-			"type" : "STRING",
-			"value" : "gomp"
-		},
-		{
-			"name" : "OpenMP_C_SPEC_DATE",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "C compiler's OpenMP specification date"
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "201511"
-		},
-		{
 			"name" : "OpenMP_SPECTEST_CXX_",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Result of TRY_COMPILE"
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "TRUE"
-		},
-		{
-			"name" : "OpenMP_SPECTEST_C_",
 			"properties" : 
 			[
 				{

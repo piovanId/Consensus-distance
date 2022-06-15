@@ -41,7 +41,7 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = /Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake-build-debug/
 # =============================================================================
-# Object build statements for STATIC_LIBRARY target Consensus_distance
+# Object build statements for EXECUTABLE target Consensus_distance
 
 
 #############################################
@@ -49,36 +49,29 @@ cmake_ninja_workdir = /Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake
 
 build cmake_object_order_depends_target_Consensus_distance: phony || CMakeFiles/Consensus_distance.dir
 
-build CMakeFiles/Consensus_distance.dir/library.cpp.o: CXX_COMPILER__Consensus_distance_Debug /Users/gi-loaner-05/CLionProjects/Consensus-distance/library.cpp || cmake_object_order_depends_target_Consensus_distance
-  DEP_FILE = CMakeFiles/Consensus_distance.dir/library.cpp.o.d
+build CMakeFiles/Consensus_distance.dir/main.cpp.o: CXX_COMPILER__Consensus_distance_Debug /Users/gi-loaner-05/CLionProjects/Consensus-distance/main.cpp || cmake_object_order_depends_target_Consensus_distance
+  DEP_FILE = CMakeFiles/Consensus_distance.dir/main.cpp.o.d
   FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk -mmacosx-version-min=11.6 -fopenmp -std=gnu++14
   INCLUDES = -I/Users/gi-loaner-05/include
   OBJECT_DIR = CMakeFiles/Consensus_distance.dir
   OBJECT_FILE_DIR = CMakeFiles/Consensus_distance.dir
 
-build CMakeFiles/Consensus_distance.dir/test/test.cpp.o: CXX_COMPILER__Consensus_distance_Debug /Users/gi-loaner-05/CLionProjects/Consensus-distance/test/test.cpp || cmake_object_order_depends_target_Consensus_distance
-  DEP_FILE = CMakeFiles/Consensus_distance.dir/test/test.cpp.o.d
-  FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk -mmacosx-version-min=11.6 -fopenmp -std=gnu++14
-  INCLUDES = -I/Users/gi-loaner-05/include
-  OBJECT_DIR = CMakeFiles/Consensus_distance.dir
-  OBJECT_FILE_DIR = CMakeFiles/Consensus_distance.dir/test
-
 
 # =============================================================================
-# Link build statements for STATIC_LIBRARY target Consensus_distance
+# Link build statements for EXECUTABLE target Consensus_distance
 
 
 #############################################
-# Link the static library libConsensus_distance.a
+# Link the executable Consensus_distance
 
-build libConsensus_distance.a: CXX_STATIC_LIBRARY_LINKER__Consensus_distance_Debug CMakeFiles/Consensus_distance.dir/library.cpp.o CMakeFiles/Consensus_distance.dir/test/test.cpp.o
-  ARCH_FLAGS = -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk -mmacosx-version-min=11.6
-  LANGUAGE_COMPILE_FLAGS = -g
+build Consensus_distance: CXX_EXECUTABLE_LINKER__Consensus_distance_Debug CMakeFiles/Consensus_distance.dir/main.cpp.o | /Users/gi-loaner-05/lib/libgbwtgraph.a /Users/gi-loaner-05/lib/libgbwt.a /Users/gi-loaner-05/lib/libhandlegraph.a /Users/gi-loaner-05/lib/libsdsl.a /usr/local/Cellar/gcc/11.3.0_1/lib/gcc/11/libgomp.dylib
+  FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX12.1.sdk -mmacosx-version-min=11.6
+  LINK_LIBRARIES = /Users/gi-loaner-05/lib/libgbwtgraph.a  /Users/gi-loaner-05/lib/libgbwt.a  /Users/gi-loaner-05/lib/libhandlegraph.a  /Users/gi-loaner-05/lib/libsdsl.a  /usr/local/Cellar/gcc/11.3.0_1/lib/gcc/11/libgomp.dylib
   OBJECT_DIR = CMakeFiles/Consensus_distance.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = libConsensus_distance.a
-  TARGET_PDB = Consensus_distance.a.dbg
+  TARGET_FILE = Consensus_distance
+  TARGET_PDB = Consensus_distance.dbg
 
 
 #############################################
@@ -106,8 +99,6 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build Consensus_distance: phony libConsensus_distance.a
-
 # =============================================================================
 # Folder targets.
 
@@ -116,7 +107,7 @@ build Consensus_distance: phony libConsensus_distance.a
 #############################################
 # Folder: /Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake-build-debug
 
-build all: phony libConsensus_distance.a
+build all: phony Consensus_distance
 
 # =============================================================================
 # Built-in targets
@@ -125,14 +116,14 @@ build all: phony libConsensus_distance.a
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | ../CMakeLists.txt /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeParseImplicitLinkInfo.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindOpenMP.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageMessage.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin-Initialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.22.3/CMakeCCompiler.cmake CMakeFiles/3.22.3/CMakeCXXCompiler.cmake CMakeFiles/3.22.3/CMakeSystem.cmake
+build build.ninja: RERUN_CMAKE | ../CMakeLists.txt /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeParseImplicitLinkInfo.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindOpenMP.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageMessage.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin-Initialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.22.3/CMakeCXXCompiler.cmake CMakeFiles/3.22.3/CMakeSystem.cmake CMakeFiles/FindOpenMP/OpenMPCheckVersion.cpp CMakeFiles/FindOpenMP/OpenMPTryFlag.cpp
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build ../CMakeLists.txt /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeParseImplicitLinkInfo.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindOpenMP.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageMessage.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin-Initialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.22.3/CMakeCCompiler.cmake CMakeFiles/3.22.3/CMakeCXXCompiler.cmake CMakeFiles/3.22.3/CMakeSystem.cmake: phony
+build ../CMakeLists.txt /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeParseImplicitLinkInfo.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Compiler/GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindOpenMP.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/FindPackageMessage.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU-CXX.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Apple-GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin-Initialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/Darwin.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.22/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.22.3/CMakeCXXCompiler.cmake CMakeFiles/3.22.3/CMakeSystem.cmake CMakeFiles/FindOpenMP/OpenMPCheckVersion.cpp CMakeFiles/FindOpenMP/OpenMPTryFlag.cpp: phony
 
 
 #############################################

@@ -31,11 +31,10 @@ std::vector<path_handle_t> get_graph_path_handles(GBWTGraph g){
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-
     std::map<std::string, std::vector<int>> paths_steps_length;
     std::vector<int> empty;
     //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/GBWTgraph stuff/gbwtgraph/tests/gfas/default.gfa");
-    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/components_paths_walks.gfa");
+    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
 
     const gbwt::GBWT& index = *(gfa_parse.first);
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
@@ -72,5 +71,19 @@ int main() {
         iterator++;
     }
 
+    while (iterator != paths_steps_length.end())
+    {
+        // Accessing KEY from element pointed by it.
+        std::string word = iterator->first;
+        // Accessing VALUE from element pointed by it.
+        std::vector<int> count = iterator->second;
+        std::cout << word << " :: ";
+        for(auto i : paths_steps_length[word]){
+            std::cout<< i << " ";
+        }
+        std::cout << std::endl;
+        // Increment the Iterator to point to next entry
+        iterator++;
+    }
     return 0;
 }
