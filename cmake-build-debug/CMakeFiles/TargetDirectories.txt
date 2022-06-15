@@ -1,3 +1,0 @@
-/Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake-build-debug/CMakeFiles/Consensus_distance.dir
-/Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake-build-debug/CMakeFiles/rebuild_cache.dir
