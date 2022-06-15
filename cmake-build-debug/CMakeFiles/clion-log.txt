@@ -1,6 +1,12 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -DCMAKE_C_COMPILER=/usr/local/bin/gcc-11 -DCMAKE_CXX_COMPILER=/usr/local/bin/g++-11 -G Ninja -S /Users/gi-loaner-05/CLionProjects/Consensus-distance -B /Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake-build-debug
+/home/andrea/clion-2022.1.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/andrea/clion-2022.1.2/bin/ninja/linux/ninja -G Ninja -S /home/andrea/Desktop/Thesis/Consensus-distance -B /home/andrea/Desktop/Thesis/Consensus-distance/cmake-build-debug
+-- The CXX compiler identification is GNU 11.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
 -- Found OpenMP_CXX: -fopenmp (found version "4.5") 
 -- Found OpenMP: TRUE (found version "4.5")  
 -- Configuring done
 -- Generating done
--- Build files have been written to: /Users/gi-loaner-05/CLionProjects/Consensus-distance/cmake-build-debug
+-- Build files have been written to: /home/andrea/Desktop/Thesis/Consensus-distance/cmake-build-debug
