@@ -9,7 +9,7 @@
 #include <handlegraph/handle_graph.hpp>
 #include <handlegraph/mutable_handle_graph.hpp>
 #include <handlegraph/mutable_path_deletable_handle_graph.hpp>
-#include "include/consensus_distance/prefix_sum_array.h"
+#include "include/consensus_distance/paths_prefix_sum_arrays.h"
 using namespace gbwtgraph;
 
 
@@ -76,12 +76,12 @@ int main() {
 
 
 
-    //auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
-    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
+    auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
+    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
 
     const gbwt::GBWT& index = *(gfa_parse.first);
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
-    PrefixSumArray *a = new PrefixSumArray(graph);
+    PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
 
 /*
     auto c =get_prefix_sum_array(graph);

@@ -19,11 +19,11 @@
 
 using namespace gbwtgraph;
 
-class PrefixSumArray{
+class PathsPrefixSumArrays{
 
 
 private:
-    std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *prefix_sum_array ;
+    std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *prefix_sum_arrays;
 
     std::vector<path_handle_t>* get_graph_path_handles(GBWTGraph &g);
 
@@ -31,11 +31,18 @@ private:
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_paths(GBWTGraph gbwtGraph);
 
 public:
+    /**
+     * Default constructor
+     */
+    PathsPrefixSumArrays();
 
-    PrefixSumArray();
+    PathsPrefixSumArrays(GBWTGraph gbwtGraph);
 
-    PrefixSumArray(GBWTGraph gbwtGraph);
+    const std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_prefix_sum_arrays() const;
 
-
+    /**
+     * Destroyer
+     */
+    ~PathsPrefixSumArrays();
 };
 

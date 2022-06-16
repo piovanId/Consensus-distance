@@ -2,9 +2,9 @@
 // Created by GI-Loaner-05 on 6/15/22.
 //
 
-#include "../include/consensus_distance/prefix_sum_array.h"
+#include "../include/consensus_distance/paths_prefix_sum_arrays.h"
 
-std::vector<path_handle_t>* PrefixSumArray::get_graph_path_handles(GBWTGraph &g){
+std::vector<path_handle_t>* PathsPrefixSumArrays::get_graph_path_handles(GBWTGraph &g){
     std::vector<path_handle_t> *path_handles = new std::vector<path_handle_t>();
     g.for_each_path_handle([&](const path_handle_t path_handle) {
         (*path_handles).push_back(path_handle);
@@ -12,10 +12,9 @@ std::vector<path_handle_t>* PrefixSumArray::get_graph_path_handles(GBWTGraph &g)
     return path_handles;
 }
 
-std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* PrefixSumArray::get_paths(GBWTGraph gbwtGraph){
+std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* PathsPrefixSumArrays::get_paths(GBWTGraph gbwtGraph){
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *paths_steps_length = new std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>();
 
-    //VA ELIMINATA LA MEMORIA QUA dopo che lo usi
     auto path_handles = get_graph_path_handles(gbwtGraph);
 
     //OCHO ALLA MEMORIA QUA
@@ -29,19 +28,45 @@ std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* PrefixSumArra
         }); // end of lambda expression));
     }
 
+    // Deleting path_handles memory
+    path_handles->clear();
+    delete path_handles;
+    path_handles = nullptr;
+
     return paths_steps_length;
 }
 
-PrefixSumArray::PrefixSumArray(){
 
+PathsPrefixSumArrays::PathsPrefixSumArrays(): prefix_sum_arrays(nullptr){}
+
+
+
+PathsPrefixSumArrays::~PathsPrefixSumArrays() {
+    auto iterator = (*prefix_sum_arrays).begin();
+    
+    // Iterate over the map using Iterator till end.
+    while (iterator != (*prefix_sum_arrays).end())
+    {
+        // Delete the vector object
+        (*(iterator->second)).clear();
+        delete iterator->second;
+        iterator->second = nullptr;
+
+        // Increment the Iterator to point to next entry
+        iterator++;
+    }
+
+    // Deleting the map
+    prefix_sum_arrays->clear();
+    delete prefix_sum_arrays;
+    prefix_sum_arrays = nullptr;
 }
 
-PrefixSumArray::PrefixSumArray(GBWTGraph gbwtGraph) {
+PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* paths =  get_paths(gbwtGraph);
 
     // Create a map iterator and point to beginning of map
     auto iterator = (*paths).begin();
-
 
     // Iterate over the map using Iterator till end.
     while (iterator != (*paths).end())
@@ -80,5 +105,30 @@ PrefixSumArray::PrefixSumArray(GBWTGraph gbwtGraph) {
         iterator++;
     }
 
-    this->prefix_sum_array = paths;
+    this->prefix_sum_arrays = paths;
+
+    // Deleting paths memory
+    auto iterator_delete_paths = (*paths).begin();
+
+    // Iterate over the map of the paths using Iterator till end.
+    while (iterator_delete_paths != (*paths).end())
+    {
+        // Delete the vector object
+        (*(iterator_delete_paths->second)).clear();
+        delete iterator_delete_paths->second;
+        iterator_delete_paths->second = nullptr;
+
+        // Increment the Iterator to point to next entry
+        iterator_delete_paths++;
+    }
+
+    paths->clear();
+    delete paths;
+    paths = nullptr;
+}
+
+
+//ocho memoria
+const std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* PathsPrefixSumArrays::get_prefix_sum_arrays() const{
+    return PathsPrefixSumArrays::prefix_sum_arrays;
 }
