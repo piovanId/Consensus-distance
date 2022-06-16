@@ -44,5 +44,7 @@ public:
      * Destroyer
      */
     ~PathsPrefixSumArrays();
+
+    std::string toString();
 };
 

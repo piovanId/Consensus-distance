@@ -76,14 +76,14 @@ int main() {
 
 
 
-    auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
-    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
+    //auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
+    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
 
     const gbwt::GBWT& index = *(gfa_parse.first);
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
-
-/*
+    std::cout << a->toString();
+    /*
     auto c =get_prefix_sum_array(graph);
 
 

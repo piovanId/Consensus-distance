@@ -84,46 +84,11 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
         iterator++;
     }
 
-    iterator = (*paths).begin();
 
-    // Iterate over the map using Iterator till end.
-    while (iterator != (*paths).end())
-    {
-        // Accessing KEY from element pointed by it.
-        std::string path_name = gbwtGraph.get_path_name(iterator->first);
-        // Accessing VALUE from element pointed by it.
-        std::vector<std::pair<handle_t ,int>> nodes = *(iterator->second);
-        std::cout << path_name << " :: ";
-        if(nodes.size()>1){
-            for(int i=0; i< nodes.size(); ++i){
-                std::cout << nodes[i].second << " ";
-            }
-        }
 
-        std::cout << std::endl;
-        // Increment the Iterator to point to next entry
-        iterator++;
-    }
+    prefix_sum_arrays = paths;
 
-    this->prefix_sum_arrays = paths;
 
-    // Deleting paths memory
-    auto iterator_delete_paths = (*paths).begin();
-
-    // Iterate over the map of the paths using Iterator till end.
-    while (iterator_delete_paths != (*paths).end())
-    {
-        // Delete the vector object
-        (*(iterator_delete_paths->second)).clear();
-        delete iterator_delete_paths->second;
-        iterator_delete_paths->second = nullptr;
-
-        // Increment the Iterator to point to next entry
-        iterator_delete_paths++;
-    }
-
-    paths->clear();
-    delete paths;
     paths = nullptr;
 }
 
@@ -131,4 +96,30 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
 //ocho memoria
 const std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* PathsPrefixSumArrays::get_prefix_sum_arrays() const{
     return PathsPrefixSumArrays::prefix_sum_arrays;
+}
+
+
+
+std::string PathsPrefixSumArrays::toString(){
+    std::string temp="";
+    auto iterator = (*prefix_sum_arrays).begin();
+
+    // Iterate over the map using Iterator till end.
+    while (iterator != (*prefix_sum_arrays).end())
+    {
+        // Accessing KEY from element pointed by it.
+        temp += std::to_string(handlegraph::as_integer(iterator->first)) + " :: ";
+        // Accessing VALUE from element pointed by it.
+        std::vector<std::pair<handle_t ,int>> nodes = *(iterator->second);
+        if(nodes.size()>1){
+            for(int i=0; i< nodes.size(); ++i){
+                temp += std::to_string(nodes[i].second) + "  ";
+            }
+        }
+
+
+        // Increment the Iterator to point to next entry
+        iterator++;
+    }
+    return temp;
 }
