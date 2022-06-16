@@ -4,6 +4,31 @@
 
 #include "../include/consensus_distance/paths_prefix_sum_arrays.h"
 
+PathsPrefixSumArrays::PathsPrefixSumArrays(): prefix_sum_arrays(nullptr){}
+
+
+PathsPrefixSumArrays::~PathsPrefixSumArrays() {
+    auto iterator = (*prefix_sum_arrays).begin();
+
+    // Iterate over the map using Iterator till end.
+    while (iterator != (*prefix_sum_arrays).end())
+    {
+        // Delete the vector object
+        (*(iterator->second)).clear();
+        delete iterator->second;
+        iterator->second = nullptr;
+
+        // Increment the Iterator to point to next entry
+        iterator++;
+    }
+
+    // Deleting the map
+    prefix_sum_arrays->clear();
+    delete prefix_sum_arrays;
+    prefix_sum_arrays = nullptr;
+}
+
+
 std::vector<path_handle_t>* PathsPrefixSumArrays::get_graph_path_handles(GBWTGraph &g){
     std::vector<path_handle_t> *path_handles = new std::vector<path_handle_t>();
     g.for_each_path_handle([&](const path_handle_t path_handle) {
@@ -11,6 +36,7 @@ std::vector<path_handle_t>* PathsPrefixSumArrays::get_graph_path_handles(GBWTGra
     }); // end of lambda expression)
     return path_handles;
 }
+
 
 std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* PathsPrefixSumArrays::get_paths(GBWTGraph gbwtGraph){
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *paths_steps_length = new std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>();
@@ -37,31 +63,6 @@ std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* PathsPrefixSu
 }
 
 
-PathsPrefixSumArrays::PathsPrefixSumArrays(): prefix_sum_arrays(nullptr){}
-
-
-
-PathsPrefixSumArrays::~PathsPrefixSumArrays() {
-    auto iterator = (*prefix_sum_arrays).begin();
-    
-    // Iterate over the map using Iterator till end.
-    while (iterator != (*prefix_sum_arrays).end())
-    {
-        // Delete the vector object
-        (*(iterator->second)).clear();
-        delete iterator->second;
-        iterator->second = nullptr;
-
-        // Increment the Iterator to point to next entry
-        iterator++;
-    }
-
-    // Deleting the map
-    prefix_sum_arrays->clear();
-    delete prefix_sum_arrays;
-    prefix_sum_arrays = nullptr;
-}
-
 PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* paths =  get_paths(gbwtGraph);
 
@@ -84,11 +85,7 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
         iterator++;
     }
 
-
-
     prefix_sum_arrays = paths;
-
-
     paths = nullptr;
 }
 
