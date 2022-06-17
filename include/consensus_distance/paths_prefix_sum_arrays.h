@@ -83,6 +83,9 @@ public:
      * @return a string containing the prefix sum arrays.
      */
     std::string toString();
+
+    std::vector<std::pair<handle_t , int>> get_prefsum_of_path(path_handle_t path_handle);
+
 };
 
 #endif //CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H

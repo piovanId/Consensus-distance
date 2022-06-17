@@ -120,3 +120,7 @@ std::string PathsPrefixSumArrays::toString(){
     }
     return temp;
 }
+
+std::vector<std::pair<handle_t , int>> PathsPrefixSumArrays::get_prefsum_of_path(path_handle_t path_handle){
+    return *prefix_sum_arrays->at(path_handle);
+}
