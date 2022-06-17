@@ -83,7 +83,7 @@ public:
      * @return a string containing the prefix sum arrays.
      */
     std::string toString();
-
+    std::string print_prefsum_of_path(path_handle_t path_handle);
     std::vector<std::pair<handle_t , int>> get_prefsum_of_path(path_handle_t path_handle);
 
 };

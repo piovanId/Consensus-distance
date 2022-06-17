@@ -108,11 +108,9 @@ std::string PathsPrefixSumArrays::toString(){
         temp += std::to_string(handlegraph::as_integer(iterator->first)) + " :: ";
         // Accessing VALUE from element pointed by it.
         std::vector<std::pair<handle_t ,int>> nodes = *(iterator->second);
-        if(nodes.size()>1){
             for(int i=0; i< nodes.size(); ++i){
                 temp += std::to_string(nodes[i].second) + "  ";
             }
-        }
 
 
         // Increment the Iterator to point to next entry
@@ -123,4 +121,17 @@ std::string PathsPrefixSumArrays::toString(){
 
 std::vector<std::pair<handle_t , int>> PathsPrefixSumArrays::get_prefsum_of_path(path_handle_t path_handle){
     return *prefix_sum_arrays->at(path_handle);
+}
+
+std::string PathsPrefixSumArrays::print_prefsum_of_path(path_handle_t path_handle){
+    std::string temp;
+
+    temp += std::to_string(handlegraph::as_integer(path_handle)) + " :: ";
+
+
+    std::vector<std::pair<handle_t ,int>> nodes = *prefix_sum_arrays->at(path_handle);
+    for(int i=0; i< nodes.size(); ++i){
+        temp += std::to_string(nodes[i].second) + "  ";
+    }
+    return temp;
 }

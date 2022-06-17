@@ -55,9 +55,9 @@ int main() {
     const gbwt::GBWT& index = *(gfa_parse.first);
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
-    std::cout << a->toString();
-    std::cout << a->get_prefsum_of_path(graph.get_path_handle("x")).at(0).second;
-
+    std::cout << a->toString() << std::endl;
+    std::cout << a->get_prefsum_of_path(graph.get_path_handle("x")).at(0).second<< std::endl;
+    std::cout << a->print_prefsum_of_path(graph.get_path_handle("x")) << std::endl;
     /*
     auto c =get_prefix_sum_array(graph);
 
