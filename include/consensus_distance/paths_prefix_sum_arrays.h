@@ -34,7 +34,7 @@ using namespace gbwtgraph;
  * This class represent the paths' prefix sum arrays.
  */
 class PathsPrefixSumArrays{
-    friend class GBWTGraph;
+
 private:
     // Every vector has as a key its path_handle_t, each entry in the vector is stored with the related handle_t
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *prefix_sum_arrays;
@@ -55,6 +55,16 @@ private:
      * relative handle_t.
      */
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_paths(GBWTGraph gbwtGraph);
+
+
+    /**
+     * Compute distance between two node position, knowing that the pos_node_1 is less than pos_node_2.
+     * @param pos_node_1
+     * @param pos_node_2
+     * @param sdb_sel is the select operation.
+     * @return the distance betweem the two nodes.
+     */
+    size_t compute_node_distance(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel);
 
 
 public:
@@ -85,8 +95,20 @@ public:
      * @return a string containing the prefix sum arrays.
      */
     std::string toString();
+
     std::string print_prefsum_of_path(path_handle_t path_handle);
+
     std::vector<std::pair<handle_t , int>> get_prefsum_of_path(path_handle_t path_handle);
+
+    /**
+     * Given the path_id and two position node compute the distance between the nodes inside the path.
+     * @param pos_node_1
+     * @param pos_node_2
+     * @param path_id
+     * @return the distance.
+     */
+    size_t get_distance_in_a_path(size_t pos_node_1, size_t pos_node_2, size_t path_id);
+
 
 };
 

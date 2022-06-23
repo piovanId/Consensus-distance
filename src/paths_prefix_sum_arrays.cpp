@@ -3,6 +3,7 @@
 //
 
 #include "../include/consensus_distance/paths_prefix_sum_arrays.h"
+#include "sdsl/util.hpp"
 
 PathsPrefixSumArrays::PathsPrefixSumArrays(): prefix_sum_arrays(nullptr){}
 
@@ -17,7 +18,7 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
     /*    for (int j = 0; j < path.size() ; ++j) {
             std::cout << path[j] << " ";
         }
-*/        std::cout <<std::endl;
+*/      std::cout <<std::endl;
 
         size_t offset =0;
 
@@ -38,7 +39,35 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
         (*psa)[i]= vector;
     }
 
+}
+
+
+size_t PathsPrefixSumArrays::get_distance_in_a_path(size_t pos_node_1, size_t pos_node_2, size_t path_id){
+    size_t distance = 0;
+
+    // Distance between the same node
+    if(pos_node_1 == pos_node_2)
+        return distance;
+
+    sdsl::sd_vector<>::select_1_type sdb_sel((*(psa))[path_id]); // Initialize select
+
+    if(pos_node_2 > (*(psa))[path_id]->size() || pos_node_1 > (*(psa))[path_id]->size()){
+        return 0; // You can't compute the distance between two node where at least one doesn't exist
+    }else if (pos_node_1 < pos_node_2) {
+        distance = compute_node_distance(pos_node_1, pos_node_2, sdb_sel);
+    } else {
+        distance = compute_node_distance(pos_node_2, pos_node_1, sdb_sel);
     }
+
+    return distance;
+}
+
+
+size_t PathsPrefixSumArrays::compute_node_distance(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel){
+    size_t node_before_bigger_node_offset = sdb_sel(pos_node_2);
+    size_t node_1_offset = sdb_sel(pos_node_1 + 1);
+    return node_before_bigger_node_offset - node_1_offset;
+}
 
 
 
@@ -72,6 +101,7 @@ std::vector<path_handle_t>* PathsPrefixSumArrays::get_graph_path_handles(GBWTGra
     }); // end of lambda expression)
     return path_handles;
 }
+
 
 
 
