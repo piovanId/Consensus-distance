@@ -48,15 +48,15 @@ std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_prefix_su
 
 
 int main() {
-    std::string s= "c";
-    std::cout << "Hello, World!" << std::endl;
+    std::string s1= "c";
+    std::cout << "Hello, Santa Cruz!" << std::endl;
 
 
 
-    //auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
+    auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference.gfa");
    // auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
     //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/cactus-BRCA2.gfa");
-    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
+    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
 
 
     const gbwt::GBWT& index = *(gfa_parse.first);
