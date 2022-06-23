@@ -39,13 +39,15 @@ private:
     // Every vector has as a key its path_handle_t, each entry in the vector is stored with the related handle_t
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *prefix_sum_arrays;
 
+    std::map<gbwt::size_type , sdsl::sd_vector<>*> *psa;
+
+
     /**
      * Get the all the path handles in the graph, which is a reference to a path (opaque 64-bit identifier).
      * @param g the graph on which we are getting the path_handles.
      * @return a pointer to vector of path_handle_t type.
      */
     std::vector<path_handle_t>* get_graph_path_handles(GBWTGraph &g);
-
     /**
      * Get all the paths from a GBWTGraph.
      * @param gbwtGraph

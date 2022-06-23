@@ -6,6 +6,10 @@
 #include "gbwtgraph/gfa.h"
 #include "gbwt/gbwt.h"
 #include "include/consensus_distance/paths_prefix_sum_arrays.h"
+#include "sdsl/sd_vector.hpp"
+#include "sdsl/int_vector.hpp"
+#include "sdsl/bit_vectors.hpp"
+#include "gbwt/fast_locate.h"
 using namespace gbwtgraph;
 
 
@@ -45,45 +49,71 @@ std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_prefix_su
 
 int main() {
     std::string s= "c";
-    std::cout << "Hello, World!" << sizeof(s) << std::endl;
+    std::cout << "Hello, World!" << std::endl;
 
 
 
     //auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/tiny/tiny.gfa");
-    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
+   // auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
+    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/cactus-BRCA2.gfa");
+    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
+
 
     const gbwt::GBWT& index = *(gfa_parse.first);
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
+    std::cout <<graph.get_path_count();
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
     std::cout << a->toString() << std::endl;
-    std::cout << a->get_prefsum_of_path(graph.get_path_handle("x")).at(0).second<< std::endl;
-    std::cout << a->print_prefsum_of_path(graph.get_path_handle("x")) << std::endl;
-    /*
-    auto c =get_prefix_sum_array(graph);
 
+/*
+    auto path = a->get_prefsum_of_path(get_graph_path_handles(graph)->at(1));
+   // std::cout << path.at(0).second<< std::endl;
+    handle_t node = path.at(2).first;
+    std::cout << "distance from the start using 'graph.handle_to_node(node) - graph.handle_to_node(path.at(1).first)' for node:"+ std::to_string(as_integer(node)) +" = "+std::to_string(graph.handle_to_node(node) - graph.handle_to_node(path.at(1).first));
 
+    gbwt::FastLocate fast_locate = gbwt::FastLocate(*graph.index);
+    auto result = fast_locate.decompressSA(graph.handle_to_node(node));
+    std::cout <<std::endl<<std::endl<<std::endl<<std::endl;
 
-    // Create a map iterator and point to beginning of map
-    auto iterator = (*c).begin();
-
-    // Iterate over the map using Iterator till end.
-    while (iterator != (*c).end())
-    {
-        // Accessing KEY from element pointed by it.
-        std::string path_name = graph.get_path_name(iterator->first);
-        // Accessing VALUE from element pointed by it.
-        std::vector<std::pair<handle_t ,int>> nodes = *(iterator->second);
-        std::cout << path_name << " :: ";
-        for(int i=0; i< nodes.size(); ++i){
-            std::cout<< " (id: " << graph.get_id(nodes[i].first) << ", " << nodes[i].second << ") ";
-        }
-
-
-        std::cout << std::endl;
-        // Increment the Iterator to point to next entry
-        iterator++;
+    for (int i = 0; i < result.size(); ++i) {
+        std::cout <<"visit:"+ std::to_string(result[i]) << " - r_index.seqId(visit): "+ std::to_string(fast_locate.seqId(result[i]));
+        std::cout <<" -  r_index.seqOffset(visit)"+std::to_string(fast_locate.seqOffset(result[i]));
+        std::cout <<std::endl;
+        std::cout <<std::endl;
     }
-*/
+    std::cout <<std::endl<<std::endl<<std::endl<<std::endl;
+
+    graph.for_each_path_handle([&](const path_handle_t path_handle) {
+       std::cout << as_integer(path_handle);
+    }); // end of lambda expression))
+
+    std::cout <<std::endl<<std::endl<<std::endl<<std::endl;
+
+    bool out = false;
+    for (int i = 0; !out; ++i) {
+
+        auto a = graph.index->extract(gbwt::Path::encode(i, false));
+        if (a.size()==0)
+            out = true;
+
+        //test print
+        for (int j = 0; j < a.size() ; ++j) {
+            std::cout << a[j] << " ";
+        }
+        std::cout <<std::endl;
+
+    }
+
+    for(gbwt::size_type i = 0; i < graph.index->sequences(); i += 2) {
+        auto path = graph.index->extract(i);
+        //test print
+        for (int j = 0; j < path.size() ; ++j) {
+            std::cout << path[j] << " ";
+        }
+        std::cout <<std::endl;
+    }
 
     return 0;
+*/
+
 }
