@@ -61,7 +61,7 @@ int main() {
 
     const gbwt::GBWT& index = *(gfa_parse.first);
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
-    std::cout <<graph.get_path_count();
+
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
     std::cout << a->toString() << std::endl;
 
