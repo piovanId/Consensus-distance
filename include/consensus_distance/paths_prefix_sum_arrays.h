@@ -34,7 +34,7 @@ using namespace gbwtgraph;
  * This class represent the paths' prefix sum arrays.
  */
 class PathsPrefixSumArrays{
-
+    friend class GBWTGraph;
 private:
     // Every vector has as a key its path_handle_t, each entry in the vector is stored with the related handle_t
     std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*> *prefix_sum_arrays;
@@ -64,7 +64,7 @@ public:
     PathsPrefixSumArrays();
 
     /**
-     *
+     * Constructor
      * @param gbwtGraph
      */
     PathsPrefixSumArrays(GBWTGraph gbwtGraph);
@@ -76,7 +76,7 @@ public:
     const std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_prefix_sum_arrays() const;
 
     /**
-     * Destroyer
+     * Destructor
      */
     ~PathsPrefixSumArrays();
 

@@ -65,55 +65,6 @@ int main() {
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
     std::cout << a->toString() << std::endl;
 
-/*
-    auto path = a->get_prefsum_of_path(get_graph_path_handles(graph)->at(1));
-   // std::cout << path.at(0).second<< std::endl;
-    handle_t node = path.at(2).first;
-    std::cout << "distance from the start using 'graph.handle_to_node(node) - graph.handle_to_node(path.at(1).first)' for node:"+ std::to_string(as_integer(node)) +" = "+std::to_string(graph.handle_to_node(node) - graph.handle_to_node(path.at(1).first));
 
-    gbwt::FastLocate fast_locate = gbwt::FastLocate(*graph.index);
-    auto result = fast_locate.decompressSA(graph.handle_to_node(node));
-    std::cout <<std::endl<<std::endl<<std::endl<<std::endl;
-
-    for (int i = 0; i < result.size(); ++i) {
-        std::cout <<"visit:"+ std::to_string(result[i]) << " - r_index.seqId(visit): "+ std::to_string(fast_locate.seqId(result[i]));
-        std::cout <<" -  r_index.seqOffset(visit)"+std::to_string(fast_locate.seqOffset(result[i]));
-        std::cout <<std::endl;
-        std::cout <<std::endl;
-    }
-    std::cout <<std::endl<<std::endl<<std::endl<<std::endl;
-
-    graph.for_each_path_handle([&](const path_handle_t path_handle) {
-       std::cout << as_integer(path_handle);
-    }); // end of lambda expression))
-
-    std::cout <<std::endl<<std::endl<<std::endl<<std::endl;
-
-    bool out = false;
-    for (int i = 0; !out; ++i) {
-
-        auto a = graph.index->extract(gbwt::Path::encode(i, false));
-        if (a.size()==0)
-            out = true;
-
-        //test print
-        for (int j = 0; j < a.size() ; ++j) {
-            std::cout << a[j] << " ";
-        }
-        std::cout <<std::endl;
-
-    }
-
-    for(gbwt::size_type i = 0; i < graph.index->sequences(); i += 2) {
-        auto path = graph.index->extract(i);
-        //test print
-        for (int j = 0; j < path.size() ; ++j) {
-            std::cout << path[j] << " ";
-        }
-        std::cout <<std::endl;
-    }
-
-    return 0;
-*/
 
 }
