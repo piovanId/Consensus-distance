@@ -3,7 +3,7 @@ project(Consensus_distance LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Consensus_distance main.cpp include/consensus_distance/consensus_distance.h src/paths_prefix_sum_arrays.cpp include/consensus_distance/paths_prefix_sum_arrays.h)
+add_executable(Consensus_distance main.cpp include/consensus_distance/consensus_distance.h src/paths_prefix_sum_arrays.cpp include/consensus_distance/paths_prefix_sum_arrays.h src/pruned_graph.cpp include/consensus_distance/pruned_graph.h)
 include_directories(~/include)
 
 find_package(OpenMP)
