@@ -65,5 +65,6 @@ int main() {
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
     std::cout << a->toString() << std::endl;
 
+    //std::cout << "Distance: " << std::to_string(a->get_distance_in_a_path(5,6,0));
 
 }
