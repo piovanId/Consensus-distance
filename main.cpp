@@ -31,7 +31,9 @@ int main() {
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
 
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
+    std::cout << a->toString_sd_vectors() << std::endl;
     std::cout << a->toString() << std::endl;
+
     PrunedGraph pruned(graph);
     //std::cout << "Distance: " << std::to_string(a->get_distance_between_positions_in_path(5,6,0));
 
