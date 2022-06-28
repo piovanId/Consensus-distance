@@ -163,7 +163,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
     std::sort(node_1_positions->begin(), node_1_positions->end());
     std::sort(node_2_positions->begin(), node_2_positions->end());
 
-    int pivot_1 = -1, pivot_2 = -1;
+    int pivot_1 = 0, pivot_2 = 0;
     int i, j, end;
 
     bool iterate_on_node_2_positions;
