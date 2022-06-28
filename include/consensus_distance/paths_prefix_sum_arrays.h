@@ -49,13 +49,6 @@ private:
      * @return a pointer to vector of path_handle_t type.
      */
     std::vector<path_handle_t>* get_graph_path_handles(GBWTGraph &g);
-    /**
-     * Get all the paths from a GBWTGraph.
-     * @param gbwtGraph
-     * @return a map of vectors (path_handle_t as key). Each vector, in each entru has the length of the node and the
-     * relative handle_t.
-     */
-    std::map<path_handle_t , std::vector<std::pair<handle_t , int>>*>* get_paths(GBWTGraph gbwtGraph);
 
 
     /**
@@ -68,6 +61,7 @@ private:
     size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel);
 
 
+    std::vector<size_t>* get_visits_in_path(size_t path_id, gbwt::node_type node, size_t &ones);
 public:
     /**
      * Default constructor
@@ -102,7 +96,9 @@ public:
      */
     size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id);
 
-    std::vector<size_t> get_all_nodes_distances_in_path( gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id);
+    std::vector<size_t>* get_all_nodes_distances_in_path( gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id);
+
+
 
 };
 

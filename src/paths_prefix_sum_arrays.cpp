@@ -4,6 +4,7 @@
 
 #include "../include/consensus_distance/paths_prefix_sum_arrays.h"
 #include "sdsl/util.hpp"
+#include <bits/stdc++.h> // To sort
 
 PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr){}
 
@@ -11,7 +12,7 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr){}
 PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
 
     //create the prefix sum array
-    std::map<gbwt::size_type , sdsl::sd_vector<>>* paths ;
+    std::map<gbwt::size_type , sdsl::sd_vector<>>* paths;
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
     for(gbwt::size_type i = 0; i < gbwtGraph.index->sequences(); i += 2) {
         auto path = gbwtGraph.index->extract(i);
@@ -92,13 +93,6 @@ std::vector<path_handle_t>* PathsPrefixSumArrays::get_graph_path_handles(GBWTGra
 }
 
 
-
-
-
-
-
-
-
 std::string PathsPrefixSumArrays::toString(){
     std::string temp="";
     auto iterator = (*psa).begin();
@@ -125,12 +119,92 @@ std::string PathsPrefixSumArrays::toString(){
 }
 
 
-std::vector<size_t> PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id){
-    auto node_1_visits = fast_locate.decompressSA(node_1);
-    auto node_2_visits = fast_locate.decompressSA(node_1);
-    for (int i = 0; i < node_1_visits.size() ; ++i) {
-        fast_locate.seqId(node_1_visits[i]);
+std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
+                                                                            gbwt::node_type node_2,
+                                                                            size_t path_id){
+    auto zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))(psa[path_id].size());
+    auto ones = ((*psa)[path_id])->size() - zeros;
 
-    }
-    //"+ std::to_string(fast_locate.seqId(result[i]));
+    std::vector<size_t>* node_1_positions = get_visits_in_path(path_id, node_1, ones);
+    std::vector<size_t>* node_2_positions = get_visits_in_path(path_id, node_2, ones);
+
+    std::sort(node_1_positions->begin(), node_1_positions->end());
+    std::sort(node_2_positions->begin(), node_2_positions->end());
+
+
+
+    int pivot_1 = 0, pivot_2 = 0;
+
+    int i, j, end;
+
+    std::vector<size_t>* distances = new std::vector<size_t>();
+
+    bool iterate_on_node_2_positions;
+
+    do{
+        if(node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
+            j = pivot_2;
+            end = node_2_positions->size();
+            i = pivot_1;
+            ++ pivot_1;
+            iterate_on_node_2_positions = true;
+        }else{
+            j = pivot_1;
+            end = node_1_positions->size();
+            i = pivot_2;
+            ++ pivot_2;
+            iterate_on_node_2_positions = false;
+        }
+
+        while(j < end){
+            if(iterate_on_node_2_positions) {
+                (*distances).push_back(PathsPrefixSumArrays::get_distance_between_positions_in_path(node_1_positions->at(i),
+                                                                                                    node_2_positions->at(j),
+                                                                                                    path_id));
+            }else{
+                (*distances).push_back(PathsPrefixSumArrays::get_distance_between_positions_in_path(node_1_positions->at(j),
+                                                                                                    node_2_positions->at(i),
+                                                                                                    path_id));
+            }
+            ++ j;
+        }
+    }while(pivot_1 < node_1_positions->size() &&
+            pivot_2 < node_2_positions->size());
+
+
+    // Deleting memory
+    node_1_positions->clear();
+    node_2_positions->clear();
+    node_1_positions->shrink_to_fit();
+    node_2_positions->shrink_to_fit();
+
+    delete node_1_positions;
+    delete node_2_positions;
+    node_1_positions = nullptr;
+    node_2_positions = nullptr;
+
+    return distances;
 };
+
+
+std::vector<size_t>* PathsPrefixSumArrays::get_visits_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
+    auto node_visits = fast_locate.decompressSA(node);
+
+    std::vector<size_t>* node_positions = new std::vector<size_t>();
+
+    std::cout << "\nSEQTHINGS: ";
+    for (int i = 0; i < node_visits.size() ; ++i) {
+        if(fast_locate.seqId(node_visits[i]) == path_id){
+            std::cout<< "SeqOffset: " << fast_locate.seqOffset(node_visits[i]);
+            std::cout<< " - SeqId: " << fast_locate.seqId(node_visits[i]);
+            node_positions->push_back(ones - fast_locate.seqOffset(node_visits[i]));
+
+        }
+    }
+
+    std::cout << std::endl;
+
+    return node_positions;
+}
+
+
