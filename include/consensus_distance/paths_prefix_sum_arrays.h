@@ -41,7 +41,7 @@ private:
 
     std::map<gbwt::size_type , sdsl::sd_vector<>*> *psa;
 
-    gbwt::FastLocate fast_locate;
+    gbwt::FastLocate *fast_locate;
 
     /**
      * Get the all the path handles in the graph, which is a reference to a path (opaque 64-bit identifier).
@@ -61,7 +61,15 @@ private:
     size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel);
 
 
-    std::vector<size_t>* get_visits_in_path(size_t path_id, gbwt::node_type node, size_t &ones);
+    /**
+     * Get all the visits of a node in a path.
+     * @param path_id
+     * @param node
+     * @param ones the number of ones inside the sd_vector prefix sum array representation. It is needed to compute
+     * @return
+     */
+    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones);
+
 public:
     /**
      * Default constructor
@@ -86,7 +94,14 @@ public:
      */
     std::string toString_sd_vectors();
 
+
+    /**
+     * Get a string of the prefix sum arrays
+     * @return a string representing the prefix sum arrays
+     */
     std::string toString();
+
+
     /**
      * Given the path_id and two position node compute the distance between the nodes inside the path.
      * @param pos_node_1
@@ -96,10 +111,16 @@ public:
      */
     size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id);
 
+
+    /**
+     * Get all the distances between two nodes in a path, takes into account multiple occurences of the same node in a
+     * looping path.
+     * @param node_1 id of the node.
+     * @param node_2 id of the node.
+     * @param path_id id of the path.
+     * @return a vector of size_t distances.
+     */
     std::vector<size_t>* get_all_nodes_distances_in_path( gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id);
-
-
-
 };
 
 #endif //CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H

@@ -10,42 +10,39 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr){}
 
 
 PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
-
-    //create the prefix sum array
-    std::map<gbwt::size_type , sdsl::sd_vector<>>* paths;
+    // Create the prefix sum array
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
+
+    std::cout << std::endl;
+
     for(gbwt::size_type i = 0; i < gbwtGraph.index->sequences(); i += 2) {
+        // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
+        // is the representation
+
         auto path = gbwtGraph.index->extract(i);
 
-        //test print
-    /*    for (int j = 0; j < path.size() ; ++j) {
-            std::cout << path[j] << " ";
-        }
-*/
-    std::cout <<std::endl;
-
-        size_t offset =0;
-
-        for (gbwt::size_type j = 0; j < path.size(); ++j) {
+        size_t offset = 0;
+        for(gbwt::size_type j = 0; j < path.size(); ++j) {
             gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
             std::cout<< length_of_node << " ";
-            offset+=length_of_node;
+            offset += length_of_node;
         }
+
         sdsl::bit_vector psa_temp(offset+1,0);
+        std::cout << std::endl;
 
         offset =0;
-        for (gbwt::size_type j = 0; j < path.size(); ++j) {
+        for(gbwt::size_type j = 0; j < path.size(); ++j) {
             gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
-            offset+=length_of_node;
-            psa_temp[offset]=1;
+            offset += length_of_node;
+            psa_temp[offset] = 1;
         }
-        sdsl::sd_vector<>* vector = new sdsl::sd_vector<>(psa_temp);
-        (*psa)[i]= vector;
+
+        (*psa)[i] = new sdsl::sd_vector<>(psa_temp);
     }
 
     //create the fast locate
-    fast_locate = gbwt::FastLocate(*gbwtGraph.index);
-
+    fast_locate = new gbwt::FastLocate(*gbwtGraph.index);
 }
 
 
@@ -56,7 +53,8 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
     if(pos_node_1 == pos_node_2)
         return distance;
 
-    sdsl::sd_vector<>::select_1_type sdb_sel((*(psa))[path_id]); // Initialize select
+    // Initialize select operation (see select/rank)
+    sdsl::sd_vector<>::select_1_type sdb_sel((*(psa))[path_id]);
 
     if(pos_node_2 > (*(psa))[path_id]->size() || pos_node_1 > (*(psa))[path_id]->size()){
         return 0; // You can't compute the distance between two node where at least one doesn't exist
@@ -77,27 +75,23 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t p
 }
 
 
-
-
 PathsPrefixSumArrays::~PathsPrefixSumArrays() {
+    // Delete memory fast locate
+    delete fast_locate;
+    fast_locate = nullptr;
 
+    // Delete map memory
+    std::map<gbwt::size_type , sdsl::sd_vector<>*>::iterator it;
+
+    for (it = psa->begin(); it != psa->end(); it++){
+        delete it->second;
+        it->second = nullptr;
+    }
+
+    psa->clear();
+    delete psa;
+    psa = nullptr;
 }
-
-
-std::vector<path_handle_t>* PathsPrefixSumArrays::get_graph_path_handles(GBWTGraph &g){
-    std::vector<path_handle_t> *path_handles = new std::vector<path_handle_t>();
-    g.for_each_path_handle([&](const path_handle_t path_handle) {
-        (*path_handles).push_back(path_handle);
-    }); // end of lambda expression)
-    return path_handles;
-}
-
-
-
-
-
-
-
 
 
 std::string PathsPrefixSumArrays::toString_sd_vectors(){
@@ -157,24 +151,39 @@ std::string PathsPrefixSumArrays::toString(){
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
+    // Used to compute the number of nodes inside a path
     auto zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))(psa[path_id].size());
     auto ones = ((*psa)[path_id])->size() - zeros;
 
-    std::vector<size_t>* node_1_positions = get_visits_in_path(path_id, node_1, ones);
-    std::vector<size_t>* node_2_positions = get_visits_in_path(path_id, node_2, ones);
+    // Get nodes positions within a path, a node in a loop can occurr several times
+    std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
+    std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
 
+    // Sort the position nodes in each vector
     std::sort(node_1_positions->begin(), node_1_positions->end());
     std::sort(node_2_positions->begin(), node_2_positions->end());
 
-
-
-    int pivot_1 = 0, pivot_2 = 0;
-
+    int pivot_1 = -1, pivot_2 = -1;
     int i, j, end;
+
+    bool iterate_on_node_2_positions;
 
     std::vector<size_t>* distances = new std::vector<size_t>();
 
-    bool iterate_on_node_2_positions;
+    /**
+     * Explanation of the algorithm: the idea is to check which of the two first positions (in the vector of positions)
+     * is greater and iterate on the greater one.
+     *
+     * For instance: if the first item of the vector node_1_positions is the less, we set a index position i on the pivot_1,
+     * we set j to pivot_2 and we set as end position the node_2_position.size(). We increment the pivot_1 because it
+     * will be used in the next iteration.
+     *
+     * The pivot_1 is the index of the position for which have to compute the distances during a iteration, this index
+     * refers to node_1_postions vector (pivot_2 refers to node_2_positions).
+     *
+     * Based on the boolean flag iterate_on_node_2_positions we iterate (j) on the first or the second vector of positions
+     * to compute the distance with the fixed one (i) in that iteration.
+     */
 
     do{
         if(node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
@@ -203,8 +212,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
             }
             ++ j;
         }
-    }while(pivot_1 < node_1_positions->size() &&
-            pivot_2 < node_2_positions->size());
+    }while(pivot_1 < node_1_positions->size() && pivot_2 < node_2_positions->size());
 
 
     // Deleting memory
@@ -222,22 +230,16 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 };
 
 
-std::vector<size_t>* PathsPrefixSumArrays::get_visits_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
-    auto node_visits = fast_locate.decompressSA(node);
+std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
+    auto node_visits = fast_locate->decompressSA(node);
 
     std::vector<size_t>* node_positions = new std::vector<size_t>();
 
-    std::cout << "\nSEQTHINGS: ";
     for (int i = 0; i < node_visits.size() ; ++i) {
-        if(fast_locate.seqId(node_visits[i]) == path_id){
-            std::cout<< "SeqOffset: " << fast_locate.seqOffset(node_visits[i]);
-            std::cout<< " - SeqId: " << fast_locate.seqId(node_visits[i]);
-            node_positions->push_back(ones - fast_locate.seqOffset(node_visits[i]));
-
+        if(fast_locate->seqId(node_visits[i]) == path_id){
+            node_positions->push_back(ones - fast_locate->seqOffset(node_visits[i]));
         }
     }
-
-    std::cout << std::endl;
 
     return node_positions;
 }

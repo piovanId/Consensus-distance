@@ -1,15 +1,10 @@
 #include <iostream>
 #include <iterator>
-#include <map>
 #include <vector>
 #include "gbwtgraph/gbwtgraph.h"
 #include "gbwtgraph/gfa.h"
 #include "gbwt/gbwt.h"
 #include "include/consensus_distance/paths_prefix_sum_arrays.h"
-#include "sdsl/sd_vector.hpp"
-#include "sdsl/int_vector.hpp"
-#include "sdsl/bit_vectors.hpp"
-#include "gbwt/fast_locate.h"
 #include "include/consensus_distance/pruned_graph.h"
 
 
@@ -21,7 +16,7 @@ int main() {
 
 
 
-    auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference.gfa");
+    auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference (copy).gfa");
    // auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
     //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/cactus-BRCA2.gfa");
    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
@@ -31,7 +26,7 @@ int main() {
     GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
 
     PathsPrefixSumArrays *a = new PathsPrefixSumArrays(graph);
-    auto distances = a->get_all_nodes_distances_in_path(8, 12, 0);
+    auto distances = a->get_all_nodes_distances_in_path(18, 2, 0);
 
 
     std::cout << a->toString_sd_vectors() << std::endl;
