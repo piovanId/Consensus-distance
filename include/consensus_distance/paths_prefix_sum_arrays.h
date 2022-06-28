@@ -84,9 +84,9 @@ public:
      * Get a string with all the prefix sum arrays.
      * @return a string containing the prefix sum arrays.
      */
+    std::string toString_sd_vectors();
+
     std::string toString();
-
-
     /**
      * Given the path_id and two position node compute the distance between the nodes inside the path.
      * @param pos_node_1

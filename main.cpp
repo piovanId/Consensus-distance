@@ -34,6 +34,7 @@ int main() {
     auto distances = a->get_all_nodes_distances_in_path(8, 12, 0);
 
 
+    std::cout << a->toString_sd_vectors() << std::endl;
     std::cout << a->toString() << std::endl;
 
     std::cout << "DISTANCES (size)" << distances->size() << " ----> ";

@@ -93,7 +93,14 @@ std::vector<path_handle_t>* PathsPrefixSumArrays::get_graph_path_handles(GBWTGra
 }
 
 
-std::string PathsPrefixSumArrays::toString(){
+
+
+
+
+
+
+
+std::string PathsPrefixSumArrays::toString_sd_vectors(){
     std::string temp="";
     auto iterator = (*psa).begin();
 
@@ -110,6 +117,34 @@ std::string PathsPrefixSumArrays::toString(){
             temp += std::to_string((*(iterator->second))[i] );
             if(i!=iterator->second->size()-1)
             temp += ", ";
+        }
+        temp += "]";
+        // Increment the Iterator to point to next entry
+        iterator++;
+    }
+    return temp;
+}
+
+
+std::string PathsPrefixSumArrays::toString(){
+    std::string temp="";
+    auto iterator = (*psa).begin();
+
+    // Iterate over the map using Iterator till end.
+    while (iterator != (*psa).end())
+    {
+        temp +=  "\n| ";
+
+        // Accessing KEY from element pointed by it.
+        temp += std::to_string(iterator->first) + "::\t[";
+
+        // Accessing VALUE from element pointed by it.
+        for(int i=0; i< iterator->second->size(); ++i){
+            if((*(iterator->second))[i] == 1) {
+                temp += std::to_string(i);
+                if (i != iterator->second->size() - 1)
+                    temp += ", ";
+            }
         }
         temp += "]";
         // Increment the Iterator to point to next entry
