@@ -9,6 +9,8 @@
 #ifndef CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H
 #define CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H
 
+
+
 // Standard
 #include <iostream>
 #include <iterator>
@@ -35,11 +37,11 @@ using namespace gbwtgraph;
 /**
  * This class represent the paths' prefix sum arrays.
  */
-class PathsPrefixSumArrays{
+class PathsPrefixSumArrays {
 
 private:
 
-    std::map<gbwt::size_type , sdsl::sd_vector<>*> *psa;
+    std::map<gbwt::size_type, sdsl::sd_vector<> *> *psa;
 
     gbwt::FastLocate *fast_locate;
 
@@ -48,7 +50,7 @@ private:
      * @param g the graph on which we are getting the path_handles.
      * @return a pointer to vector of path_handle_t type.
      */
-    std::vector<path_handle_t>* get_graph_path_handles(GBWTGraph &g);
+    std::vector<path_handle_t> *get_graph_path_handles(GBWTGraph &g);
 
 
     /**
@@ -58,7 +60,8 @@ private:
      * @param sdb_sel is the select operation.
      * @return the distance between the two positions.
      */
-    size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel);
+    size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2,
+                                                      sdsl::sd_vector<>::select_1_type &sdb_sel);
 
 
     /**
@@ -68,7 +71,7 @@ private:
      * @param ones the number of ones inside the sd_vector prefix sum array representation. It is needed to compute
      * @return
      */
-    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones);
+    std::vector<size_t> *get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &teones);
 
 public:
     /**
@@ -120,7 +123,15 @@ public:
      * @param path_id id of the path.
      * @return a vector of size_t distances.
      */
-    std::vector<size_t>* get_all_nodes_distances_in_path( gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id);
-};
+    std::vector<size_t> *
+    get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id);
 
+    std::vector<size_t>* get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2);
+
+    std::map<size_t,std::vector<size_t>*>* get_all_node_positions(gbwt::node_type node);
+
+    std::vector<size_t>* get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
+                                                                                std::vector<size_t>* node_2_positions,
+                                                                                size_t path_id);
+};
 #endif //CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H
