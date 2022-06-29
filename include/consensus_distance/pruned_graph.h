@@ -1,6 +1,8 @@
-//
-// Created by GI-Loaner-05 on 6/24/22.
-//
+/**
+ * Authors:
+ *  - Andrea Mariotti
+ *  - Davide Piovani
+ */
 
 #ifndef CONSENSUS_DISTANCE_PRUNED_GRAPH_H
 #define CONSENSUS_DISTANCE_PRUNED_GRAPH_H

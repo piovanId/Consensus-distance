@@ -1,12 +1,14 @@
-//
-// Created by GI-Loaner-05 on 6/15/22.
-//
+/**
+ * Authors:
+ *  - Andrea Mariotti
+ *  - Davide Piovani
+ */
 
 
 #include "../include/consensus_distance/paths_prefix_sum_arrays.h"
 #include "sdsl/util.hpp"
-#include <bits/stdc++.h> // To sort
 #include <stdexcept>
+
 void stamparrei(std::vector<size_t> mauro){
     for (int i = 0; i < mauro.size(); ++i) {
         std::cout<< mauro[i]<<" ";
@@ -15,25 +17,23 @@ void stamparrei(std::vector<size_t> mauro){
 }
 
 
-PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr){}
+PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr), fast_locate(nullptr) {}
 
 
-PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
+PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph){
     // Create the prefix sum array
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
 
-  //  std::cout << std::endl;
-
+    // Build prefix sum array for each path (sequence)
     for(gbwt::size_type i = 0; i < gbwtGraph.index->sequences(); i += 2) {
         // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
         // is the representation
 
-        auto path = gbwtGraph.index->extract(i);
+        auto path = gbwtGraph.index->extract(i); // Attention: it's the sequence representation
 
         size_t offset = 0;
         for(gbwt::size_type j = 0; j < path.size(); ++j) {
             gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
-          //  std::cout<< length_of_node << " ";
             offset += length_of_node;
         }
 
@@ -49,7 +49,7 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph) {
         (*psa)[i] = new sdsl::sd_vector<>(psa_temp);
     }
 
-    //create the fast locate
+    // Create the fast locate
     fast_locate = new gbwt::FastLocate(*gbwtGraph.index);
 }
 
@@ -65,9 +65,7 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
     sdsl::sd_vector<>::select_1_type sdb_sel((*(psa))[path_id]);
 
     if(pos_node_2 > (*(psa))[path_id]->size() || pos_node_1 > (*(psa))[path_id]->size()){
-        return 0; // You can't compute the distance between two node where at least one doesn't exist
-    }else if (pos_node_1 < pos_node_2) {
-        distance = get_distance_between_positions_in_path_aux(pos_node_1, pos_node_2, sdb_sel);
+        return 0; // You can't compute the distance between two position if at least one of them doesn't exist
     } else {
         distance = get_distance_between_positions_in_path_aux(pos_node_2, pos_node_1, sdb_sel);
     }
@@ -77,6 +75,10 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
 
 
 size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel){
+    if(pos_node_1 > pos_node_2){
+        std::swap(pos_node_1, pos_node_2);
+    }
+
     size_t node_before_bigger_node_offset = sdb_sel(pos_node_2);
     size_t node_1_offset = sdb_sel(pos_node_1 + 1);
     return node_before_bigger_node_offset - node_1_offset;
@@ -159,10 +161,10 @@ std::string PathsPrefixSumArrays::toString(){
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
-    // Used to compute the number of nodes inside a path
-
-    auto zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
-    size_t ones = ((*psa)[path_id])->size() - zeros;
+    // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
+    /*auto zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+    size_t ones = ((*psa)[path_id])->size() - zeros;*/
+    size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
@@ -258,12 +260,9 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 
     std::vector<size_t> *distances = new   std::vector<size_t>();
 
-    //todo /  guarda se becchi dov'è l'errore che è tra qua
-
-    //todo 2
     std::map<size_t,std::vector<size_t>*> * positions_node_1 = get_all_node_positions(node_1);
     std::map<size_t,std::vector<size_t>*> * positions_node_2 = get_all_node_positions(node_2);
-    //todo / e qua, si vede che fa casino con questi assegnamenti
+
 
 
 
@@ -294,23 +293,19 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 }
 
 std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node){
-    //todo 3
     auto node_visits = fast_locate->decompressSA(node);
 
     std::map<size_t,std::vector<size_t>*> *distances_in_paths = new std::map<size_t,std::vector<size_t>*>();
 
-
     for (int i = 0; i < node_visits.size() ; ++i) {
+        gbwt::size_type path_id =fast_locate->seqId(node_visits[i]); // Sequence id
 
-        gbwt::size_type path_id =fast_locate->seqId(node_visits[i]);
+        // Todo: we could optimize this operation by memorizing the ones, try to find out if it is a good way.
+        /*gbwt::size_type zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))((*psa)[path_id]->size());
+        gbwt::size_type ones = ((*psa)[path_id])->size() - zeros;*/
+        size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
-        // Used to compute the number of nodes inside a path todo si può ottimizzare in tempo ma peggiorando in spazio tenendoli salvati
-      //todo questo è il diaulo
-        gbwt::size_type zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))((*psa)[path_id]->size());
-
-        gbwt::size_type ones = ((*psa)[path_id])->size() - zeros;
-
-      //  std::cout << "path id:" << std::to_string(path_id) << " 1->"<<std::to_string(ones)<<" - 0->" <<zeros << " offset:" << std::to_string(fast_locate->seqOffset(node_visits[i]))<<std::endl;
+        //std::cout << "path id:" << std::to_string(path_id) << " 1->"<<std::to_string(ones) <<", 0->" <<zeros << " offset:" << std::to_string(fast_locate->seqOffset(node_visits[i]))<<std::endl;
 
         if((*distances_in_paths)[path_id] == nullptr){
             (*distances_in_paths)[path_id] = new std::vector<size_t>();
@@ -322,9 +317,9 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
 }
 
 
-std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
-                                                                            std::vector<size_t>* node_2_positions,
-                                                                            size_t path_id){
+std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::vector<size_t>* node_1_positions,
+                                                                           std::vector<size_t>* node_2_positions,
+                                                                           size_t path_id){
 
     // Sort the position nodes in each vector
     std::sort(node_1_positions->begin(), node_1_positions->end());

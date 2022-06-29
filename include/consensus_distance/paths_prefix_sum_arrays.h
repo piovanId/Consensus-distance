@@ -1,10 +1,8 @@
-//
-// Created by GI-Loaner-05 on 6/15/22.
-//
-// TODO: implement a method that take the path_handle and return directly its prefix sum array.
-// TODO: implement a method "build_prexif_sum_arrays" (we can discuss about the name)
-//  to get the constructor nice and clean (remember memory leaks).
-// TODO: implement anothe to_stirng that takes as a parameter a single path_handle, if you want to see just one
+/**
+ * Authors:
+ *  - Andrea Mariotti
+ *  - Davide Piovani
+ */
 
 #ifndef CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H
 #define CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H
@@ -41,20 +39,14 @@ class PathsPrefixSumArrays {
 
 private:
 
-    std::map<gbwt::size_type, sdsl::sd_vector<> *> *psa;
+    std::map<gbwt::size_type, sdsl::sd_vector<> *> *psa; // prefix sum arrays (seq_id, prefix sum array)
 
-    gbwt::FastLocate *fast_locate;
-
-    /**
-     * Get the all the path handles in the graph, which is a reference to a path (opaque 64-bit identifier).
-     * @param g the graph on which we are getting the path_handles.
-     * @return a pointer to vector of path_handle_t type.
-     */
-    std::vector<path_handle_t> *get_graph_path_handles(GBWTGraph &g);
+    gbwt::FastLocate *fast_locate; // it is needed to perform select operation on sd_vector
 
 
     /**
-     * Compute distance between two node position, knowing that the pos_node_1 is less than pos_node_2.
+     * Compute distance between two node position in a path, it's an auxiliar method used by the public
+     * get_distance_between_positions_in_path.
      * @param pos_node_1
      * @param pos_node_2
      * @param sdb_sel is the select operation.
@@ -65,48 +57,50 @@ private:
 
 
     /**
-     * Get all the visits of a node in a path.
-     * @param path_id
+     * Get all the positions of a node in a path.
+     * @param path_id it's the sequence id (not GBWTGraph representation).
      * @param node
-     * @param ones the number of ones inside the sd_vector prefix sum array representation. It is needed to compute
-     * @return
+     * @param ones the number of ones inside the sd_vector prefix sum array representation. It is needed to compute the
+     * positions.
+     * @return a vector of the positions of a node in the path.
      */
-    std::vector<size_t> *get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &teones);
+    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones);
 
 public:
     /**
-     * Default constructor
+     * Default constructor.
      */
     PathsPrefixSumArrays();
 
     /**
-     * Constructor
+     * Constructor.
      * @param gbwtGraph
      */
     PathsPrefixSumArrays(GBWTGraph gbwtGraph);
 
 
     /**
-     * Destructor
+     * Destructor.
      */
     ~PathsPrefixSumArrays();
 
     /**
-     * Get a string with all the prefix sum arrays.
+     * Get a string with all the prefix sum arrays as sd_vectors representation (0,1).
      * @return a string containing the prefix sum arrays.
      */
     std::string toString_sd_vectors();
 
 
     /**
-     * Get a string of the prefix sum arrays
-     * @return a string representing the prefix sum arrays
+     * Get a string with all the prefix sum arrays as arrays of integers.
+     * @return a string representing the prefix sum arrays.
      */
     std::string toString();
 
 
     /**
-     * Given the path_id and two position node compute the distance between the nodes inside the path.
+     * Given the path_id and two position node inside that path, compute the distance between the positions inside the
+     * path.
      * @param pos_node_1
      * @param pos_node_2
      * @param path_id
@@ -116,20 +110,42 @@ public:
 
 
     /**
-     * Get all the distances between two nodes in a path, takes into account multiple occurences of the same node in a
-     * looping path.
+     * Get all the distances between two nodes in a path, also takes into account multiple occurences of the same node
+     * in a looping path.
      * @param node_1 id of the node.
      * @param node_2 id of the node.
-     * @param path_id id of the path.
+     * @param path_id id of the path (sequence).
      * @return a vector of size_t distances.
      */
     std::vector<size_t> *
     get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id);
 
+
+    /**
+     * Get all node distance between two nodes.
+     * @param node_1
+     * @param node_2
+     * @return a vector with all the distance between two nodes.
+     */
     std::vector<size_t>* get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2);
 
+
+    /**
+     * Get all node positions in every path that visits the node.
+     * @param node
+     * @return a map where the key is the path id (sequence id) and the value is a pointer to a vector of positions in
+     * that path.
+     */
     std::map<size_t,std::vector<size_t>*>* get_all_node_positions(gbwt::node_type node);
 
+
+    /**
+     * Get all distances between two nodes in a path. Each nodes can occur several time in a path in different positions.
+     * @param node_1_positions positions of node_1 inside the path (sequence)
+     * @param node_2_positions positions of node_1 inside the path (sequence)
+     * @param path_id
+     * @return a vector of all the distances between the two nodes in a path.
+     */
     std::vector<size_t>* get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
                                                                                 std::vector<size_t>* node_2_positions,
                                                                                 size_t path_id);

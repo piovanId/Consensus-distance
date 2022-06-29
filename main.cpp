@@ -21,10 +21,10 @@ int main() {
 
 
 
-    // auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference.gfa");
+     auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference.gfa");
    // auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
     //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/cactus-BRCA2.gfa");
-    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
+    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
     //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference_cycle.gfa");
 
 
