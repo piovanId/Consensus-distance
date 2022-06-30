@@ -1,31 +1,83 @@
+// Standard
 #include <iostream>
 #include <iterator>
 #include <map>
 #include <vector>
-#include "gbwtgraph/gbwtgraph.h"
-#include "gbwtgraph/gfa.h"
-#include "gbwt/gbwt.h"
-#include "include/consensus_distance/paths_prefix_sum_arrays.h"
-#include "sdsl/sd_vector.hpp"
-#include "sdsl/int_vector.hpp"
-#include "sdsl/bit_vectors.hpp"
-#include "gbwt/fast_locate.h"
+
+// GBWTGraph
+#include <gbwtgraph/gbwtgraph.h>
+#include <gbwtgraph/gfa.h>
+
+// GBWT
+#include <gbwt/fast_locate.h>
+#include <gbwt/gbwt.h>
+
+// Sdsl
+#include <sdsl/bit_vectors.hpp>
+#include <sdsl/int_vector.hpp>
+#include <sdsl/sd_vector.hpp>
+
+// Custom
 #include "include/consensus_distance/pruned_graph.h"
+#include "include/consensus_distance/paths_prefix_sum_arrays.h"
+
+// test
+#include <gtest/gtest.h>
 
 
+namespace _test_paths_prefix_sum_arrays {
+    class PrefixSumArraysTest : public ::testing::Test {
+    protected:
+        GBWTGraph* cyclic_graph;
+        GBWTGraph* acyclic_graph;
+
+        PrefixSumArraysTest(): acyclic_graph(nullptr), cyclic_graph(nullptr) {}
+
+        ~PrefixSumArraysTest() override {
+            // You can do clean-up work that doesn't throw exceptions here.
+        }
+
+        // If the constructor and destructor are not enough for setting up
+        // and cleaning up each test, you can define the following methods:
+
+        void SetUp() override {
+            // Code here will be called immediately after the constructor (right
+            // before each test).
 
 
+                auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference.gfa");
+
+                        //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
+                    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/cactus-BRCA2.gfa");
+                    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
+                    auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference_cycle.gfa");
+
+        }
+
+        void TearDown() override {
+            // Code here will be called immediately after each test (right
+            // before the destructor).
+        }
+
+        // Class members declared here can be used by all tests in the test suite
+        // for Foo.
+    };
+}
 int main() {
+    // Choosing the file based on the system
+    #ifdef __linux__
+        auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference.gfa");
+    #else
+        //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
+        //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/cactus-BRCA2.gfa");
+        //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
+        auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference_cycle.gfa");
+    #endif
+
 
     std::cout << "Hello, Santa Cruz!" << std::endl;
 
 
-
-     auto gfa_parse = gfa_to_gbwt("/home/andrea/vg/test/graphs/gfa_with_reference.gfa");
-   // auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/tiny/tiny.gfa");
-    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/cactus-BRCA2.gfa");
-    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference.gfa");
-    //auto gfa_parse = gfa_to_gbwt("/Users/gi-loaner-05/tesi/vg/test/graphs/gfa_with_reference_cycle.gfa");
 
 
 

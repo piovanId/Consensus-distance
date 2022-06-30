@@ -6,9 +6,15 @@
 
 #ifndef CONSENSUS_DISTANCE_PRUNED_GRAPH_H
 #define CONSENSUS_DISTANCE_PRUNED_GRAPH_H
+
+// GBWT
+#include <gbwt/gbwt.h>
+
+// GBWTGraph
+#include <gbwtgraph/gbwtgraph.h>
+
+// Custom
 #include "paths_prefix_sum_arrays.h"
-#include "gbwt/gbwt.h"
-#include "gbwtgraph/gbwtgraph.h"
 
 
 

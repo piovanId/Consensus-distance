@@ -5,10 +5,12 @@
  */
 
 
-#include "../include/consensus_distance/paths_prefix_sum_arrays.h"
-#include "sdsl/util.hpp"
+#include <sdsl/util.hpp>
 #include <stdexcept>
 
+#include "../include/consensus_distance/paths_prefix_sum_arrays.h"
+
+//TODO: remove this method
 void stamparrei(std::vector<size_t> mauro){
     for (int i = 0; i < mauro.size(); ++i) {
         std::cout<< mauro[i]<<" ";
@@ -20,22 +22,24 @@ void stamparrei(std::vector<size_t> mauro){
 PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr), fast_locate(nullptr) {}
 
 
-PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph){
+PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph &gbwtGraph){
     // Create the prefix sum array
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
 
     // Build prefix sum array for each path (sequence)
-    for(gbwt::size_type i = 0; i < gbwtGraph.index->sequences(); i += 2) {
+    for(gbwt::size_type i = gbwtGraph.index->sequences()-1; i < gbwtGraph.index->sequences(); i += 2) {
         // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
         // is the representation
 
         auto path = gbwtGraph.index->extract(i); // Attention: it's the sequence representation
+
 
         size_t offset = 0;
         for(gbwt::size_type j = 0; j < path.size(); ++j) {
             gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
             offset += length_of_node;
         }
+
 
         sdsl::bit_vector psa_temp(offset+1,0);
 
@@ -46,11 +50,22 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph gbwtGraph){
             psa_temp[offset] = 1;
         }
 
+
         (*psa)[i] = new sdsl::sd_vector<>(psa_temp);
     }
 
     // Create the fast locate
     fast_locate = new gbwt::FastLocate(*gbwtGraph.index);
+}
+
+
+gbwt::FastLocate* PathsPrefixSumArrays::get_fast_locate(){
+    return fast_locate;
+}
+
+
+std::map<gbwt::size_type, sdsl::sd_vector<>*>* PathsPrefixSumArrays::get_prefix_sum_arrays(){
+    return psa;
 }
 
 
@@ -256,33 +271,26 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 }
 
 
+// TODO: it could be helpful know at which path every distances belongs to
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2){
 
-    std::vector<size_t> *distances = new   std::vector<size_t>();
+    std::vector<size_t>* distances = new std::vector<size_t>();
 
-    std::map<size_t,std::vector<size_t>*> * positions_node_1 = get_all_node_positions(node_1);
-    std::map<size_t,std::vector<size_t>*> * positions_node_2 = get_all_node_positions(node_2);
-
-
-
-
+    std::map<size_t,std::vector<size_t>*>* positions_node_1 = get_all_node_positions(node_1);
+    std::map<size_t,std::vector<size_t>*>* positions_node_2 = get_all_node_positions(node_2);
 
     auto iterator = (*positions_node_1).begin();
 
-    int contatoredelsiurmariotti =0;
     // Iterate over the map using Iterator till end.
     while (iterator != (*positions_node_1).end())
     {
-
-        size_t key = iterator->first;
+        size_t key = iterator->first; // sequence id
         std::vector<size_t> *distances_in_path;
 
         if((*positions_node_2).find(key)  != (*positions_node_2).end()) {
-            //todo 1
-
             distances_in_path = get_all_nodes_distances_in_path((*positions_node_1)[key],
-                                                                                     (*positions_node_2)[key],
-                                                                                     key);
+                                                                (*positions_node_2)[key],
+                                                                key);
         }
 
         distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
@@ -291,6 +299,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
     }
     return distances;
 }
+
 
 std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node){
     auto node_visits = fast_locate->decompressSA(node);

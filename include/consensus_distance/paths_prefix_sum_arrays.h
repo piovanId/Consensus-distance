@@ -16,14 +16,14 @@
 #include <vector>
 
 // GBWT
-#include "gbwt/gbwt.h"
-#include "gbwt/fast_locate.h"
+#include <gbwt/gbwt.h>
+#include <gbwt/fast_locate.h>
 
 
 // GBWTGraph
-#include "gbwtgraph/gbwtgraph.h"
-#include "gbwtgraph/gfa.h"
-#include "gbwtgraph/gbz.h"
+#include <gbwtgraph/gbwtgraph.h>
+#include <gbwtgraph/gfa.h>
+#include <gbwtgraph/gbz.h>
 
 // HandleGraph
 #include <handlegraph/handle_graph.hpp>
@@ -39,7 +39,7 @@ class PathsPrefixSumArrays {
 
 private:
 
-    std::map<gbwt::size_type, sdsl::sd_vector<> *> *psa; // prefix sum arrays (seq_id, prefix sum array)
+    std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // prefix sum arrays (seq_id, prefix sum array)
 
     gbwt::FastLocate *fast_locate; // it is needed to perform select operation on sd_vector
 
@@ -76,7 +76,7 @@ public:
      * Constructor.
      * @param gbwtGraph
      */
-    PathsPrefixSumArrays(GBWTGraph gbwtGraph);
+    PathsPrefixSumArrays(GBWTGraph &gbwtGraph);
 
 
     /**
@@ -96,6 +96,20 @@ public:
      * @return a string representing the prefix sum arrays.
      */
     std::string toString();
+
+
+    /**
+     * Get fast locate used in Test.
+     * @return fast_locate.
+     */
+    gbwt::FastLocate* get_fast_locate();
+
+
+    /**
+     * Get prefix sum arrays.
+     * @return a map in which for each path we have the prefix sum array.
+     */
+    std::map<gbwt::size_type, sdsl::sd_vector<>*>* get_prefix_sum_arrays();
 
 
     /**
