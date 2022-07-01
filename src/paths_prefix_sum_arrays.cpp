@@ -27,8 +27,6 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph &gbwtGraph){
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
 
     // Build prefix sum array for each path (sequence)
-
-
     for(gbwt::size_type i = 0; i < (gbwtGraph.index)->sequences(); i += 2) {
         // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
         // is the representation
@@ -49,8 +47,6 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph &gbwtGraph){
             offset += length_of_node;
             psa_temp[offset] = 1;
         }
-
-
 
         (*psa)[i] = new sdsl::sd_vector<>(psa_temp);
     }
@@ -103,20 +99,24 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t p
 
 PathsPrefixSumArrays::~PathsPrefixSumArrays() {
     // Delete memory fast locate
-    delete fast_locate;
-    fast_locate = nullptr;
-
-    // Delete map memory
-    std::map<gbwt::size_type , sdsl::sd_vector<>*>::iterator it;
-
-    for (it = psa->begin(); it != psa->end(); it++){
-        delete it->second;
-        it->second = nullptr;
+    if(fast_locate != nullptr){
+        delete fast_locate;
+        fast_locate = nullptr;
     }
 
-    psa->clear();
-    delete psa;
-    psa = nullptr;
+    // Delete map memory
+    if(psa != nullptr){
+        std::map<gbwt::size_type , sdsl::sd_vector<>*>::iterator it;
+
+        for (it = psa->begin(); it != psa->end(); it++){
+            delete it->second;
+            it->second = nullptr;
+        }
+
+        psa->clear();
+        delete psa;
+        psa = nullptr;
+    }
 }
 
 
