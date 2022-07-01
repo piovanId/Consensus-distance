@@ -88,28 +88,28 @@ public:
      * Get a string with all the prefix sum arrays as sd_vectors representation (0,1).
      * @return a string containing the prefix sum arrays.
      */
-    std::string toString_sd_vectors();
+    std::string toString_sd_vectors() const;
 
 
     /**
      * Get a string with all the prefix sum arrays as arrays of integers.
      * @return a string representing the prefix sum arrays.
      */
-    std::string toString();
+    std::string toString() const;
 
 
     /**
      * Get fast locate used in Test.
      * @return fast_locate.
      */
-    gbwt::FastLocate* get_fast_locate();
+    gbwt::FastLocate* get_fast_locate() const;
 
 
     /**
      * Get prefix sum arrays.
      * @return a map in which for each path we have the prefix sum array.
      */
-    std::map<gbwt::size_type, sdsl::sd_vector<>*>* get_prefix_sum_arrays();
+    std::map<gbwt::size_type, sdsl::sd_vector<>*>* get_prefix_sum_arrays() const;
 
 
     /**

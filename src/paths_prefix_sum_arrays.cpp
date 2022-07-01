@@ -56,12 +56,12 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph &gbwtGraph){
 }
 
 
-gbwt::FastLocate* PathsPrefixSumArrays::get_fast_locate(){
+gbwt::FastLocate* PathsPrefixSumArrays::get_fast_locate() const{
     return fast_locate;
 }
 
 
-std::map<gbwt::size_type, sdsl::sd_vector<>*>* PathsPrefixSumArrays::get_prefix_sum_arrays(){
+std::map<gbwt::size_type, sdsl::sd_vector<>*>* PathsPrefixSumArrays::get_prefix_sum_arrays() const{
     return psa;
 }
 
@@ -120,7 +120,7 @@ PathsPrefixSumArrays::~PathsPrefixSumArrays() {
 }
 
 
-std::string PathsPrefixSumArrays::toString_sd_vectors(){
+std::string PathsPrefixSumArrays::toString_sd_vectors() const{
     std::string temp="";
     auto iterator = (*psa).begin();
 
@@ -146,7 +146,7 @@ std::string PathsPrefixSumArrays::toString_sd_vectors(){
 }
 
 
-std::string PathsPrefixSumArrays::toString(){
+std::string PathsPrefixSumArrays::toString() const{
     std::string temp="";
     auto iterator = (*psa).begin();
 

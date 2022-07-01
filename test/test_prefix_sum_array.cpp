@@ -63,20 +63,22 @@ namespace _test_paths_prefix_sum_arrays{
             }
         };
 
+        void ASSERT_PSA_MEMBERS_NE_NULLPTR(PathsPrefixSumArrays const& psa) {
+            // googletest has the assumption that you put the expected value first
+            ASSERT_NE(nullptr, psa.get_fast_locate());
+            ASSERT_NE(nullptr, psa.get_prefix_sum_arrays());
+        }
 
         TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
-            PathsPrefixSumArrays* psa_default = new PathsPrefixSumArrays();
-            ASSERT_EQ(psa_default->get_fast_locate(), nullptr);
-            ASSERT_EQ(psa_default->get_prefix_sum_arrays(), nullptr);
-
+            const PathsPrefixSumArrays*  psa_default = new PathsPrefixSumArrays();
+            ASSERT_EQ(nullptr, psa_default->get_fast_locate());
+            ASSERT_EQ(nullptr, psa_default->get_prefix_sum_arrays());
 
             PathsPrefixSumArrays *psa_cyclic = new PathsPrefixSumArrays((*cyclic_graph));
-            ASSERT_NE(psa_cyclic->get_fast_locate(), nullptr);
-            ASSERT_NE(psa_cyclic->get_prefix_sum_arrays(), nullptr);
+            ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa_cyclic);
 
             PathsPrefixSumArrays* psa_acyclic = new PathsPrefixSumArrays(*acyclic_graph);
-            ASSERT_NE(psa_acyclic->get_fast_locate(), nullptr);
-            ASSERT_NE(psa_acyclic->get_prefix_sum_arrays(), nullptr);
+            ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa_acyclic);
 
             delete psa_default;
             psa_default = nullptr;
