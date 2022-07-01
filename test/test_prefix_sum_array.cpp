@@ -65,9 +65,9 @@ namespace _test_paths_prefix_sum_arrays{
 
 
         TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
-            PathsPrefixSumArrays* psa_default1 = new PathsPrefixSumArrays();
-            ASSERT_EQ(psa_default1->get_fast_locate(), nullptr);
-            ASSERT_EQ(psa_default1->get_prefix_sum_arrays(), nullptr);
+            PathsPrefixSumArrays* psa_default = new PathsPrefixSumArrays();
+            ASSERT_EQ(psa_default->get_fast_locate(), nullptr);
+            ASSERT_EQ(psa_default->get_prefix_sum_arrays(), nullptr);
 
 
             PathsPrefixSumArrays *psa_cyclic = new PathsPrefixSumArrays((*cyclic_graph));
@@ -78,7 +78,7 @@ namespace _test_paths_prefix_sum_arrays{
             ASSERT_NE(psa_acyclic->get_fast_locate(), nullptr);
             ASSERT_NE(psa_acyclic->get_prefix_sum_arrays(), nullptr);
 
-            delete psa_default1;
+            delete psa_default;
             psa_default = nullptr;
 
             delete psa_cyclic;
