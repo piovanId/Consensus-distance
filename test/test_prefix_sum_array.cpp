@@ -98,32 +98,9 @@ int main(int argc, char **argv)  {
      * std::unique_ptr<PathsPrefixSumArrays> psa_default(new PathsPrefixSumArrays());
      * THIS LINE DOESN'T WORK, DON'T DELETE ASK ADAM ON ADAM OFFICE HOURS HOW TO SOLVE IT
      */
-
-
+    
     std::cout << "Hello, Santa Cruzsdd!" << std::endl;
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
-
-
-    /*PathsPrefixSumArrays *prefixSumArrays = new PathsPrefixSumArrays(graph);
-    gbwt::FastLocate*  localfastlocate = new gbwt::FastLocate(*graph.index);
-
-    auto posizioninodo18 = prefixSumArrays->get_all_node_positions(12);
-
-
-    auto temp =localfastlocate->decompressSA(12);
-
-    auto distances = prefixSumArrays->get_all_nodes_distances_in_path(18, 2, 0);
-
-    auto position_in_all_sequences = prefixSumArrays->get_all_node_positions(2);
-
-    auto distances_in_graph = prefixSumArrays->get_all_nodes_distances(18,2);
-
-
-    delete prefixSumArrays;
-    prefixSumArrays = nullptr;
-    delete distances;
-    distances = nullptr;*/
-    return 0;
 }
