@@ -30,61 +30,76 @@
 // test
 #include <gtest/gtest.h>
 
+namespace my{
+namespace _test_paths_prefix_sum_arrays{
+    namespace  {
+        class PrefixSumArraysTest : public ::testing::Test {
+        private:
+            // We need this to not loose the index and the sequence source because the gfa_parse_acyclic is on the stack
+            // and after the constructor is called it is destroyed and with it the pointers.
+            std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<SequenceSource>> gfa_parse_cyclic;
+            std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<SequenceSource>> gfa_parse_acyclic;
 
-namespace _test_paths_prefix_sum_arrays {
-    using namespace gbwtgraph;
-    class PrefixSumArraysTest : public ::testing::Test {
-    protected:
-        PrefixSumArraysTest(): cyclic_graph(nullptr) {
-            /*std::string path_gfa_acyclic = "/home/andrea/vg/test/graphs/gfa_with_reference.gfa";
-            auto gfa_parse_acyclic = gfa_to_gbwt(path_gfa_acyclic);
-            acyclic_graph = new GBWTGraph(*(gfa_parse_acyclic.first), *(gfa_parse_acyclic.second));*/
-            std::string path_gfa_cyclic = "/home/andrea/vg/test/graphs/gfa_with_reference.gfa";
-            auto gfa_parse_cyclic = gbwtgraph::gfa_to_gbwt(path_gfa_cyclic);
-            cyclic_graph = new GBWTGraph(*(gfa_parse_cyclic.first), *(gfa_parse_cyclic.second));
+        protected:
+            // Class members declared here can be used by all tests in the test suite
+            std::unique_ptr<GBWTGraph> cyclic_graph;
+            std::unique_ptr<GBWTGraph> acyclic_graph;
+
+            PrefixSumArraysTest() {
+                // Cyclic graph
+                std::string path_gfa_cyclic = "../test/gfa_with_reference.gfa";
+                gfa_parse_cyclic = std::move(gbwtgraph::gfa_to_gbwt(path_gfa_cyclic));
+                cyclic_graph.reset(new GBWTGraph(*(gfa_parse_cyclic.first), *(gfa_parse_cyclic.second)));
+
+                // Acyclic graph
+                std::string path_gfa_acyclic = "../test/gfa_with_reference.gfa";
+                gfa_parse_acyclic = std::move(gfa_to_gbwt(path_gfa_acyclic));
+                acyclic_graph.reset(new GBWTGraph(*(gfa_parse_acyclic.first), *(gfa_parse_acyclic.second)));
+            }
+
+            ~PrefixSumArraysTest() override {
+                // You can do clean-up work that doesn't throw exceptions here.
+                // Acyclic delete
+            }
+        };
+
+
+        TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
+            PathsPrefixSumArrays* psa_default = new PathsPrefixSumArrays());
+            ASSERT_EQ(psa_default->get_fast_locate(), nullptr);
+            ASSERT_EQ(psa_default->get_prefix_sum_arrays(), nullptr);
+
+
+            PathsPrefixSumArrays *psa_cyclic = new PathsPrefixSumArrays((*cyclic_graph));
+            ASSERT_NE(psa_cyclic->get_fast_locate(), nullptr);
+            ASSERT_NE(psa_cyclic->get_prefix_sum_arrays(), nullptr);
+
+            PathsPrefixSumArrays* psa_acyclic = new PathsPrefixSumArrays(*acyclic_graph);
+            ASSERT_NE(psa_acyclic->get_fast_locate(), nullptr);
+            ASSERT_NE(psa_acyclic->get_prefix_sum_arrays(), nullptr);
+
+            delete psa_default;
+            psa_default = nullptr;
+
+            delete psa_cyclic;
+            psa_cyclic = nullptr;
+
+            delete psa_acyclic;
+            psa_acyclic = nullptr;
         }
-
-        ~PrefixSumArraysTest() override {
-            // You can do clean-up work that doesn't throw exceptions here.
-            /*delete acyclic_graph;
-            acyclic_graph = nullptr;*/
-            delete cyclic_graph;
-            cyclic_graph = nullptr;
-        }
-
-        // Class members declared here can be used by all tests in the test suite
-        gbwtgraph::GBWTGraph* cyclic_graph;
-        //gbwtgraph::GBWTGraph* acyclic_graph;
-    };
-
-
-
-    TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
-        /*PathsPrefixSumArrays* psa_default = new PathsPrefixSumArrays();
-        ASSERT_EQ(psa_default->get_fast_locate(), nullptr);
-        ASSERT_EQ(psa_default->get_prefix_sum_arrays(), nullptr);*/
-
-
-        //PathsPrefixSumArrays* psa_cyclic = new PathsPrefixSumArrays(*cyclic_graph);
-        std::cerr << "AFTER INITIALIZED gbwtgraph node count: " << std::to_string((*cyclic_graph).get_node_count()) << std::endl;
-        PathsPrefixSumArrays* psa_cyclic = new PathsPrefixSumArrays(*cyclic_graph);
-
-        //std::cerr << "[     ohhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh     ]" << std::endl;
-        /*ASSERT_NE(psa_cyclic->get_fast_locate(), nullptr);
-        ASSERT_NE(psa_cyclic->get_prefix_sum_arrays(), nullptr);
-
-        PathsPrefixSumArrays* psa_acyclic = new PathsPrefixSumArrays(*acyclic_graph);
-        //ASSERT_NE(psa_acyclic->get_fast_locate(), nullptr);
-        //pippobaudo(psa_acyclic);
-        ASSERT_NE(psa_acyclic->get_prefix_sum_arrays(), nullptr);*/
     }
+}
 }
 
 
 
+int main(int argc, char **argv)  {
+    /**
+     * std::unique_ptr<PathsPrefixSumArrays> psa_default(new PathsPrefixSumArrays());
+     * THIS LINE DOESN'T WORK, DON'T DELETE ASK ADAM ON ADAM OFFICE HOURS HOW TO SOLVE IT
+     */
 
 
-int main(int argc, char *argv[])  {
     std::cout << "Hello, Santa Cruzsdd!" << std::endl;
 
     ::testing::InitGoogleTest(&argc, argv);

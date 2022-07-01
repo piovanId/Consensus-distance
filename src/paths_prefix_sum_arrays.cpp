@@ -27,12 +27,12 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph &gbwtGraph){
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
 
     // Build prefix sum array for each path (sequence)
-    for(gbwt::size_type i = gbwtGraph.index->sequences()-1; i < gbwtGraph.index->sequences(); i += 2) {
+
+
+    for(gbwt::size_type i = 0; i < (gbwtGraph.index)->sequences(); i += 2) {
         // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
         // is the representation
-
         auto path = gbwtGraph.index->extract(i); // Attention: it's the sequence representation
-
 
         size_t offset = 0;
         for(gbwt::size_type j = 0; j < path.size(); ++j) {
@@ -49,6 +49,7 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph &gbwtGraph){
             offset += length_of_node;
             psa_temp[offset] = 1;
         }
+
 
 
         (*psa)[i] = new sdsl::sd_vector<>(psa_temp);
