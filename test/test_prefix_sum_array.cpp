@@ -34,32 +34,39 @@ namespace my{
 namespace _test_paths_prefix_sum_arrays{
     namespace  {
         class PrefixSumArraysTest : public ::testing::Test {
-        private:
-            // We need this to not loose the index and the sequence source because the gfa_parse_acyclic is on the stack
-            // and after the constructor is called it is destroyed and with it the pointers.
-            std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<SequenceSource>> gfa_parse_cyclic;
-            std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<SequenceSource>> gfa_parse_acyclic;
-
         protected:
             // Class members declared here can be used by all tests in the test suite
-            std::unique_ptr<GBWTGraph> cyclic_graph;
-            std::unique_ptr<GBWTGraph> acyclic_graph;
+            // Vector of prefix sums arrays for each graph, prefix_sums_arrays[i] is referred to the graph i in
+            // gfa_files_path.
+            std::vector<PathsPrefixSumArrays*>* prefix_sums_arrays = new std::vector<PathsPrefixSumArrays*>();
 
             PrefixSumArraysTest() {
-                // Cyclic graph
-                std::string path_gfa_cyclic = "../test/gfa_with_reference.gfa";
-                gfa_parse_cyclic = std::move(gbwtgraph::gfa_to_gbwt(path_gfa_cyclic));
-                cyclic_graph.reset(new GBWTGraph(*(gfa_parse_cyclic.first), *(gfa_parse_cyclic.second)));
+                std::unique_ptr<GBWTGraph> graph;
+                std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<SequenceSource>> gfa_parse;
 
-                // Acyclic graph
-                std::string path_gfa_acyclic = "../test/gfa_with_reference.gfa";
-                gfa_parse_acyclic = std::move(gfa_to_gbwt(path_gfa_acyclic));
-                acyclic_graph.reset(new GBWTGraph(*(gfa_parse_acyclic.first), *(gfa_parse_acyclic.second)));
+                // Name of the graph examples for testing
+                std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
+                                                            "../test/one_node_cyclic.gfa",
+                                                            "../test/acyclic_graph_even_paths.gfa",
+                                                            "../test/acyclic_graph_odd_paths.gfa",
+                                                            "../test/cyclic_graph_even_paths.gfa",
+                                                            "../test/cyclic_graph_odd_paths.gfa"};
+
+                // Creating vector of prefix sum array for each graph
+                for(int i=0; i < gfa_files_paths.size(); ++i){
+                    gfa_parse = std::move(gbwtgraph::gfa_to_gbwt(gfa_files_paths[i]));
+                    graph.reset(new GBWTGraph(*(gfa_parse.first),
+                                              *(gfa_parse.second)));
+                    prefix_sums_arrays->push_back(new PathsPrefixSumArrays(*graph));
+                }
             }
 
             ~PrefixSumArraysTest() override {
                 // You can do clean-up work that doesn't throw exceptions here.
-                // Acyclic delete
+                for(auto psa : *prefix_sums_arrays){
+                    delete psa;
+                }
+                prefix_sums_arrays->clear();
             }
         };
 
@@ -70,24 +77,23 @@ namespace _test_paths_prefix_sum_arrays{
         }
 
         TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
-            const PathsPrefixSumArrays*  psa_default = new PathsPrefixSumArrays();
+            std::unique_ptr<PathsPrefixSumArrays>  psa_default = std::unique_ptr<PathsPrefixSumArrays>(new PathsPrefixSumArrays());
             ASSERT_EQ(nullptr, psa_default->get_fast_locate());
             ASSERT_EQ(nullptr, psa_default->get_prefix_sum_arrays());
 
-            PathsPrefixSumArrays *psa_cyclic = new PathsPrefixSumArrays((*cyclic_graph));
+            /*PathsPrefixSumArrays *psa_cyclic = new PathsPrefixSumArrays((*cyclic_graph));
             ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa_cyclic);
 
             PathsPrefixSumArrays* psa_acyclic = new PathsPrefixSumArrays(*acyclic_graph);
             ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa_acyclic);
 
-            delete psa_default;
-            psa_default = nullptr;
+
 
             delete psa_cyclic;
             psa_cyclic = nullptr;
 
             delete psa_acyclic;
-            psa_acyclic = nullptr;
+            psa_acyclic = nullptr;*/
         }
     }
 }
