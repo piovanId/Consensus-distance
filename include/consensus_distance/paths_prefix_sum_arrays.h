@@ -31,14 +31,19 @@
 #include <handlegraph/mutable_path_deletable_handle_graph.hpp>
 
 #include "gtest/gtest.h"
-using namespace gbwtgraph;
-
+//TEST
+#include "gtest/gtest.h"
 /**
  * This class represent the paths' prefix sum arrays.
  */
+
+namespace pathsprefixsumarrays{
 class PathsPrefixSumArrays {
 
 private:
+    friend class PrefixSumArraysTest;
+    FRIEND_TEST(PrefixSumArraysTest, distanza);
+
 
     ///friend class my::_test_paths_prefix_sum_arrays::::PrefixSumArraysTest;
     ///TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath);
@@ -80,7 +85,7 @@ public:
      * Constructor.
      * @param gbwtGraph
      */
-    PathsPrefixSumArrays(GBWTGraph &gbwtGraph);
+    PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph);
 
 
     /**
@@ -168,4 +173,5 @@ public:
                                                                                 std::vector<size_t>* node_2_positions,
                                                                                 size_t path_id);
 };
+}// fine del namespace
 #endif //CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H

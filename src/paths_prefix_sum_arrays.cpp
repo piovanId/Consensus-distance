@@ -10,6 +10,7 @@
 
 #include "../include/consensus_distance/paths_prefix_sum_arrays.h"
 
+using namespace pathsprefixsumarrays;
 //TODO: remove this method
 void stamparrei(std::vector<size_t> mauro){
     for (int i = 0; i < mauro.size(); ++i) {
@@ -22,7 +23,7 @@ void stamparrei(std::vector<size_t> mauro){
 PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr), fast_locate(nullptr) {}
 
 
-PathsPrefixSumArrays::PathsPrefixSumArrays(GBWTGraph &gbwtGraph){
+PathsPrefixSumArrays::PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph){
     // Create the prefix sum array
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
 

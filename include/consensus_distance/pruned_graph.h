@@ -19,11 +19,11 @@
 
 
 class PrunedGraph {
-    PathsPrefixSumArrays *prefix_sum_arrays;
+    pathsprefixsumarrays::PathsPrefixSumArrays *prefix_sum_arrays;
 
 public:
     PrunedGraph();
-    PrunedGraph(GBWTGraph g);
+    PrunedGraph(gbwtgraph::GBWTGraph g);
 
 
 
