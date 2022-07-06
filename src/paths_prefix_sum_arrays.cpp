@@ -2,6 +2,14 @@
  * Authors:
  *  - Andrea Mariotti
  *  - Davide Piovani
+ *
+ *  ATTENTION:
+ *  To convert a GFA file into a gbwt object we use the method gbwtgraph::gfa_to_gbwt. This method returns an object of
+ *  type: std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>, let's call it gfa_parse.
+ *  This type is used to create a GBWTGraph object: new gbwtgraph::GBWTGraph(gfa_parse.first, gfa_parse.second).
+ *
+ *  Using this class pay attention to not deallocate from stack/heap the gfa_parse used to create the GBWTGraph, because
+ *  it will lead to memory errors due to the internal pointers of the GBWTGraph class.
  */
 
 

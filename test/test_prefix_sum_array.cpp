@@ -67,10 +67,16 @@ namespace pathsprefixsumarrays {
 
         ~PrefixSumArraysTest() override {
             // You can do clean-up work that doesn't throw exceptions here.
+            // PSA
             for (auto psa: *prefix_sums_arrays) {
                 delete psa;
             }
             prefix_sums_arrays->clear();
+            prefix_sums_arrays = nullptr;
+
+            // gfa_parses
+            gfa_parses->clear();
+            gfa_parses = nullptr;
         }
     };
 
@@ -124,20 +130,26 @@ namespace pathsprefixsumarrays {
          */
 
         // One node acyclic graph, one path, all distances
-        //PathsPrefixSumArrays* psa = new PathsPrefixSumArrays(*graph);
-        //std::vector<size_t>* distances = psa->get_all_nodes_distances_in_path(2,2,0);
-
-        //std::vector<size_t>* distances = (*(*prefix_sums_arrays)[0]).get_all_nodes_distances_in_path(2,2,0);
         gbwt::node_type n1 = 2;
         gbwt::node_type n2 = 2;
 
-        //PROBLEMA NELLA FUNZIONE QUANDO CHIAMA get_positions_of_a_node_in_path
         auto distances = (*(*prefix_sums_arrays)[0]).get_all_nodes_distances_in_path(n1,n2,0);
+        ASSERT_EQ(1, distances->size()); // only one distance computable because there is only one path of length 1
+        ASSERT_EQ(0, distances->at(0)); // distances between two same positions in a path is 0
 
-        //(*prefix_sums_arrays)[i]->get_distance_between_positions_in_path(0,3,0));
+        // One node cyclic graph, one path, all distances
+        n1 = 2;
+        n2 = 2;
 
-        //ASSERT_EQ(1, distances->size()); // only one distance computable because there is only one path of length 1
-        //ASSERT_EQ(0, distances->at(0)); // distances between two same positions in a path is 0
+        std::cout << "DISTANZE: ";
+        distances = (*(*prefix_sums_arrays)[1]).get_all_nodes_distances_in_path(n1,n2,0);
+        for(auto d : *distances){
+            std::cout << " " << d;
+        }
+
+        std::cout << "\n";
+        //ASSERT_EQ(2, distances->size()); // only one distance computable because there is only one path of length 1
+        //ASSERT_EQ(1, distances->at(0));
 
         //distances->clear();
 
