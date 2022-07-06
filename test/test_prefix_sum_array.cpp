@@ -76,7 +76,6 @@ namespace pathsprefixsumarrays {
         }
 
 
-
         /**
          * Test constructors
          */
@@ -84,6 +83,7 @@ namespace pathsprefixsumarrays {
             std::unique_ptr<PathsPrefixSumArrays>  psa_default = std::unique_ptr<PathsPrefixSumArrays>(new PathsPrefixSumArrays());
             ASSERT_EQ(nullptr, psa_default->get_fast_locate());
             ASSERT_EQ(nullptr, psa_default->get_prefix_sum_arrays());
+
             // The prefix sums array is already been created in the constructor of the test.
             for(auto psa : *prefix_sums_arrays){
                 ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa);
@@ -99,21 +99,44 @@ namespace pathsprefixsumarrays {
             // test nome nodi
             std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<SequenceSource>> gfa_parse;
             std::unique_ptr<GBWTGraph> graph;
-            std::unique_ptr<std::vector<P>>
+            //std::vector<gbwt::size_type> nodes of the graph
 
-            gfa_parse = std::move(gbwtgraph::gfa_to_gbwt("../test/acyclic_graph_odd_paths.gfa"));
+            gfa_parse = std::move(gbwtgraph::gfa_to_gbwt("../test/cyclic_graph_even_paths.gfa"));
 
             graph.reset(new GBWTGraph(*(gfa_parse.first),*(gfa_parse.second)));
+
+            /*
+             * All possible nodes in the test files are:
+             * 2 = AGTCATACGG
+             * 4 = C
+             * 6 = G
+             * 8 = AAAA
+             * 10 = AG
+             * 12 = T
+             * In the one node graph:
+             * 2 = G
+             */
+
+            // Starts from 2 because the first two file has different naming of the nodes
+            /*for(int file_index = 2; file_index < prefix_sums_arrays->size(); ++file_index){
+
+            }
+
+
+
             for(gbwt::size_type i = 0; i < (gfa_parse.first)->sequences(); i += 2) {
                 // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
                 // is the representation
                 auto path = graph->index->extract(i); // Attention: it's the sequence representation
+
                 graph->index->sigma();
 
                 std::cout << "PATH: " << i << ", NODES: ";
                 for(gbwt::size_type j = 0; j < path.size(); ++j) {
                     std::cout << " " << path[j];
                 }
+
+
                 std::cout << std::endl;
 
             }
