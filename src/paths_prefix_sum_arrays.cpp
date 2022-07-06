@@ -178,11 +178,16 @@ std::string PathsPrefixSumArrays::toString() const{
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
+
+    std::cout << "ENTRATOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO";
+
     // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
     size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
+
+
     // Get nodes positions within a path, a node in a loop can occurr several times
-    std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
+    std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones); //PROBLEM
     std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
 
     // Sort the position nodes in each vector
@@ -257,6 +262,8 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
 
 std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
+    if(fast_locate == nullptr)
+        std::cout << "FAST LOCATE NULLPTR";
     auto node_visits = fast_locate->decompressSA(node);
 
     std::vector<size_t>* node_positions = new std::vector<size_t>();
@@ -273,10 +280,9 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 
 // TODO: it could be helpful know at which path every distances belongs to
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2){
-
     std::vector<size_t>* distances = new std::vector<size_t>();
 
-    std::map<size_t,std::vector<size_t>*>* positions_node_1 = get_all_node_positions(node_1);
+    /*std::map<size_t,std::vector<size_t>*>* positions_node_1 = get_all_node_positions(node_1);
     std::map<size_t,std::vector<size_t>*>* positions_node_2 = get_all_node_positions(node_2);
 
     auto iterator = (*positions_node_1).begin();
@@ -296,7 +302,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
         distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
         // Increment the Iterator to point to next entry
         iterator++;
-    }
+    }*/
     return distances;
 }
 
