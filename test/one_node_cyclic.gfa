@@ -2,4 +2,4 @@ H	VN:Z:1.1
 S	1	G
 L	1	+	1	+	*
 P	path1	1+,1+	*
-W	path1	1	node1	0	2	>1>1
+W	wpath1	1	node1	0	2	>1>1

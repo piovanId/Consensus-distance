@@ -30,6 +30,7 @@
 #include <handlegraph/mutable_handle_graph.hpp>
 #include <handlegraph/mutable_path_deletable_handle_graph.hpp>
 
+#include "gtest/gtest.h"
 using namespace gbwtgraph;
 
 /**
@@ -38,6 +39,9 @@ using namespace gbwtgraph;
 class PathsPrefixSumArrays {
 
 private:
+
+    ///friend class my::_test_paths_prefix_sum_arrays::::PrefixSumArraysTest;
+    ///TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath);
 
     std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // prefix sum arrays (seq_id, prefix sum array)
 

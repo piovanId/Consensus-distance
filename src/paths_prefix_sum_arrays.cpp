@@ -178,8 +178,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
     // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
-    /*auto zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
-    size_t ones = ((*psa)[path_id])->size() - zeros;*/
     size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
     // Get nodes positions within a path, a node in a loop can occurr several times

@@ -70,31 +70,62 @@ namespace _test_paths_prefix_sum_arrays{
             }
         };
 
+
         void ASSERT_PSA_MEMBERS_NE_NULLPTR(PathsPrefixSumArrays const& psa) {
             // googletest has the assumption that you put the expected value first
             ASSERT_NE(nullptr, psa.get_fast_locate());
             ASSERT_NE(nullptr, psa.get_prefix_sum_arrays());
         }
 
+
+        /**
+         * Test constructors
+         */
         TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
             std::unique_ptr<PathsPrefixSumArrays>  psa_default = std::unique_ptr<PathsPrefixSumArrays>(new PathsPrefixSumArrays());
             ASSERT_EQ(nullptr, psa_default->get_fast_locate());
             ASSERT_EQ(nullptr, psa_default->get_prefix_sum_arrays());
 
-            /*PathsPrefixSumArrays *psa_cyclic = new PathsPrefixSumArrays((*cyclic_graph));
-            ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa_cyclic);
-
-            PathsPrefixSumArrays* psa_acyclic = new PathsPrefixSumArrays(*acyclic_graph);
-            ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa_acyclic);
-
-
-
-            delete psa_cyclic;
-            psa_cyclic = nullptr;
-
-            delete psa_acyclic;
-            psa_acyclic = nullptr;*/
+            // The prefix sums array is already been created in the constructor of the test.
+            for(auto psa : *prefix_sums_arrays){
+                ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa);
+            }
         }
+
+
+        TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath){
+            /*std::vector<size_t>* distances = (*prefix_sums_arrays)[0]->get_all_nodes_distances_in_path( gbwt::node_type node_1,
+                                                                                        gbwt::node_type node_2,
+                                                                                        size_t path_id)*/
+
+            // test nome nodi
+            std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<SequenceSource>> gfa_parse;
+            std::unique_ptr<GBWTGraph> graph;
+            std::unique_ptr<std::vector<P>>
+
+            gfa_parse = std::move(gbwtgraph::gfa_to_gbwt("../test/acyclic_graph_odd_paths.gfa"));
+
+            graph.reset(new GBWTGraph(*(gfa_parse.first),*(gfa_parse.second)));
+
+            for(gbwt::size_type i = 0; i < (gfa_parse.first)->sequences(); i += 2) {
+                // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
+                // is the representation
+                auto path = graph->index->extract(i); // Attention: it's the sequence representation
+
+                graph->index->sigma();
+
+                std::cout << "PATH: " << i << ", NODES: ";
+                for(gbwt::size_type j = 0; j < path.size(); ++j) {
+                    std::cout << " " << path[j];
+                }
+
+
+                std::cout << std::endl;
+
+            }
+        }
+
+
     }
 }
 }
