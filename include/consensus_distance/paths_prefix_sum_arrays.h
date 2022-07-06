@@ -42,7 +42,8 @@ class PathsPrefixSumArrays {
 
 private:
     friend class PrefixSumArraysTest;
-    FRIEND_TEST(PrefixSumArraysTest, distanza);
+    FRIEND_TEST(PrefixSumArraysTest, get_distance_between_positions_in_path);
+    FRIEND_TEST(PrefixSumArraysTest, get_all_nodes_distances);
 
 
     ///friend class my::_test_paths_prefix_sum_arrays::::PrefixSumArraysTest;
