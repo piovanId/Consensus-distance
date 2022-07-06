@@ -179,8 +179,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
 
-    std::cout << "ENTRATOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO";
-
     // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
     size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
