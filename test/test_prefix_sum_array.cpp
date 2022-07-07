@@ -33,9 +33,10 @@
 namespace pathsprefixsumarrays {
 
     class PrefixSumArraysTest : public ::testing::Test {
+
+    protected:
         // We need this due to memory problem in FastLocate
         std::vector<std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>> *gfa_parses;
-    protected:
         // Class members declared here can be used by all tests in the test suite
         // Vector of prefix sums arrays for each graph, prefix_sums_arrays[i] is referred to the graph i in
         // gfa_files_path.
@@ -171,7 +172,91 @@ namespace pathsprefixsumarrays {
         }*/
     }
 
+        TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
+
+            for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+                PathsPrefixSumArrays* temp = (*prefix_sums_arrays)[i];
+                //testing the outer function
+                ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 0, 0));
+                if (i > 1) {
+                    ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
+                    //testing the aux function
+                    auto tempsa = (*temp).psa;
+                    sdsl::sd_vector<>::select_1_type sdb_sel(tempsa->at(0));
+                    ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
+                    ASSERT_EQ(3, temp->get_distance_between_positions_in_path_aux(1, 4, sdb_sel));
+                }
+            }
+        }
+
+        TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
+
+
+        size_t A=2;
+        size_t B=6;
+
+        // print everything
+/*
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays* temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A,B);
+            std::cout<<std::to_string(i)<<":: size:"<<std::to_string(distance_vector->size())<<"values:";
+            for (int j = 0; j < distance_vector->size(); ++j) {
+                std::cout << std::to_string(distance_vector->at(j))<<" ";
+            }
+            std::cout<<std::endl;
+        }
+*/
+
+
+        std::vector<std::vector<size_t>> check= {{},
+                                                 {},
+                                                 {1,0,1,0},
+                                                 {1,0,1},
+                                                 {1, 0, 1 ,0, 1, 12, 13, 0, 0, 1, 0, 1 },
+                                                 {1, 0, 1, 0, 1, 12, 13, 0, 0, 1}};
+        bool equal=true;
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays* temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A,B);
+            ASSERT_EQ((*distance_vector),check.at(i));
+        }
+
+
+        }
+/*
+    TEST_F(PrefixSumArraysTest, printall){
+        std::unique_ptr<gbwtgraph::GBWTGraph> graph;
+        // Name of the graph examples for testing
+        std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
+                                                    "../test/one_node_cyclic.gfa",
+                                                    "../test/acyclic_graph_even_paths.gfa",
+                                                    "../test/acyclic_graph_odd_paths.gfa",
+                                                    "../test/cyclic_graph_even_paths.gfa",
+                                                    "../test/cyclic_graph_odd_paths.gfa"};
+        // Creating vector of prefix sum array for each graph
+        for (int i = 0; i < gfa_files_paths.size(); ++i) {
+            (*gfa_parses).push_back(std::move(gbwtgraph::gfa_to_gbwt(gfa_files_paths[i])));
+            graph.reset(new gbwtgraph::GBWTGraph(*((*gfa_parses)[i].first),
+                                                 *((*gfa_parses)[i].second)));
+
+            std::cout <<i<<"th graph:"<<std::endl;
+            // std::cout << std::to_string(i)<<":"<<std::to_string(graph->min_node_id()) <<"->"<<std::to_string(graph->max_node_id())<<"all"<<std::endl;
+            graph->for_each_path_handle([&](const gbwtgraph::path_handle_t path_handle) {
+
+                graph->for_each_step_in_path(path_handle,[&](const gbwtgraph::step_handle_t step_handle) {
+                    auto handle = graph->get_handle_of_step(step_handle);
+                    std::cout << std::to_string(graph->handle_to_node(handle))<<" ";
+
+                }); // end of lambda expression
+                std::cout<< std::endl;
+            });// end of lambda expression
+            std::cout <<std::endl<<"----------------------"<<std::endl;
+        }
+    }*/
+
 }
+
 
 
 

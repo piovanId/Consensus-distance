@@ -288,9 +288,12 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2){
     std::vector<size_t>* distances = new std::vector<size_t>();
 
-    /*std::map<size_t,std::vector<size_t>*>* positions_node_1 = get_all_node_positions(node_1);
+    std::map<size_t,std::vector<size_t>*>* positions_node_1 = get_all_node_positions(node_1);
     std::map<size_t,std::vector<size_t>*>* positions_node_2 = get_all_node_positions(node_2);
+    if(positions_node_2->empty()or positions_node_2->empty()){
+        return distances;
 
+    }
     auto iterator = (*positions_node_1).begin();
 
     // Iterate over the map using Iterator till end.
@@ -307,8 +310,10 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 
         distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
         // Increment the Iterator to point to next entry
+
         iterator++;
-    }*/
+
+    }
     return distances;
 }
 
