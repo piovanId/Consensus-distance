@@ -193,8 +193,21 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
 
     // Get nodes positions within a path, a node in a loop can occurr several times
-    std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones); //PROBLEM
+    std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
+    //DEBUG PRINT
+    std::cout << "Position of the node " << std::to_string(node_1) << ": ";
+    for(int i=0; i< node_1_positions->size(); ++i){
+        std::cout << " " << node_1_positions->at(i);
+    }
+    std::cout << std::endl;
+
     std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
+    // DEBUG PRINT
+    std::cout << "Position of the node " << std::to_string(node_2) << ": ";
+    for(int i=0; i< node_2_positions->size(); ++i){
+        std::cout << " " << node_2_positions->at(i);
+    }
+    std::cout << std::endl;
 
     // Sort the position nodes in each vector
     std::sort(node_1_positions->begin(), node_1_positions->end());
@@ -227,13 +240,27 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
             j = pivot_2;
             end = node_2_positions->size();
             i = pivot_1;
-            ++ pivot_1;
+
+            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
+                ++ pivot_2;
+                ++ pivot_1;
+            }else{
+                ++ pivot_1;
+            }
+
             iterate_on_node_2_positions = true;
         }else{
             j = pivot_1;
             end = node_1_positions->size();
             i = pivot_2;
-            ++ pivot_2;
+
+            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
+                ++ pivot_2;
+                ++ pivot_1;
+            }else{
+                ++ pivot_2;
+            }
+
             iterate_on_node_2_positions = false;
         }
 
@@ -249,6 +276,17 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
             }
             ++ j;
         }
+
+        /*
+         * If node_1 == node_2 if we try to continue in the computation we would computing the same distances that
+         * we computed with the first iteration.
+         *
+         * For example:
+         * Path: GAGG
+         * node_1 = G (position 1), node_2 = G (position 2)
+         * node_1_positions = 1, 4 and node_2_positions = 1,4
+         * d(1,1) = 0 d(1,4) = 2, if we keep computing we'd obtain (because of the swap) d(1,4)=2 d(1,1)=0.
+         */
     }while(pivot_1 < node_1_positions->size() && pivot_2 < node_2_positions->size());
 
 
@@ -327,8 +365,6 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
         gbwt::size_type path_id =fast_locate->seqId(node_visits[i]); // Sequence id
 
         // Todo: we could optimize this operation by memorizing the ones, try to find out if it is a good way.
-        /*gbwt::size_type zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))((*psa)[path_id]->size());
-        gbwt::size_type ones = ((*psa)[path_id])->size() - zeros;*/
         size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
         //std::cout << "path id:" << std::to_string(path_id) << " 1->"<<std::to_string(ones) <<", 0->" <<zeros << " offset:" << std::to_string(fast_locate->seqOffset(node_visits[i]))<<std::endl;
@@ -378,13 +414,27 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
             j = pivot_2;
             end = node_2_positions->size();
             i = pivot_1;
-            ++ pivot_1;
+
+            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
+                ++ pivot_2;
+                ++ pivot_1;
+            }else{
+                ++ pivot_1;
+            }
+
             iterate_on_node_2_positions = true;
         }else{
             j = pivot_1;
             end = node_1_positions->size();
             i = pivot_2;
-            ++ pivot_2;
+
+            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
+                ++ pivot_2;
+                ++ pivot_1;
+            }else{
+                ++ pivot_2;
+            }
+
             iterate_on_node_2_positions = false;
         }
 

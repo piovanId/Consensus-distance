@@ -148,7 +148,7 @@ namespace pathsprefixsumarrays {
             std::cout << " " << d;
         }
 
-        std::cout << "\n";
+        //std::cout << "\n";
         //ASSERT_EQ(2, distances->size()); // only one distance computable because there is only one path of length 1
         //ASSERT_EQ(1, distances->at(0));
 
@@ -172,31 +172,31 @@ namespace pathsprefixsumarrays {
         }*/
     }
 
-        TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
+    TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
 
-            for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-                PathsPrefixSumArrays* temp = (*prefix_sums_arrays)[i];
-                //testing the outer function
-                ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 0, 0));
-                if (i > 1) {
-                    ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
-                    //testing the aux function
-                    auto tempsa = (*temp).psa;
-                    sdsl::sd_vector<>::select_1_type sdb_sel(tempsa->at(0));
-                    ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
-                    ASSERT_EQ(3, temp->get_distance_between_positions_in_path_aux(1, 4, sdb_sel));
-                }
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays* temp = (*prefix_sums_arrays)[i];
+            //testing the outer function
+            ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 0, 0));
+            if (i > 1) {
+                ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
+                //testing the aux function
+                auto tempsa = (*temp).psa;
+                sdsl::sd_vector<>::select_1_type sdb_sel(tempsa->at(0));
+                ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
+                ASSERT_EQ(3, temp->get_distance_between_positions_in_path_aux(1, 4, sdb_sel));
             }
         }
+    }
 
-        TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
+    /*TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
 
 
         size_t A=2;
         size_t B=6;
 
         // print everything
-/*
+    /*
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays* temp = (*prefix_sums_arrays)[i];
             auto distance_vector = temp->get_all_nodes_distances(A,B);
@@ -206,7 +206,7 @@ namespace pathsprefixsumarrays {
             }
             std::cout<<std::endl;
         }
-*/
+    //*
 
 
         std::vector<std::vector<size_t>> check= {{},
@@ -223,7 +223,7 @@ namespace pathsprefixsumarrays {
         }
 
 
-        }
+    }*/
 /*
     TEST_F(PrefixSumArraysTest, printall){
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
@@ -261,11 +261,6 @@ namespace pathsprefixsumarrays {
 
 
 int main(int argc, char **argv)  {
-    /**
-     * std::unique_ptr<PathsPrefixSumArrays> psa_ldefault(new PathsPrefixSumArrays());
-     * THIS LINE DOESN'T WORK, DON'T DELETE ASK ADAM ON ADAM OFFICE HOURS HOW TO SOLVE IT
-     */
-    
     std::cout << "Hello, Santa Cruzsdd!" << std::endl;
 
     ::testing::InitGoogleTest(&argc, argv);
