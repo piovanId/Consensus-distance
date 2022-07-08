@@ -322,12 +322,12 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 
 
 // TODO: it could be helpful know at which path every distances belongs to
-std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2){
-    std::vector<size_t>* distances = new std::vector<size_t>();
+std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) {
+    std::vector<size_t> *distances = new std::vector<size_t>();
 
-    std::map<size_t,std::vector<size_t>*>* positions_node_1 = get_all_node_positions(node_1);
-    std::map<size_t,std::vector<size_t>*>* positions_node_2 = get_all_node_positions(node_2);
-    if(positions_node_2->empty()or positions_node_2->empty()){
+    std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
+    std::map<size_t, std::vector<size_t> *> *positions_node_2 = get_all_node_positions(node_2);
+    if (positions_node_2->empty() || positions_node_2->empty()) {
         return distances;
 
     }
@@ -364,6 +364,8 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
         gbwt::size_type path_id =fast_locate->seqId(node_visits[i]); // Sequence id
 
         // Todo: we could optimize this operation by memorizing the ones, try to find out if it is a good way.
+        /*gbwt::size_type zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))((*psa)[path_id]->size());
+        gbwt::size_type ones = ((*psa)[path_id])->size() - zeros;*/
         size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
         //std::cout << "path id:" << std::to_string(path_id) << " 1->"<<std::to_string(ones) <<", 0->" <<zeros << " offset:" << std::to_string(fast_locate->seqOffset(node_visits[i]))<<std::endl;
