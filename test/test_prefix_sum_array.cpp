@@ -51,6 +51,7 @@ namespace pathsprefixsumarrays {
             std::unique_ptr<gbwtgraph::GBWTGraph> graph;
 
             // Name of the graph examples for testing
+            // ATTENTION: don't change the order of this name files because the tests are based on that order.
             std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
                                                         "../test/one_node_cyclic.gfa",
                                                         "../test/acyclic_graph_even_paths.gfa",
@@ -130,23 +131,44 @@ namespace pathsprefixsumarrays {
          *          2 = G
          */
 
+        struct parameters_test_graph{
+            gbwt::node_type n1;  // First node
+            gbwt::node_type n2;  // Second node
+
+            int assert_length_distance; // Length of the array that contains all the distances
+            int assert_distance; // Distance value to be tested
+            size_t path_id;
+            int index_distance_test; // Index of the position in distance vector
+        };
+
         /**
          * One node acyclic graph, one path (0), all distances between 2 and 2
          */
-        gbwt::node_type n1 = 2;
-        gbwt::node_type n2 = 2;
+        int gfa_file_index = 0;
 
-        std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>((*(*prefix_sums_arrays)[0]).get_all_nodes_distances_in_path(n1,n2,0));
-        ASSERT_EQ(1, distances->size()); // only one distance computable because there is only one path of length 1
-        ASSERT_EQ(0, distances->at(0)); // distances between two same positions in a path is 0
+        parameters_test_graph parameters_first_graph = {2, 2, 1, 0, 0, 0};
+
+        std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>(
+                (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameters_first_graph.n1,
+                                                                                         parameters_first_graph.n2,
+                                                                                         parameters_first_graph.path_id));
+        // only one distance computable because there is only one path of length 1
+        ASSERT_EQ(parameters_first_graph.assert_length_distance, distances->size());
+        // distances between two same positions in a path is 0
+        ASSERT_EQ(parameters_first_graph.assert_distance, distances->at(parameters_first_graph.index_distance_test));
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
          */
-        distances.reset((*(*prefix_sums_arrays)[1]).get_all_nodes_distances_in_path(n1,n2,0));
-        ASSERT_EQ(3, distances->size()); // 3 distances because d(1,1)=0, d(1,2)=0, d(2,2)=0
+        gfa_file_index = 1;
+        parameters_test_graph parameters_second_graph = {2, 2, 3, 0, 0, 0};
+
+        distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameters_second_graph.n1,
+                                                                                                 parameters_second_graph.n2,
+                                                                                                 parameters_second_graph.path_id));
+        ASSERT_EQ(parameters_second_graph.assert_length_distance, distances->size()); // 3 distances because d(1,1)=0, d(1,2)=0, d(2,2)=0
         for(int distance=0; distance < distances->size(); ++distance){
-            ASSERT_EQ(0, distances->at(0));
+            ASSERT_EQ(parameters_second_graph.assert_distance, distances->at(parameters_second_graph.index_distance_test));
         }
 
         /**
@@ -157,27 +179,56 @@ namespace pathsprefixsumarrays {
          * Path: 6 - Nodes:  2 6 10 12
          */
 
-        struct parameters_third_graph{
-            gbwt::node_type n1;
-            gbwt::node_type n2;
+        gfa_file_index = 2;
+        std::vector<parameters_test_graph> parameter_third_graph_vector = {{2, 10, 1, 2, 0, 0},
+                                                                            {2, 12, 1, 4, 0, 0},
+                                                                            {2, 12, 1, 3, 6, 0}};
 
-            int assert_length_distance;
-            int assert_distance;
-            size_t path_id;
-        };
-
-        std::vector<parameters_third_graph> parameter_third_graph_vector = {{2, 10, 1, 2, 0},
-                                                                            {2, 12, 1, 4, 0},
-                                                                            {2, 12, 1, 3, 6}};
-
-        int number_of_tests_on_third_graph = 3;
-        for(int index_test = 0; index_test < number_of_tests_on_third_graph; ++index_test){
-            distances.reset((*(*prefix_sums_arrays)[2]).get_all_nodes_distances_in_path(parameter_third_graph_vector[index_test].n1,
-                                                                                        parameter_third_graph_vector[index_test].n2,
-                                                                                        parameter_third_graph_vector[index_test].path_id));
+        int number_of_tests_on_graph = parameter_third_graph_vector.size(); // redundant but help the readability
+        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
+            distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
+            get_all_nodes_distances_in_path(parameter_third_graph_vector[index_test].n1,
+                                            parameter_third_graph_vector[index_test].n2,
+                                            parameter_third_graph_vector[index_test].path_id));
             ASSERT_EQ(parameter_third_graph_vector[index_test].assert_length_distance, distances->size());
-            ASSERT_EQ(parameter_third_graph_vector[index_test].assert_distance, distances->at(0));
+            ASSERT_EQ(parameter_third_graph_vector[index_test].assert_distance,
+                      distances->at(parameter_third_graph_vector[index_test].index_distance_test));
         }
+
+        /**
+         * Acyclic graph, odd paths (3), all distances
+         * Path: 0 - Nodes:  2 4 6 10 12
+         * Path: 2 - Nodes:  2 6 8
+         * Path: 4 - Nodes:  2 4 6 8
+         */
+
+        gfa_file_index = 3;
+        std::vector<parameters_test_graph> parameter_fourth_graph_vector = {{2, 10, 1, 2, 0, 0},
+                                                                           {2, 10, 1, 1, 2, 0},
+                                                                           {2, 10, 1, 1, 4, 0}};
+
+        number_of_tests_on_graph = parameter_fourth_graph_vector.size();
+
+        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
+            std::cout << "N1: " << parameter_fourth_graph_vector[index_test].n1 << "\n";
+            std::cout << "N2: " << parameter_fourth_graph_vector[index_test].n2 << "\n";
+            std::cout << "path_id: " << parameter_fourth_graph_vector[index_test].path_id << "\n\n\n\n";
+
+            auto temp = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 10, 2);
+
+            //auto temp1 = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1, parameter_fourth_graph_vector[index_test].n2, parameter_fourth_graph_vector[index_test].path_id);
+
+
+            /*distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
+                    get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1,
+                                                    parameter_fourth_graph_vector[index_test].n2,
+                                                    parameter_fourth_graph_vector[index_test].path_id));
+            /*ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_length_distance, distances->size());
+            ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_distance,
+                      distances->at(parameter_fourth_graph_vector[index_test].index_distance_test));*/
+        }
+
+
     }
 /*
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
