@@ -88,7 +88,7 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
     if(pos_node_2 > (*(psa))[path_id]->size() || pos_node_1 > (*(psa))[path_id]->size()){
         return 0; // You can't compute the distance between two position if at least one of them doesn't exist
     } else {
-        distance = get_distance_between_positions_in_path_aux(pos_node_2, pos_node_1, sdb_sel);
+        distance = get_distance_between_positions_in_path_aux(pos_node_1, pos_node_2, sdb_sel);
     }
 
     return distance;
@@ -102,6 +102,17 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t p
 
     size_t node_before_bigger_node_offset = sdb_sel(pos_node_2);
     size_t node_1_offset = sdb_sel(pos_node_1 + 1);
+
+
+    // START PRINT DEBUG
+    if(pos_node_1 == 1 && pos_node_2 == 4){
+        std::cout << "\npos_node_1 " << std::to_string(pos_node_1) << ", pos_node_2 " << std::to_string(pos_node_2) << "\n";
+        std::cout << "node_before_bigger_node_offset: " << std::to_string(node_before_bigger_node_offset) << "\n";
+        std::cout << "node_1_offset: " << std::to_string(node_1_offset) << "\n";
+        std::cout << "Distanza fornita dal metodo get_distance_between_positions_in_path_aux: " << std::to_string(node_before_bigger_node_offset - node_1_offset) << "\n";
+    }
+
+    // END PRINT DEBUG
     return node_before_bigger_node_offset - node_1_offset;
 }
 
@@ -145,7 +156,7 @@ std::string PathsPrefixSumArrays::toString_sd_vectors() const{
         for(int i=0; i< iterator->second->size(); ++i){
             temp += std::to_string((*(iterator->second))[i] );
             if(i!=iterator->second->size()-1)
-            temp += ", ";
+                temp += ", ";
         }
         temp += "]";
         // Increment the Iterator to point to next entry
@@ -194,12 +205,13 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
-    //DEBUG PRINT
+    // START DEBUG PRINT
     std::cout << "Position of the node " << std::to_string(node_1) << ": ";
     for(int i=0; i< node_1_positions->size(); ++i){
         std::cout << " " << node_1_positions->at(i);
     }
     std::cout << std::endl;
+    // END DEBUG PRINT
 
     std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
     // DEBUG PRINT
@@ -276,17 +288,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
             }
             ++ j;
         }
-
-        /*
-         * If node_1 == node_2 if we try to continue in the computation we would computing the same distances that
-         * we computed with the first iteration.
-         *
-         * For example:
-         * Path: GAGG
-         * node_1 = G (position 1), node_2 = G (position 2)
-         * node_1_positions = 1, 4 and node_2_positions = 1,4
-         * d(1,1) = 0 d(1,4) = 2, if we keep computing we'd obtain (because of the swap) d(1,4)=2 d(1,1)=0.
-         */
     }while(pivot_1 < node_1_positions->size() && pivot_2 < node_2_positions->size());
 
 
@@ -306,15 +307,13 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
 
 std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
-    if(fast_locate == nullptr)
-        std::cout << "FAST LOCATE NULLPTR";
     auto node_visits = fast_locate->decompressSA(node);
 
     std::vector<size_t>* node_positions = new std::vector<size_t>();
 
     for (int i = 0; i < node_visits.size() ; ++i) {
         if(fast_locate->seqId(node_visits[i]) == path_id){
-            node_positions->push_back(ones - fast_locate->seqOffset(node_visits[i]));
+            node_positions->push_back(ones - fast_locate->seqOffset(node_visits[i]) - 1);
         }
     }
 
@@ -372,7 +371,8 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
         if((*distances_in_paths)[path_id] == nullptr){
             (*distances_in_paths)[path_id] = new std::vector<size_t>();
         }
-        ((*distances_in_paths)[path_id])->push_back(ones - fast_locate->seqOffset(node_visits[i]));
+
+        ((*distances_in_paths)[path_id])->push_back(ones - fast_locate->seqOffset(node_visits[i]) - 1);
 
     }
     return distances_in_paths;
