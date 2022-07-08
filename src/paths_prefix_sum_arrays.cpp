@@ -103,16 +103,6 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t p
     size_t node_before_bigger_node_offset = sdb_sel(pos_node_2);
     size_t node_1_offset = sdb_sel(pos_node_1 + 1);
 
-
-    // START PRINT DEBUG
-    if(pos_node_1 == 1 && pos_node_2 == 4){
-        std::cout << "\npos_node_1 " << std::to_string(pos_node_1) << ", pos_node_2 " << std::to_string(pos_node_2) << "\n";
-        std::cout << "node_before_bigger_node_offset: " << std::to_string(node_before_bigger_node_offset) << "\n";
-        std::cout << "node_1_offset: " << std::to_string(node_1_offset) << "\n";
-        std::cout << "Distanza fornita dal metodo get_distance_between_positions_in_path_aux: " << std::to_string(node_before_bigger_node_offset - node_1_offset) << "\n";
-    }
-
-    // END PRINT DEBUG
     return node_before_bigger_node_offset - node_1_offset;
 }
 
@@ -205,21 +195,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
-    // START DEBUG PRINT
-    std::cout << "Position of the node " << std::to_string(node_1) << ": ";
-    for(int i=0; i< node_1_positions->size(); ++i){
-        std::cout << " " << node_1_positions->at(i);
-    }
-    std::cout << std::endl;
-    // END DEBUG PRINT
-
     std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
-    // DEBUG PRINT
-    std::cout << "Position of the node " << std::to_string(node_2) << ": ";
-    for(int i=0; i< node_2_positions->size(); ++i){
-        std::cout << " " << node_2_positions->at(i);
-    }
-    std::cout << std::endl;
 
     // Sort the position nodes in each vector
     std::sort(node_1_positions->begin(), node_1_positions->end());
@@ -343,11 +319,12 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
             distances_in_path = get_all_nodes_distances_in_path((*positions_node_1)[key],
                                                                 (*positions_node_2)[key],
                                                                 key);
+
+            distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
         }
 
-        distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
-        // Increment the Iterator to point to next entry
 
+        // Increment the Iterator to point to next entry
         iterator++;
 
     }
@@ -364,11 +341,7 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
         gbwt::size_type path_id =fast_locate->seqId(node_visits[i]); // Sequence id
 
         // Todo: we could optimize this operation by memorizing the ones, try to find out if it is a good way.
-        /*gbwt::size_type zeros = sdsl::sd_vector<>::rank_0_type(&(*(*psa)[path_id]))((*psa)[path_id]->size());
-        gbwt::size_type ones = ((*psa)[path_id])->size() - zeros;*/
         size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
-
-        //std::cout << "path id:" << std::to_string(path_id) << " 1->"<<std::to_string(ones) <<", 0->" <<zeros << " offset:" << std::to_string(fast_locate->seqOffset(node_visits[i]))<<std::endl;
 
         if((*distances_in_paths)[path_id] == nullptr){
             (*distances_in_paths)[path_id] = new std::vector<size_t>();

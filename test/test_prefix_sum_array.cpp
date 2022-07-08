@@ -15,90 +15,33 @@
 #include <gbwtgraph/gfa.h>
 
 // GBWT
-#include <gbwt/fast_locate.h>
 #include <gbwt/gbwt.h>
 
 // Sdsl
-#include <sdsl/bit_vectors.hpp>
-#include <sdsl/int_vector.hpp>
 #include <sdsl/sd_vector.hpp>
 
 // Custom
 #include "../include/consensus_distance/pruned_graph.h"
-#include "../include/consensus_distance/paths_prefix_sum_arrays.h"
 
 // test
 #include <gtest/gtest.h>
 
-//DEBUG PRINT
-void printNodesInPath(std::string file_name){
-    auto gfa_parse = std::move(gbwtgraph::gfa_to_gbwt(file_name));
-    std::unique_ptr<gbwtgraph::GBWTGraph> graph_ = std::unique_ptr<gbwtgraph::GBWTGraph>(
-            new gbwtgraph::GBWTGraph(*gfa_parse.first, *gfa_parse.second));
-
-    /*pathsprefixsumarrays::PathsPrefixSumArrays* psa_ = new pathsprefixsumarrays::PathsPrefixSumArrays(*graph_);
-
-    for(gbwt::size_type i = 0; i < (graph_->index)->sequences(); i += 2) {
-        // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
-        // is the representation
-        auto path = graph_->index->extract(i); // Attention: it's the sequence representation
-
-        std::cout << "\nPath: " << std::to_string(i) << " - Nodes: ";
-        for (gbwt::size_type j = 0; j < path.size(); ++j) {
-            std::cout << " " << path[j] << "(len " << graph_->get_length( graph_->node_to_handle(path[j])) <<")";
-        }
-        std::cout << std::endl;
-    }*/
-
-    // VERIFICA CHE IL PATH SIA OK
-    /*pathsprefixsumarrays::PathsPrefixSumArrays p(*graph_);
-    auto map_pos = p.get_all_node_positions(2);
-    auto pos = (*map_pos)[0];
-    std::cout << "PATH 0 posizioni di 2: ";
-    for(int i=0; i < pos->size();++i){
-        std::cout << " " << (*pos)[i];
-    }
-
-    std::cout << std::endl;*/
-
-    /*int offset = 0;
-    sdsl::bit_vector psa_temp(16,0);
-    auto path = graph_->index->extract(0);
-    for(gbwt::size_type j = 0; j < path.size(); ++j) {
-        gbwt::size_type length_of_node = graph_->get_length(graph_->node_to_handle(path[j]));
-        offset += length_of_node;
-        psa_temp[offset] = 1;
-    }
-
-    sdsl::sd_vector<>* v = new sdsl::sd_vector<>(psa_temp);
-    std::string temp =  "\n| ";
-
-    // Accessing KEY from element pointed by it.
-    temp += std::to_string(0) + "::\t[";
-
-    // Accessing VALUE from element pointed by it.
-    for(int i=0; i< v->size(); ++i){
-        temp += std::to_string((*v)[i]);
-        if(i!=v->size()-1)
-            temp += ", ";
-    }
-    temp += "]";
-
-    std::cout << "VETTORE PATH 0: " << temp << "\n";
-    delete v;*/
-}
 
 
+/**
+ * This namespace contains all the unit tests
+ */
 namespace pathsprefixsumarrays {
 
     class PrefixSumArraysTest : public ::testing::Test {
+        // Cause the graph stores pointer to FastLocate that can be destroyed, we have to memorize it
+        std::vector<std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>> *gfa_parses;
 
     protected:
-        // We need this due to memory problem in FastLocate
-        std::vector<std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>> *gfa_parses;
         // Class members declared here can be used by all tests in the test suite
+
         // Vector of prefix sums arrays for each graph, prefix_sums_arrays[i] is referred to the graph i in
-        // gfa_files_path.
+        // gfa_files_path vector.
         std::vector<PathsPrefixSumArrays*> *prefix_sums_arrays;
 
         PrefixSumArraysTest() {
@@ -141,6 +84,10 @@ namespace pathsprefixsumarrays {
     };
 
 
+    /**
+     * Used to remove duplicated code, assert that all the psa memebers are not equal to NULLPTR
+     * @param psa
+     */
     void ASSERT_PSA_MEMBERS_NE_NULLPTR(PathsPrefixSumArrays const &psa) {
         // googletest has the assumption that you put the expected value first
         ASSERT_NE(nullptr, psa.get_fast_locate());
@@ -149,7 +96,7 @@ namespace pathsprefixsumarrays {
 
 
     /**
-     * Test constructors
+     * Test the constructors
      */
     TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
         std::unique_ptr<PathsPrefixSumArrays> psa_default = std::unique_ptr<PathsPrefixSumArrays>(
@@ -163,20 +110,13 @@ namespace pathsprefixsumarrays {
         }
     }
 
+
+    /**
+     * Test the method PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
+     *                                                                        gbwt::node_type node_2,
+     *                                                                        size_t path_id )
+     */
     TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath) {
-        /*std::vector<size_t>* distances = (*prefix_sums_arrays)[0]->get_all_nodes_distances_in_path( gbwt::node_type node_1,
-                                                                                    gbwt::node_type node_2,
-                                                                                    size_t path_id)*/
-
-        // test nome nodi
-        //std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>> gfa_parse;
-        //std::unique_ptr<gbwtgraph::GBWTGraph> graph;
-        //std::vector<gbwt::size_type> nodes of the graph
-
-        //gfa_parse = std::move(gbwtgraph::gfa_to_gbwt("../test/one_node_acyclic.gfa"));
-
-        //graph.reset(new gbwtgraph::GBWTGraph(*(gfa_parse.first), *(gfa_parse.second)));
-
         /*
          * All possible nodes in the test files are:
          *      In the more nodes graphs:
@@ -226,74 +166,18 @@ namespace pathsprefixsumarrays {
             size_t path_id;
         };
 
-        std::vector<parameters_third_graph> parameter_third_graph_vector = {{2,10,1,2,0},
-                                                                            {2,12,1,4,0},
-                                                                            {2,12,1,3, 6}};
+        std::vector<parameters_third_graph> parameter_third_graph_vector = {{2, 10, 1, 2, 0},
+                                                                            {2, 12, 1, 4, 0},
+                                                                            {2, 12, 1, 3, 6}};
 
         int number_of_tests_on_third_graph = 3;
         for(int index_test = 0; index_test < number_of_tests_on_third_graph; ++index_test){
             distances.reset((*(*prefix_sums_arrays)[2]).get_all_nodes_distances_in_path(parameter_third_graph_vector[index_test].n1,
                                                                                         parameter_third_graph_vector[index_test].n2,
-                                                                                        0));
+                                                                                        parameter_third_graph_vector[index_test].path_id));
             ASSERT_EQ(parameter_third_graph_vector[index_test].assert_length_distance, distances->size());
             ASSERT_EQ(parameter_third_graph_vector[index_test].assert_distance, distances->at(0));
         }
-
-        /*n1 = 2;
-        n2 = 10;
-
-        printNodesInPath("../test/acyclic_graph_even_paths.gfa");
-        distances.reset((*(*prefix_sums_arrays)[2]).get_all_nodes_distances_in_path(n1,n2,0));
-        ASSERT_EQ(1, distances->size());
-        ASSERT_EQ(2, distances->at(0));
-
-        //START PRINT DEBUG
-        /*std::cout << "DISTANZE: ";
-        for(auto d : *distances){
-            std::cout << " " << d;
-        }
-        std::cout << "\n";
-        //std::cout << "DISTANZA CHE IN TEORIA E' SBAGLIATA: " << (*prefix_sums_arrays)[2]->get_distance_between_positions_in_path(1,4,0) << "\n";
-        std::cout << "STAMPA PSA: " << (*prefix_sums_arrays)[2]->toString() << "\n";
-        std::cout << "STAMPA PSA bitvector: " << (*prefix_sums_arrays)[2]->toString_sd_vectors() << "\n";
-        // END PRINT DEBUG
-
-        n1 = 2;
-        n2 = 12;
-
-        distances.reset((*(*prefix_sums_arrays)[2]).get_all_nodes_distances_in_path(n1,n2,0));
-        ASSERT_EQ(1, distances->size());
-        ASSERT_EQ(4, distances->at(0));
-
-        n1 = 2;
-        n2 = 12;
-
-        distances.reset((*(*prefix_sums_arrays)[2]).get_all_nodes_distances_in_path(n1,n2,6));
-        ASSERT_EQ(1, distances->size());
-        ASSERT_EQ(3, distances->at(0));*/
-
-        //
-
-
-
-
-
-        /*for (gbwt::size_type i = 0; i < (gfa_parse.first)->sequences(); i += 2) {
-            // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
-            // is the representation
-            auto path = graph->index->extract(i); // Attention: it's the sequence representation
-
-            graph->index->sigma();
-
-            std::cout << "PATH: " << i << ", NODES: ";
-            for (gbwt::size_type j = 0; j < path.size(); ++j) {
-                std::cout << " " << path[j];
-            }
-
-
-            std::cout << std::endl;
-
-        }*/
     }
 /*
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
