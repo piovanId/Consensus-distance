@@ -210,11 +210,15 @@ namespace pathsprefixsumarrays {
         number_of_tests_on_graph = parameter_fourth_graph_vector.size();
 
         for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
-            std::cout << "N1: " << parameter_fourth_graph_vector[index_test].n1 << "\n";
+            //START DEBUG PRINT
+            /*std::cout << "N1: " << parameter_fourth_graph_vector[index_test].n1 << "\n";
             std::cout << "N2: " << parameter_fourth_graph_vector[index_test].n2 << "\n";
-            std::cout << "path_id: " << parameter_fourth_graph_vector[index_test].path_id << "\n\n\n\n";
+            std::cout << "path_id: " << parameter_fourth_graph_vector[index_test].path_id << "\n\n\n\n";*/
+            //END DEBUG PRINT
 
-            auto temp = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 10, 2);
+            //auto temp = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 10, 2);
+
+
 
             //auto temp1 = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1, parameter_fourth_graph_vector[index_test].n2, parameter_fourth_graph_vector[index_test].path_id);
 
@@ -230,7 +234,7 @@ namespace pathsprefixsumarrays {
 
 
     }
-/*
+
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
@@ -246,7 +250,7 @@ namespace pathsprefixsumarrays {
             }
         }
     }
-*/
+
     TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
         size_t A = 2;
         size_t B = 6;
@@ -313,7 +317,7 @@ namespace pathsprefixsumarrays {
     }
 
 */
-}
+} // End namespace
 int main(int argc, char **argv)  {
     std::cout << "Hello, Santa Cruzsdd!" << std::endl;
 

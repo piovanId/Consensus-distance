@@ -38,6 +38,7 @@
  */
 
 namespace pathsprefixsumarrays{
+
 class PathsPrefixSumArrays {
 
 private:

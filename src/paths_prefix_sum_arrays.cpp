@@ -188,98 +188,18 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
 
+    std::vector<size_t>* distances = new std::vector<size_t>();
+
     // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
     size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
 
-
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
-    std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
+    std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);;
 
-    // Sort the position nodes in each vector
-    std::sort(node_1_positions->begin(), node_1_positions->end());
-    std::sort(node_2_positions->begin(), node_2_positions->end());
-
-    int pivot_1 = 0, pivot_2 = 0;
-    int i, j, end;
-
-    bool iterate_on_node_2_positions;
-
-    std::vector<size_t>* distances = new std::vector<size_t>();
-
-    /**
-     * Explanation of the algorithm: the idea is to check which of the two first positions (in the vector of positions)
-     * is greater and iterate on the greater one.
-     *
-     * For instance: if the first item of the vector node_1_positions is the less, we set a index position i on the pivot_1,
-     * we set j to pivot_2 and we set as end position the node_2_position.size(). We increment the pivot_1 because it
-     * will be used in the next iteration.
-     *
-     * The pivot_1 is the index of the position for which have to compute the distances during a iteration, this index
-     * refers to node_1_postions vector (pivot_2 refers to node_2_positions).
-     *
-     * Based on the boolean flag iterate_on_node_2_positions we iterate (j) on the first or the second vector of positions
-     * to compute the distance with the fixed one (i) in that iteration.
-     */
-
-    do{
-        if(node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
-            j = pivot_2;
-            end = node_2_positions->size();
-            i = pivot_1;
-
-            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
-                ++ pivot_2;
-                ++ pivot_1;
-            }else{
-                ++ pivot_1;
-            }
-
-            iterate_on_node_2_positions = true;
-        }else{
-            j = pivot_1;
-            end = node_1_positions->size();
-            i = pivot_2;
-
-            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
-                ++ pivot_2;
-                ++ pivot_1;
-            }else{
-                ++ pivot_2;
-            }
-
-            iterate_on_node_2_positions = false;
-        }
-
-        while(j < end){
-            if(iterate_on_node_2_positions) {
-                (*distances).push_back(PathsPrefixSumArrays::get_distance_between_positions_in_path(node_1_positions->at(i),
-                                                                                                    node_2_positions->at(j),
-                                                                                                    path_id));
-            }else{
-                (*distances).push_back(PathsPrefixSumArrays::get_distance_between_positions_in_path(node_1_positions->at(j),
-                                                                                                    node_2_positions->at(i),
-                                                                                                    path_id));
-            }
-            ++ j;
-        }
-    }while(pivot_1 < node_1_positions->size() && pivot_2 < node_2_positions->size());
-
-
-    // Deleting memory
-    node_1_positions->clear();
-    node_2_positions->clear();
-    node_1_positions->shrink_to_fit();
-    node_2_positions->shrink_to_fit();
-
-    delete node_1_positions;
-    delete node_2_positions;
-    node_1_positions = nullptr;
-    node_2_positions = nullptr;
-
-    return distances;
-};
+    return get_all_nodes_distances_in_path(node_1_positions, node_2_positions, path_id);
+}
 
 
 std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
@@ -303,10 +223,11 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 
     std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
     std::map<size_t, std::vector<size_t> *> *positions_node_2 = get_all_node_positions(node_2);
-    if (positions_node_2->empty() || positions_node_2->empty()) {
-        return distances;
 
+    if (positions_node_1->empty() || positions_node_2->empty()) {
+        return distances;
     }
+
     auto iterator = (*positions_node_1).begin();
 
     // Iterate over the map using Iterator till end.
@@ -357,6 +278,11 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::vector<size_t>* node_1_positions,
                                                                            std::vector<size_t>* node_2_positions,
                                                                            size_t path_id){
+    std::vector<size_t>* distances = new std::vector<size_t>();
+
+    if(node_1_positions->empty() || node_2_positions->empty()) {
+        return distances;
+    }
 
     // Sort the position nodes in each vector
     std::sort(node_1_positions->begin(), node_1_positions->end());
@@ -366,8 +292,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
     int i, j, end;
 
     bool iterate_on_node_2_positions;
-
-    std::vector<size_t>* distances = new std::vector<size_t>();
 
     /**
      * Explanation of the algorithm: the idea is to check which of the two first positions (in the vector of positions)
@@ -390,6 +314,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
             end = node_2_positions->size();
             i = pivot_1;
 
+
             if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
                 ++ pivot_2;
                 ++ pivot_1;
@@ -399,9 +324,11 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
 
             iterate_on_node_2_positions = true;
         }else{
+
             j = pivot_1;
             end = node_1_positions->size();
             i = pivot_2;
+
 
             if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
                 ++ pivot_2;
@@ -412,6 +339,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
 
             iterate_on_node_2_positions = false;
         }
+
 
         while(j < end){
             if(iterate_on_node_2_positions) {
