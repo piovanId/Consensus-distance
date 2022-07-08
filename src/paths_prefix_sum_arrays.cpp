@@ -277,42 +277,97 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 
 
 // TODO: it could be helpful know at which path every distances belongs to
-std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2){
-    std::vector<size_t>* distances = new std::vector<size_t>();
+std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) {
+    std::vector<size_t> *distances = new std::vector<size_t>();
 
-    std::map<size_t,std::vector<size_t>*>* positions_node_1 = get_all_node_positions(node_1);
-    std::map<size_t,std::vector<size_t>*>* positions_node_2 = get_all_node_positions(node_2);
-    if(positions_node_2->empty()or positions_node_2->empty()){
+    std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
+
+
+    std::map<size_t, std::vector<size_t> *> *positions_node_2 = get_all_node_positions(node_2);
+    if (positions_node_2->empty() || positions_node_2->empty()) {
         return distances;
 
     }
     auto iterator = (*positions_node_1).begin();
 
+ /*   //todo remove debug print
+    std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << " quaaaaa:" << std::endl;
+    auto iteratorstampa = (*positions_node_1).begin();
+    while (iteratorstampa != (*positions_node_1).end()) {
+        size_t key = iteratorstampa->first; // sequence id
+
+        for (int i = 0; i < (*positions_node_1)[key]->size(); ++i) {
+            std::cout << std::to_string((*positions_node_1)[key]->at(i));
+
+        }
+        std::cout<<std::endl;
+        iteratorstampa++;
+    }        std::cout<<std::endl;
+
+    auto iteratorstampa2 = (*positions_node_2).begin();
+    while (iteratorstampa2 != (*positions_node_2).end()) {
+        size_t key = iteratorstampa2->first; // sequence id
+
+        for (int i = 0; i < (*positions_node_2)[key]->size(); ++i) {
+            std::cout << std::to_string((*positions_node_2)[key]->at(i));
+
+        }
+        std::cout<<std::endl;
+        iteratorstampa2++;
+    }
+*/
+
     // Iterate over the map using Iterator till end.
+    //todo check here for discrepancy
     while (iterator != (*positions_node_1).end())
     {
+
         size_t key = iterator->first; // sequence id
+
+
+
         std::vector<size_t> *distances_in_path;
 
         if((*positions_node_2).find(key)  != (*positions_node_2).end()) {
             distances_in_path = get_all_nodes_distances_in_path((*positions_node_1)[key],
                                                                 (*positions_node_2)[key],
                                                                 key);
+          /*  std::cout <<std::endl<< "key:"<<std::to_string(key) << " "<< "values:";
+
+            for (int i = 0; i < distances_in_path->size(); ++i) {
+                std::cout <<std::to_string((*distances_in_path)[i]) << " ";
+
+            }*/
+
+            distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
+          /*  for (int i = 0; i < distances->size(); ++i) {
+                std::cout << std::to_string((*distances)[i]);
+
+            }*/
         }
 
-        distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
+
         // Increment the Iterator to point to next entry
 
         iterator++;
 
     }
+   /* std::cout<<"distances"<<"::";
+    for (int i = 0; i < distances->size(); ++i) {
+        std::cout << std::to_string((*distances)[i]);
+
+    }*/
     return distances;
+
 }
 
 
 std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node){
     auto node_visits = fast_locate->decompressSA(node);
-
+   /* std::cout<<"node_visits for "<<std::to_string(node)<<":";
+    for (int i = 0; i < node_visits.size(); ++i) {
+        std::cout<<std::to_string(node_visits[i])<<"[seq: "<<fast_locate->seqId(node_visits[i]) << ",off: " <<fast_locate->seqOffset(node_visits[i])<<"] ";
+    }*/
     std::map<size_t,std::vector<size_t>*> *distances_in_paths = new std::map<size_t,std::vector<size_t>*>();
 
     for (int i = 0; i < node_visits.size() ; ++i) {
@@ -328,9 +383,12 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
         if((*distances_in_paths)[path_id] == nullptr){
             (*distances_in_paths)[path_id] = new std::vector<size_t>();
         }
-        ((*distances_in_paths)[path_id])->push_back(ones - fast_locate->seqOffset(node_visits[i]));
+
+       // std::cout <<std::endl<<"ones"<< std::to_string(ones)<< " ";
+        ((*distances_in_paths)[path_id])->push_back(ones - fast_locate->seqOffset(node_visits[i])-1);
 
     }
+
     return distances_in_paths;
 }
 

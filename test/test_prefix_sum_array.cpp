@@ -159,7 +159,7 @@ namespace pathsprefixsumarrays {
 
         }*/
     }
-
+/*
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
@@ -173,26 +173,16 @@ namespace pathsprefixsumarrays {
                 ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
                 ASSERT_EQ(3, temp->get_distance_between_positions_in_path_aux(1, 4, sdb_sel));
             }
-
         }
     }
-
+*/
     TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
-
         size_t A = 2;
         size_t B = 6;
 
         // print everything
 
-        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-            auto distance_vector = temp->get_all_nodes_distances(A, B);
-            std::cout << std::to_string(i) << ":: size:" << std::to_string(distance_vector->size()) << "values:";
-            for (int j = 0; j < distance_vector->size(); ++j) {
-                std::cout << std::to_string(distance_vector->at(j)) << " ";
-            }
-            std::cout << std::endl;
-        }
+
 
         std::vector<std::vector<size_t>> check = {{},
                                                   {},
@@ -207,22 +197,18 @@ namespace pathsprefixsumarrays {
             auto distance_vector = temp->get_all_nodes_distances(A, B);
             ASSERT_EQ((*distance_vector), check.at(i));
         }
-        A = 2;
-        B = 12;
-        check = {{},
-                 {},
-                 {4, 4, 4, 3},
-                 {4, 4, 4},
-                 {4, 4, 4, 3, 3, 4},
-                 {4, 4, 4, 3, 3}};
+
+
+   /*
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            if(i==2)
             auto distance_vector = temp->get_all_nodes_distances(A, B);
-            ASSERT_EQ((*distance_vector), check.at(i));
+         //   ASSERT_EQ((*distance_vector), check.at(i));
         }
-
+*/
     }
-
+/*
     TEST_F(PrefixSumArraysTest, printall) {
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
         // Name of the graph examples for testing
@@ -251,8 +237,9 @@ namespace pathsprefixsumarrays {
             });// end of lambda expression
             std::cout << std::endl << "----------------------" << std::endl;
         }
-    }
+    }*/
 
+/*
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
@@ -262,7 +249,7 @@ namespace pathsprefixsumarrays {
         }
     }
 
-
+*/
 }
 int main(int argc, char **argv)  {
     /**
