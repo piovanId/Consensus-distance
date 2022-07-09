@@ -188,15 +188,14 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
 
-    std::vector<size_t>* distances = new std::vector<size_t>();
-
     // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
     size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
 
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
-    std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);;
+    std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
+
 
     return get_all_nodes_distances_in_path(node_1_positions, node_2_positions, path_id);
 }
@@ -204,6 +203,10 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
 std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
     auto node_visits = fast_locate->decompressSA(node);
+
+    if(node == 0 || node_visits.empty()){
+        throw NodeNotInPathsException();
+    }
 
     std::vector<size_t>* node_positions = new std::vector<size_t>();
 
@@ -255,6 +258,10 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 
 std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node){
     auto node_visits = fast_locate->decompressSA(node);
+
+    if(node == 0 || node_visits.empty()){
+        throw NodeNotInPathsException();
+    }
 
     std::map<size_t,std::vector<size_t>*> *distances_in_paths = new std::map<size_t,std::vector<size_t>*>();
 

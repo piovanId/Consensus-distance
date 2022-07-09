@@ -38,6 +38,13 @@
  */
 
 namespace pathsprefixsumarrays{
+class NodeNotInPathsException : public std::exception {
+public:
+    char * what () {
+        return "NodeNotInPathsException: The node used doesn't occur in any path.";
+    }
+};
+
 
 class PathsPrefixSumArrays {
 

@@ -34,15 +34,15 @@
 namespace pathsprefixsumarrays {
 
     class PrefixSumArraysTest : public ::testing::Test {
-        // Cause the graph stores pointer to FastLocate that can be destroyed, we have to memorize it
-        std::vector<std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>> *gfa_parses;
-
     protected:
         // Class members declared here can be used by all tests in the test suite
 
         // Vector of prefix sums arrays for each graph, prefix_sums_arrays[i] is referred to the graph i in
         // gfa_files_path vector.
         std::vector<PathsPrefixSumArrays*> *prefix_sums_arrays;
+
+        // Cause the graph stores pointer to FastLocate that can be destroyed, we have to memorize it
+        std::vector<std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>> *gfa_parses;
 
         PrefixSumArraysTest() {
             prefix_sums_arrays = new std::vector<PathsPrefixSumArrays*>();
@@ -204,35 +204,36 @@ namespace pathsprefixsumarrays {
 
         gfa_file_index = 3;
         std::vector<parameters_test_graph> parameter_fourth_graph_vector = {{2, 10, 1, 2, 0, 0},
-                                                                           {2, 10, 1, 1, 2, 0},
-                                                                           {2, 10, 1, 1, 4, 0}};
+                                                                           {2, 10, 0, 0, 2, 0},
+                                                                           {2, 10, 0, 0, 4, 0},
+                                                                           {2,16,0,0,0,0},
+                                                                           {8, 4, 0, 0, 0, 0}
+                                                                            };
+
 
         number_of_tests_on_graph = parameter_fourth_graph_vector.size();
 
-        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
-            //START DEBUG PRINT
-            /*std::cout << "N1: " << parameter_fourth_graph_vector[index_test].n1 << "\n";
-            std::cout << "N2: " << parameter_fourth_graph_vector[index_test].n2 << "\n";
-            std::cout << "path_id: " << parameter_fourth_graph_vector[index_test].path_id << "\n\n\n\n";*/
-            //END DEBUG PRINT
 
+        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
             //auto temp = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 10, 2);
 
 
 
             //auto temp1 = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1, parameter_fourth_graph_vector[index_test].n2, parameter_fourth_graph_vector[index_test].path_id);
 
-
-            /*distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
-                    get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1,
-                                                    parameter_fourth_graph_vector[index_test].n2,
-                                                    parameter_fourth_graph_vector[index_test].path_id));
-            /*ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_length_distance, distances->size());
-            ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_distance,
-                      distances->at(parameter_fourth_graph_vector[index_test].index_distance_test));*/
+            try {
+                distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
+                        get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1,
+                                                        parameter_fourth_graph_vector[index_test].n2,
+                                                        parameter_fourth_graph_vector[index_test].path_id));
+                ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_length_distance, distances->size());
+                if (!distances->empty())
+                    ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_distance,
+                              distances->at(parameter_fourth_graph_vector[index_test].index_distance_test));
+            }catch(NodeNotInPathsException &ex){
+                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
+            }
         }
-
-
     }
 
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
@@ -268,15 +269,21 @@ namespace pathsprefixsumarrays {
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-            auto distance_vector = temp->get_all_nodes_distances(A, B);
-            ASSERT_EQ((*distance_vector), check.at(i));
+            try {
+                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+                auto distance_vector = temp->get_all_nodes_distances(A, B);
+                ASSERT_EQ((*distance_vector), check.at(i));
+            }catch(NodeNotInPathsException &ex){
+                ASSERT_TRUE(i == 0 || i == 1);
+                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
+            }
+
         }
 
 
     }
-/*
-    TEST_F(PrefixSumArraysTest, printall) {
+
+/*    TEST_F(PrefixSumArraysTest, printall) {
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
         // Name of the graph examples for testing
         std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
