@@ -224,6 +224,17 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) {
     std::vector<size_t> *distances = new std::vector<size_t>();
 
+
+    /**
+     * try {
+        positions_node_1 = get_all_node_positions(node_1);
+        positions_node_2 = get_all_node_positions(node_2);
+    }catch(NodeNotInPathsException &ex){
+        delete distances;
+        distances = nullptr;
+    }
+     */
+    //deletare memoria
     std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
     std::map<size_t, std::vector<size_t> *> *positions_node_2 = get_all_node_positions(node_2);
 
