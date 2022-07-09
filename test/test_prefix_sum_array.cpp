@@ -9,6 +9,7 @@
  *      - CHECK HOW TO USE PROPERLY THE THROW (IN THE METHODS)
  *      - CHECK THE CONSTANT ERROR OF THE THROW THAT DAVIDE SENT YOU
  *      - GO ON WITH THE TESTS
+ *      - IMPROVE THE DESTRUCTOR OF PathsPrefixSumArrays class
  */
 
 // Standard
@@ -108,7 +109,7 @@ namespace pathsprefixsumarrays {
     /**
      * Test the constructors
      */
-    TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
+    /*TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
         std::unique_ptr<PathsPrefixSumArrays> psa_default = std::unique_ptr<PathsPrefixSumArrays>(
                 new PathsPrefixSumArrays());
         ASSERT_EQ(nullptr, psa_default->get_fast_locate());
@@ -118,7 +119,7 @@ namespace pathsprefixsumarrays {
         for (auto psa: *prefix_sums_arrays) {
             ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa);
         }
-    }
+    }*/
 
 
     /**
@@ -126,7 +127,7 @@ namespace pathsprefixsumarrays {
      *                                                                        gbwt::node_type node_2,
      *                                                                        size_t path_id )
      */
-    TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath) {
+    /*TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath) {
         /*
          * All possible nodes in the test files are:
          *      In the more nodes graphs:
@@ -138,7 +139,7 @@ namespace pathsprefixsumarrays {
          *          12 = T
          *      In the one node graphs:
          *          2 = G
-         */
+         * /
 
         struct parameters_test_graph{
             gbwt::node_type n1;  // First node
@@ -152,7 +153,7 @@ namespace pathsprefixsumarrays {
 
         /**
          * One node acyclic graph, one path (0), all distances between 2 and 2
-         */
+         * /
         int gfa_file_index = 0;
 
         parameters_test_graph parameters_first_graph = {2, 2, 1, 0, 0, 0};
@@ -168,7 +169,7 @@ namespace pathsprefixsumarrays {
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
-         */
+         * /
         gfa_file_index = 1;
         parameters_test_graph parameters_second_graph = {2, 2, 3, 0, 0, 0};
 
@@ -186,7 +187,7 @@ namespace pathsprefixsumarrays {
          * Path: 2 - Nodes:  2 6 8
          * Path: 4 - Nodes:  2 4 6 8
          * Path: 6 - Nodes:  2 6 10 12
-         */
+         * /
 
         gfa_file_index = 2;
         std::vector<parameters_test_graph> parameter_third_graph_vector = {{2, 10, 1, 2, 0, 0},
@@ -209,7 +210,7 @@ namespace pathsprefixsumarrays {
          * Path: 0 - Nodes:  2 4 6 10 12
          * Path: 2 - Nodes:  2 6 8
          * Path: 4 - Nodes:  2 4 6 8
-         */
+         * /
 
         gfa_file_index = 3;
         std::vector<parameters_test_graph> parameter_fourth_graph_vector = {{2, 10, 1, 2, 0, 0},
@@ -243,7 +244,7 @@ namespace pathsprefixsumarrays {
                 EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
             }
         }
-    }
+    }*/
 
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
