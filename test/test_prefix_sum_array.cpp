@@ -34,15 +34,17 @@
 namespace pathsprefixsumarrays {
 
     class PrefixSumArraysTest : public ::testing::Test {
+
     protected:
+        // Cause the graph stores pointer to FastLocate that can be destroyed, we have to memorize it
+        std::vector<std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>> *gfa_parses;
+
         // Class members declared here can be used by all tests in the test suite
 
         // Vector of prefix sums arrays for each graph, prefix_sums_arrays[i] is referred to the graph i in
         // gfa_files_path vector.
         std::vector<PathsPrefixSumArrays*> *prefix_sums_arrays;
 
-        // Cause the graph stores pointer to FastLocate that can be destroyed, we have to memorize it
-        std::vector<std::pair<std::unique_ptr<gbwt::GBWT>, std::unique_ptr<gbwtgraph::SequenceSource>>> *gfa_parses;
 
         PrefixSumArraysTest() {
             prefix_sums_arrays = new std::vector<PathsPrefixSumArrays*>();
@@ -280,10 +282,83 @@ namespace pathsprefixsumarrays {
 
         }
 
+        A = 2;
+        B = 12;
+        check = {{},
+                 {},
+                 {4,3},
+                 {4},
+                 {4,3,4},
+                 {4,3}};
+
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            try {
+                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+                auto distance_vector = temp->get_all_nodes_distances(A, B);
+                ASSERT_EQ((*distance_vector), check.at(i));
+            }catch(NodeNotInPathsException &ex){
+                ASSERT_TRUE(i == 0 || i == 1);
+                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
+            }
+/*
+            std::cout <<std::endl;
+            for (int j = 0; j < distance_vector->size(); ++j) {
+                std::cout << std::to_string((*distance_vector)[j]) << " ";
+            }
+*/
+        }
+        A = 12;
+        B = 6;
+        check = {{},
+                 {},
+                 {2,2},
+                 {2},
+                 {2,2,3,2},
+                 {2,2}};
+
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            try {
+                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+                auto distance_vector = temp->get_all_nodes_distances(A, B);
+                ASSERT_EQ((*distance_vector), check.at(i));
+            }catch(NodeNotInPathsException &ex){
+                ASSERT_TRUE(i == 0 || i == 1);
+                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
+            }
+        }
+
+        A = 2;
+        B = 2;
+        check = {{},
+                 {0},
+                 {},
+                 {},
+                 {2},
+                 {2}};
+
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+
+            try {
+                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+                auto distance_vector = temp->get_all_nodes_distances(A, B);
+                ASSERT_EQ((*distance_vector), check.at(i));
+                std::cout <<std::endl;
+                for (int j = 0; j < distance_vector->size(); ++j) {
+                    std::cout << std::to_string((*distance_vector)[j]) << " ";
+                }
+            }catch(NodeNotInPathsException &ex){
+                ASSERT_TRUE(i == 0 || i == 1);
+                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
+            }
+
+        }
 
     }
 
-/*    TEST_F(PrefixSumArraysTest, printall) {
+    TEST_F(PrefixSumArraysTest, printall) {
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
         // Name of the graph examples for testing
         std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
@@ -311,9 +386,9 @@ namespace pathsprefixsumarrays {
             });// end of lambda expression
             std::cout << std::endl << "----------------------" << std::endl;
         }
-    }*/
+    }
 
-/*
+
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
@@ -323,7 +398,7 @@ namespace pathsprefixsumarrays {
         }
     }
 
-*/
+
 } // End namespace
 int main(int argc, char **argv)  {
     std::cout << "Hello, Santa Cruzsdd!" << std::endl;

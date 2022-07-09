@@ -309,6 +309,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
     int pivot_1 = 0, pivot_2 = 0;
     int i, j, end;
 
+    bool exit=false;
     bool iterate_on_node_2_positions;
 
     /**
@@ -327,39 +328,34 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
      */
 
     do{
-        if(node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
+
+        if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
+            if(pivot_2==node_2_positions->size()-1)
+               exit=true;
+
+                ++ pivot_2;
+
+        }
+
+        if(!exit&&node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
             j = pivot_2;
             end = node_2_positions->size();
             i = pivot_1;
-
-
-            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
-                ++ pivot_2;
-                ++ pivot_1;
-            }else{
-                ++ pivot_1;
-            }
+            ++ pivot_1;
 
             iterate_on_node_2_positions = true;
-        }else{
+        }else if(!exit){
 
             j = pivot_1;
             end = node_1_positions->size();
             i = pivot_2;
-
-
-            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
-                ++ pivot_2;
-                ++ pivot_1;
-            }else{
-                ++ pivot_2;
-            }
+            ++ pivot_2;
 
             iterate_on_node_2_positions = false;
         }
 
 
-        while(j < end){
+        while( !exit && j < end ){
             if(iterate_on_node_2_positions) {
                 (*distances).push_back(PathsPrefixSumArrays::get_distance_between_positions_in_path(node_1_positions->at(i),
                                                                                                     node_2_positions->at(j),
