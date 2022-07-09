@@ -127,6 +127,24 @@ PathsPrefixSumArrays::~PathsPrefixSumArrays() {
         delete psa;
         psa = nullptr;
     }
+
+
+    /*if(positions_node_1 != nullptr){
+
+        // Deleting memory positions_node_1
+        std::map<size_t, std::vector<size_t> *>::iterator it;
+
+        for (it = positions_node_1->begin(); it != positions_node_1->end(); it++){
+            it->second->clear();
+            it->second->shrink_to_fit();
+            delete it->second;
+            it->second = nullptr;
+        }
+
+        positions_node_1->clear();
+        delete positions_node_1;
+        positions_node_1 = nullptr;
+    }*/
 }
 
 
@@ -224,19 +242,38 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) {
     std::vector<size_t> *distances = new std::vector<size_t>();
 
+    std::map<size_t, std::vector<size_t> *> *positions_node_1 = nullptr;
+    std::map<size_t, std::vector<size_t> *> *positions_node_2; // The initialization here is redundant
 
-    /**
-     * try {
+    try {
         positions_node_1 = get_all_node_positions(node_1);
         positions_node_2 = get_all_node_positions(node_2);
     }catch(NodeNotInPathsException &ex){
+        // MEMORY MANAGEMENT AFTER THE EXCEPTION
+        if(positions_node_1 != nullptr){
+
+            // Deleting memory positions_node_1
+            std::map<size_t, std::vector<size_t> *>::iterator it;
+
+            for (it = positions_node_1->begin(); it != positions_node_1->end(); it++){
+                it->second->clear();
+                it->second->shrink_to_fit();
+                delete it->second;
+                it->second = nullptr;
+            }
+
+            positions_node_1->clear();
+            delete positions_node_1;
+            positions_node_1 = nullptr;
+        }
+
+        // Deleting memory vector distances
         delete distances;
         distances = nullptr;
+
+        // Throw the exception at the caller
+        throw NodeNotInPathsException();
     }
-     */
-    //deletare memoria
-    std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
-    std::map<size_t, std::vector<size_t> *> *positions_node_2 = get_all_node_positions(node_2);
 
     if (positions_node_1->empty() || positions_node_2->empty()) {
         return distances;
@@ -263,6 +300,33 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
         iterator++;
 
     }
+
+    // Deleting memory positions_node_1
+    std::map<size_t, std::vector<size_t> *>::iterator it;
+
+    for (it = positions_node_1->begin(); it != positions_node_1->end(); it++){
+        it->second->clear();
+        it->second->shrink_to_fit();
+        delete it->second;
+        it->second = nullptr;
+    }
+
+    positions_node_1->clear();
+    delete positions_node_1;
+    positions_node_1 = nullptr;
+
+    // Deleting memory positions_node_2
+    for (it = positions_node_2->begin(); it != positions_node_2->end(); it++){
+        it->second->clear();
+        it->second->shrink_to_fit();
+        delete it->second;
+        it->second = nullptr;
+    }
+
+    positions_node_2->clear();
+    delete positions_node_2;
+    positions_node_2 = nullptr;
+
     return distances;
 }
 
@@ -326,19 +390,18 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
      * to compute the distance with the fixed one (i) in that iteration.
      */
 
-    do{
+    do {
+        if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){
+            // DA CORREGGERE CON QUELLO DEL PIO ++pivot_2;
+        }
+
         if(node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
             j = pivot_2;
             end = node_2_positions->size();
             i = pivot_1;
 
+            ++ pivot_1;
 
-            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
-                ++ pivot_2;
-                ++ pivot_1;
-            }else{
-                ++ pivot_1;
-            }
 
             iterate_on_node_2_positions = true;
         }else{
@@ -347,13 +410,9 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
             end = node_1_positions->size();
             i = pivot_2;
 
+            // altrimenti li aumentava entrambi
+            ++ pivot_2;
 
-            if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
-                ++ pivot_2;
-                ++ pivot_1;
-            }else{
-                ++ pivot_2;
-            }
 
             iterate_on_node_2_positions = false;
         }
@@ -372,18 +431,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
             ++ j;
         }
     }while(pivot_1 < node_1_positions->size() && pivot_2 < node_2_positions->size());
-
-
-    // Deleting memory
-    node_1_positions->clear();
-    node_2_positions->clear();
-    node_1_positions->shrink_to_fit();
-    node_2_positions->shrink_to_fit();
-
-    delete node_1_positions;
-    delete node_2_positions;
-    node_1_positions = nullptr;
-    node_2_positions = nullptr;
 
     return distances;
 }
