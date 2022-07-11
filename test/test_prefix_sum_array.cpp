@@ -333,7 +333,93 @@ namespace pathsprefixsumarrays {
 
     }
 
-    /*TEST_F(PrefixSumArraysTest, printall) {
+
+
+    TEST_F(PrefixSumArraysTest, get_all_node_positions) {
+
+        std::vector<std::vector<std::vector<size_t>>> check = {{{0}},
+                                                               {{0,1}},
+                                                               {{0},{0},{0},{0}},
+                                                               {{0},{0},{0}},
+                                                               {{0},{0},{0},{0},{0,3},{0}},
+                                                               {{0},{0},{0},{0},{0,3}}};
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto positions = temp->get_all_node_positions(2);
+            auto iterator = (*positions).begin();
+
+            // Iterate over the map using Iterator till end.
+            int j=0;
+            while (iterator != (*positions).end())
+            {
+
+                // Accessing VALUE from element pointed by it.
+                for(int k=0; k< iterator->second->size(); ++k){
+                    ASSERT_TRUE((*iterator->second)[k]==check[i][j][k]);
+                }
+                // Increment the Iterator to point to next entry
+                iterator++;
+                j++;
+            }
+        }
+        check = {{{}},
+                 {{}},
+                 {{4},{3}},
+                 {{4}},
+                 {{4},{3},{4}},
+                 {{4},{3}}};
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto positions = temp->get_all_node_positions(12);
+            auto iterator = (*positions).begin();
+
+            // Iterate over the map using Iterator till end.
+            int j=0;
+            while (iterator != (*positions).end())
+            {
+                // Accessing VALUE from element pointed by it.
+                for(int k=0; k< iterator->second->size(); ++k){
+                    ASSERT_TRUE((*iterator->second)[k]==check[i][j][k]);
+                }
+                // Increment the Iterator to point to next entry
+                iterator++;
+                j++;
+            }
+        }
+
+/* //DEBUG PRINT
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            std::cout << "\n\n$psa"<<std::to_string(i);
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto positions = temp->get_all_node_positions(12);
+            auto iterator = (*positions).begin();
+
+            // Iterate over the map using Iterator till end.
+            int j=0;
+            while (iterator != (*positions).end())
+            {
+                std::cout << "\n>" ;
+                // Accessing VALUE from element pointed by it.
+                for(int k=0; k< iterator->second->size(); ++k){
+                    std::cout << (*iterator->second)[k]<<", ";
+                }
+                // Increment the Iterator to point to next entry
+                iterator++;
+                j++;
+            }
+        }
+        std::cout << std::endl;
+//DEBUG PRINT */
+
+    }
+
+
+
+/* //DEBUG PRINT
+
+    TEST_F(PrefixSumArraysTest, printall) {
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
         // Name of the graph examples for testing
         std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
@@ -361,18 +447,8 @@ namespace pathsprefixsumarrays {
             });// end of lambda expression
             std::cout << std::endl << "----------------------" << std::endl;
         }
-    }*/
-
-
-    TEST_F(PrefixSumArraysTest, get_all_node_positions) {
-        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-            auto positions = temp->get_all_node_positions(2);
-
-
-        }
     }
-
+//DEBUG PRINT */
 
 } // End namespace
 int main(int argc, char **argv)  {
