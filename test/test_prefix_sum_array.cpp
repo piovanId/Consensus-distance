@@ -104,6 +104,47 @@ namespace pathsprefixsumarrays {
 
 
     /**
+     * This structure is used to shrink the code and store parameters to perform different tests in the
+     * ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES method.
+     */
+    struct parameters_test_graph{
+        gbwt::node_type n1;  // First node
+        gbwt::node_type n2;  // Second node
+
+        int assert_length_distance; // Length of the array that contains all the distances
+        int assert_distance; // Distance value to be tested
+        size_t path_id;
+        int index_distance_test; // Index of the position in distance vector
+    };
+
+
+    /**
+     * Used to remove duplicated code from the test GetAllNodeDistanceInAPathNodeInInputVersion, given the params compute
+     * all the distance between two nodes and assert the number of compute distances and the distances.
+     * @param psa the one created in the constructor of the fixture class PrefixSumArraysTest.
+     * @param params is a vector of structures parameters_test_graph.
+     * @param gfa_file_index index of the gfa_file in the vector gfa_files_paths defined in the constructor of PrefixSumArraysTest.
+     */
+    void ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(std::vector<PathsPrefixSumArrays*> const psa,
+                                                   std::vector<parameters_test_graph> params,
+                                                   int gfa_file_index){
+        int number_of_tests_on_graph = params.size();
+        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
+
+            std::unique_ptr<std::vector<size_t>> distances;
+            distances.reset((*psa[gfa_file_index]).
+                    get_all_nodes_distances_in_path(params[index_test].n1,
+                                                    params[index_test].n2,
+                                                    params[index_test].path_id));
+            ASSERT_EQ(params[index_test].assert_length_distance, distances->size());
+            if (!distances->empty())
+                ASSERT_EQ(params[index_test].assert_distance,
+                          distances->at(params[index_test].index_distance_test));
+        }
+    }
+
+
+    /**
      * Test the constructors
      */
     TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
@@ -124,7 +165,7 @@ namespace pathsprefixsumarrays {
      *                                                                        gbwt::node_type node_2,
      *                                                                        size_t path_id )
      */
-    TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath) {
+    TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPathNodeInInputVersion) {
         /*
          * All possible nodes in the test files are:
          *      In the more nodes graphs:
@@ -137,17 +178,7 @@ namespace pathsprefixsumarrays {
          *      In the one node graphs:
          *          2 = G
          */
-
-        struct parameters_test_graph{
-            gbwt::node_type n1;  // First node
-            gbwt::node_type n2;  // Second node
-
-            int assert_length_distance; // Length of the array that contains all the distances
-            int assert_distance; // Distance value to be tested
-            size_t path_id;
-            int index_distance_test; // Index of the position in distance vector
-        };
-
+        
         /**
          * One node acyclic graph, one path (0), all distances between 2 and 2
          */
@@ -187,16 +218,7 @@ namespace pathsprefixsumarrays {
                                                                             {2, 12, 1, 4, 0, 0},
                                                                             {2, 12, 1, 3, 6, 0}};
 
-        int number_of_tests_on_graph = parameter_third_graph_vector.size(); // redundant but help the readability
-        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
-            distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
-            get_all_nodes_distances_in_path(parameter_third_graph_vector[index_test].n1,
-                                            parameter_third_graph_vector[index_test].n2,
-                                            parameter_third_graph_vector[index_test].path_id));
-            ASSERT_EQ(parameter_third_graph_vector[index_test].assert_length_distance, distances->size());
-            ASSERT_EQ(parameter_third_graph_vector[index_test].assert_distance,
-                      distances->at(parameter_third_graph_vector[index_test].index_distance_test));
-        }
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_third_graph_vector, gfa_file_index);
 
         /**
          * Acyclic graph, odd paths (3), all distances
@@ -215,25 +237,64 @@ namespace pathsprefixsumarrays {
                                                                            {8, 2, 1, 1, 2, 0},
                                                                            {16,16,0,0,0,0},
                                                                            {2,16,0,0,7,0},
+                                                                           {2,4,0,0,6,0},
+                                                                           {2,5,0,0,2,0},
+                                                                           {6,2,1,1,0,0}};
+
+
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fourth_graph_vector, gfa_file_index);
+
+        /**
+         * Cyclic graph, even paths (3), all distances
+         * Path: 0 - Nodes:  2 4 6 10 12
+         * Path: 2 - Nodes:  2 6 8
+         * Path: 4 - Nodes:  2 4 6 8
+         * Path: 6 - Nodes:  2 6 10 12
+         * Path: 8 - Nodes:  2 4 6 2 6 6 8
+         * Path: 10 - Nodes:  2 6 6 10 6
+         */
+
+        gfa_file_index = 4;
+        std::vector<parameters_test_graph> parameter_fifth_graph_vector = {{2, 10, 1, 2, 10, 0},
+                                                                            {2, 6, 6, 1, 8, 0},
+                                                                            {2, 6, 6, 12, 8, 1},
+                                                                            {2, 6, 6, 13, 8, 2},
+                                                                            {2, 6, 6, 0, 8, 3},
+                                                                            {6, 2, 6, 0, 8, 4},
+                                                                            {6, 2, 6, 1, 8, 5},
+                                                                            {2, 8, 2, 14, 8, 0},
+                                                                            {2, 8, 2, 2, 8, 1},
+                                                                            {2, 19, 0, 0, 8, 0},
+                                                                            {2, 8, 0, 0, 12, 0}
                                                                             };
 
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fifth_graph_vector, gfa_file_index);
 
-        number_of_tests_on_graph = parameter_fourth_graph_vector.size();
+        /**
+         * Cyclic graph, even paths (3), all distances
+         * Path: 0 - Nodes:  2 4 6 10 12
+         * Path: 2 - Nodes:  2 6 8
+         * Path: 4 - Nodes:  2 4 6 8
+         * Path: 6 - Nodes:  2 6 10 12
+         * Path: 8 - Nodes:  2 4 6 2 6 6 8
+         */
 
+        gfa_file_index = 5;
+        std::vector<parameters_test_graph> parameter_sixth_graph_vector = {{2, 10, 0, 0, 10, 0},
+                                                                           {2, 6, 6, 1, 8, 0},
+                                                                           {2, 6, 6, 12, 8, 1},
+                                                                           {2, 6, 6, 13, 8, 2},
+                                                                           {2, 6, 6, 0, 8, 3},
+                                                                           {6, 2, 6, 0, 8, 4},
+                                                                           {6, 2, 6, 1, 8, 5},
+                                                                           {2, 8, 2, 14, 8, 0},
+                                                                           {2, 8, 2, 2, 8, 1},
+                                                                           {2, 19, 0, 0, 8, 0},
+                                                                           {2, 8, 0, 0, 12, 0}
+        };
 
-        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
-            //auto temp = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 10, 2);
-            //auto temp1 = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1, parameter_fourth_graph_vector[index_test].n2, parameter_fourth_graph_vector[index_test].path_id);
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_sixth_graph_vector, gfa_file_index);
 
-            distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
-                    get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1,
-                                                    parameter_fourth_graph_vector[index_test].n2,
-                                                    parameter_fourth_graph_vector[index_test].path_id));
-            ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_length_distance, distances->size());
-            if (!distances->empty())
-                ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_distance,
-                          distances->at(parameter_fourth_graph_vector[index_test].index_distance_test));
-        }
     }
 
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
