@@ -4,12 +4,9 @@
  *  - Andrea Mariotti
  *
  *  TODO:
- *      - CONTROLLARE MEMORY LEAK, PRIMA A MANO E POI SE TI PERDI QUALCOSA CON VALGRIND
- *      - CHECK THE TRY CATCH FOR DELETING MEMORY AND USE THE TRY CATCH WHERE YOU USE A FUNCTION THAT HAS A THROW
- *      - CHECK HOW TO USE PROPERLY THE THROW (IN THE METHODS)
+ *      - CONTROLLARE MEMORY LEAK CON VALGRIND
  *      - CHECK THE CONSTANT ERROR OF THE THROW THAT DAVIDE SENT YOU
  *      - GO ON WITH THE TESTS
- *      - IMPROVE THE DESTRUCTOR OF PathsPrefixSumArrays class
  */
 
 // Standard
@@ -207,13 +204,17 @@ namespace pathsprefixsumarrays {
          * Path: 2 - Nodes:  2 6 8
          * Path: 4 - Nodes:  2 4 6 8
          */
-
         gfa_file_index = 3;
         std::vector<parameters_test_graph> parameter_fourth_graph_vector = {{2, 10, 1, 2, 0, 0},
                                                                            {2, 10, 0, 0, 2, 0},
                                                                            {2, 10, 0, 0, 4, 0},
                                                                            {2,16,0,0,0,0},
-                                                                           {8, 4, 0, 0, 0, 0}
+                                                                           {16,2,0,0,0,0},
+                                                                           {8, 4, 0, 0, 0, 0},
+                                                                           {2, 8, 1, 1, 2, 0},
+                                                                           {8, 2, 1, 1, 2, 0},
+                                                                           {16,16,0,0,0,0},
+                                                                           {2,16,0,0,7,0},
                                                                             };
 
 
@@ -222,23 +223,16 @@ namespace pathsprefixsumarrays {
 
         for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
             //auto temp = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 10, 2);
-
-
-
             //auto temp1 = (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1, parameter_fourth_graph_vector[index_test].n2, parameter_fourth_graph_vector[index_test].path_id);
 
-            try {
-                distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
-                        get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1,
-                                                        parameter_fourth_graph_vector[index_test].n2,
-                                                        parameter_fourth_graph_vector[index_test].path_id));
-                ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_length_distance, distances->size());
-                if (!distances->empty())
-                    ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_distance,
-                              distances->at(parameter_fourth_graph_vector[index_test].index_distance_test));
-            }catch(NodeNotInPathsException &ex){
-                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
-            }
+            distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).
+                    get_all_nodes_distances_in_path(parameter_fourth_graph_vector[index_test].n1,
+                                                    parameter_fourth_graph_vector[index_test].n2,
+                                                    parameter_fourth_graph_vector[index_test].path_id));
+            ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_length_distance, distances->size());
+            if (!distances->empty())
+                ASSERT_EQ(parameter_fourth_graph_vector[index_test].assert_distance,
+                          distances->at(parameter_fourth_graph_vector[index_test].index_distance_test));
         }
     }
 
@@ -275,15 +269,9 @@ namespace pathsprefixsumarrays {
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            try {
-                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-                auto distance_vector = temp->get_all_nodes_distances(A, B);
-                ASSERT_EQ((*distance_vector), check.at(i));
-            }catch(NodeNotInPathsException &ex){
-                ASSERT_TRUE(i == 0 || i == 1);
-                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
-            }
-
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
         }
 
         A = 2;
@@ -297,14 +285,9 @@ namespace pathsprefixsumarrays {
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            try {
-                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-                auto distance_vector = temp->get_all_nodes_distances(A, B);
-                ASSERT_EQ((*distance_vector), check.at(i));
-            }catch(NodeNotInPathsException &ex){
-                ASSERT_TRUE(i == 0 || i == 1);
-                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
-            }
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
 /*
             std::cout <<std::endl;
             for (int j = 0; j < distance_vector->size(); ++j) {
@@ -323,14 +306,9 @@ namespace pathsprefixsumarrays {
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            try {
-                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-                auto distance_vector = temp->get_all_nodes_distances(A, B);
-                ASSERT_EQ((*distance_vector), check.at(i));
-            }catch(NodeNotInPathsException &ex){
-                ASSERT_TRUE(i == 0 || i == 1);
-                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
-            }
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
         }
 
         A = 2;
@@ -344,20 +322,13 @@ namespace pathsprefixsumarrays {
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-
-            try {
-                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-                auto distance_vector = temp->get_all_nodes_distances(A, B);
-                ASSERT_EQ((*distance_vector), check.at(i));
-                /*std::cout <<std::endl;
-                for (int j = 0; j < distance_vector->size(); ++j) {
-                    std::cout << std::to_string((*distance_vector)[j]) << " ";
-                }*/
-            }catch(NodeNotInPathsException &ex){
-                ASSERT_TRUE(i == 0 || i == 1);
-                EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
-            }
-
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
+            /*std::cout <<std::endl;
+            for (int j = 0; j < distance_vector->size(); ++j) {
+                std::cout << std::to_string((*distance_vector)[j]) << " ";
+            }*/
         }
 
     }
@@ -405,8 +376,7 @@ namespace pathsprefixsumarrays {
 
 } // End namespace
 int main(int argc, char **argv)  {
-    std::cout << "Hello, Santa Cruzsdd!" << std::endl;
-
+    std::cout << "MAIN RUN ALL TESTS." << std::endl;
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

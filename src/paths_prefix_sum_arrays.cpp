@@ -106,9 +106,8 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t p
     return node_before_bigger_node_offset - node_1_offset;
 }
 
-
-PathsPrefixSumArrays::~PathsPrefixSumArrays() {
-    // Delete memory fast locate
+void PathsPrefixSumArrays::clear() {
+    // Deleting memory fast_locate
     if(fast_locate != nullptr){
         delete fast_locate;
         fast_locate = nullptr;
@@ -127,6 +126,10 @@ PathsPrefixSumArrays::~PathsPrefixSumArrays() {
         delete psa;
         psa = nullptr;
     }
+}
+
+PathsPrefixSumArrays::~PathsPrefixSumArrays() {
+    clear();
 }
 
 
@@ -187,6 +190,10 @@ std::string PathsPrefixSumArrays::toString() const{
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id){
+    // If the path doesn't exist
+    if (psa->find(path_id) == psa->end()) {
+        return new std::vector<size_t>();
+    }
 
     // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
     size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
@@ -203,11 +210,12 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
     auto node_visits = fast_locate->decompressSA(node);
 
-    if(node == 0 || node_visits.empty()){
-        throw NodeNotInPathsException();
-    }
-
     std::vector<size_t>* node_positions = new std::vector<size_t>();
+
+    // If the node is 0 is not in the path || no node visits || path_id doesn't exist in the psa
+    if(node == 0 || node_visits.empty() || psa->find(path_id) == psa->end()){
+        return node_positions;
+    }
 
     for (int i = 0; i < node_visits.size() ; ++i) {
         if(fast_locate->seqId(node_visits[i]) == path_id){
@@ -223,38 +231,8 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) {
     std::vector<size_t> *distances = new std::vector<size_t>();
 
-    std::map<size_t, std::vector<size_t> *> *positions_node_1 = nullptr;
-    std::map<size_t, std::vector<size_t> *> *positions_node_2; // The initialization here is redundant
-
-    try {
-        positions_node_1 = get_all_node_positions(node_1);
-        positions_node_2 = get_all_node_positions(node_2);
-    }catch(NodeNotInPathsException &ex){
-        // MEMORY MANAGEMENT AFTER THE EXCEPTION
-        if(positions_node_1 != nullptr){
-
-            // Deleting memory positions_node_1
-            std::map<size_t, std::vector<size_t> *>::iterator it;
-
-            for (it = positions_node_1->begin(); it != positions_node_1->end(); it++){
-                it->second->clear();
-                it->second->shrink_to_fit();
-                delete it->second;
-                it->second = nullptr;
-            }
-
-            positions_node_1->clear();
-            delete positions_node_1;
-            positions_node_1 = nullptr;
-        }
-
-        // Deleting memory vector distances
-        delete distances;
-        distances = nullptr;
-
-        // Throw the exception at the caller
-        throw NodeNotInPathsException();
-    }
+    std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
+    std::map<size_t, std::vector<size_t> *> *positions_node_2 = get_all_node_positions(node_2);
 
     if (positions_node_1->empty() || positions_node_2->empty()) {
         return distances;
@@ -315,11 +293,11 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node){
     auto node_visits = fast_locate->decompressSA(node);
 
-    if(node == 0 || node_visits.empty()){
-        throw NodeNotInPathsException();
-    }
-
     std::map<size_t,std::vector<size_t>*> *distances_in_paths = new std::map<size_t,std::vector<size_t>*>();
+
+    if(node == 0 || node_visits.empty()){
+        return distances_in_paths;
+    }
 
     for (int i = 0; i < node_visits.size() ; ++i) {
         gbwt::size_type path_id =fast_locate->seqId(node_visits[i]); // Sequence id
@@ -343,7 +321,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
                                                                            size_t path_id){
     std::vector<size_t>* distances = new std::vector<size_t>();
 
-    if(node_1_positions->empty() || node_2_positions->empty()) {
+    if(node_1_positions->empty() || node_2_positions->empty() || psa->find(path_id) == psa->end()) {
         return distances;
     }
 

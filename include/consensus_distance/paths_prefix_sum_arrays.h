@@ -38,14 +38,6 @@
  */
 
 namespace pathsprefixsumarrays{
-class NodeNotInPathsException : public std::exception {
-public:
-    char * what () {
-        return "NodeNotInPathsException: The node used doesn't occur in any path.";
-    }
-};
-
-
 class PathsPrefixSumArrays {
 
 private:
@@ -53,9 +45,6 @@ private:
     FRIEND_TEST(PrefixSumArraysTest, get_distance_between_positions_in_path);
     FRIEND_TEST(PrefixSumArraysTest, get_all_nodes_distances);
 
-
-    ///friend class my::_test_paths_prefix_sum_arrays::::PrefixSumArraysTest;
-    ///TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath);
 
     std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // prefix sum arrays (seq_id, prefix sum array)
 
@@ -101,6 +90,11 @@ public:
      * Destructor.
      */
     ~PathsPrefixSumArrays();
+
+    /**
+     * This method is used to clear all the memory of the object.
+     */
+    void clear();
 
     /**
      * Get a string with all the prefix sum arrays as sd_vectors representation (0,1).
