@@ -178,7 +178,7 @@ namespace pathsprefixsumarrays {
          *      In the one node graphs:
          *          2 = G
          */
-        
+
         /**
          * One node acyclic graph, one path (0), all distances between 2 and 2
          */
