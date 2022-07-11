@@ -109,7 +109,7 @@ namespace pathsprefixsumarrays {
     /**
      * Test the constructors
      */
-    /*TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
+    TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
         std::unique_ptr<PathsPrefixSumArrays> psa_default = std::unique_ptr<PathsPrefixSumArrays>(
                 new PathsPrefixSumArrays());
         ASSERT_EQ(nullptr, psa_default->get_fast_locate());
@@ -119,7 +119,7 @@ namespace pathsprefixsumarrays {
         for (auto psa: *prefix_sums_arrays) {
             ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa);
         }
-    }*/
+    }
 
 
     /**
@@ -127,7 +127,7 @@ namespace pathsprefixsumarrays {
      *                                                                        gbwt::node_type node_2,
      *                                                                        size_t path_id )
      */
-    /*TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath) {
+    TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPath) {
         /*
          * All possible nodes in the test files are:
          *      In the more nodes graphs:
@@ -139,7 +139,7 @@ namespace pathsprefixsumarrays {
          *          12 = T
          *      In the one node graphs:
          *          2 = G
-         * /
+         */
 
         struct parameters_test_graph{
             gbwt::node_type n1;  // First node
@@ -153,33 +153,29 @@ namespace pathsprefixsumarrays {
 
         /**
          * One node acyclic graph, one path (0), all distances between 2 and 2
-         * /
+         */
         int gfa_file_index = 0;
-
-        parameters_test_graph parameters_first_graph = {2, 2, 1, 0, 0, 0};
-
+        parameters_test_graph parameters_first_graph = {2, 2, 0, 0, 0, 0};
         std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>(
                 (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameters_first_graph.n1,
                                                                                          parameters_first_graph.n2,
                                                                                          parameters_first_graph.path_id));
+
         // only one distance computable because there is only one path of length 1
         ASSERT_EQ(parameters_first_graph.assert_length_distance, distances->size());
-        // distances between two same positions in a path is 0
-        ASSERT_EQ(parameters_first_graph.assert_distance, distances->at(parameters_first_graph.index_distance_test));
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
-         * /
+         */
         gfa_file_index = 1;
-        parameters_test_graph parameters_second_graph = {2, 2, 3, 0, 0, 0};
+        parameters_test_graph parameters_second_graph = {2, 2, 1, 0, 0, 0};
 
         distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameters_second_graph.n1,
                                                                                                  parameters_second_graph.n2,
                                                                                                  parameters_second_graph.path_id));
         ASSERT_EQ(parameters_second_graph.assert_length_distance, distances->size()); // 3 distances because d(1,1)=0, d(1,2)=0, d(2,2)=0
-        for(int distance=0; distance < distances->size(); ++distance){
-            ASSERT_EQ(parameters_second_graph.assert_distance, distances->at(parameters_second_graph.index_distance_test));
-        }
+        ASSERT_EQ(parameters_second_graph.assert_distance, distances->at(parameters_second_graph.index_distance_test));
+
 
         /**
          * Acyclic graph, even paths (4), all distances
@@ -187,7 +183,7 @@ namespace pathsprefixsumarrays {
          * Path: 2 - Nodes:  2 6 8
          * Path: 4 - Nodes:  2 4 6 8
          * Path: 6 - Nodes:  2 6 10 12
-         * /
+         */
 
         gfa_file_index = 2;
         std::vector<parameters_test_graph> parameter_third_graph_vector = {{2, 10, 1, 2, 0, 0},
@@ -210,7 +206,7 @@ namespace pathsprefixsumarrays {
          * Path: 0 - Nodes:  2 4 6 10 12
          * Path: 2 - Nodes:  2 6 8
          * Path: 4 - Nodes:  2 4 6 8
-         * /
+         */
 
         gfa_file_index = 3;
         std::vector<parameters_test_graph> parameter_fourth_graph_vector = {{2, 10, 1, 2, 0, 0},
@@ -244,7 +240,7 @@ namespace pathsprefixsumarrays {
                 EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
             }
         }
-    }*/
+    }
 
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
@@ -353,10 +349,10 @@ namespace pathsprefixsumarrays {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
                 auto distance_vector = temp->get_all_nodes_distances(A, B);
                 ASSERT_EQ((*distance_vector), check.at(i));
-                std::cout <<std::endl;
+                /*std::cout <<std::endl;
                 for (int j = 0; j < distance_vector->size(); ++j) {
                     std::cout << std::to_string((*distance_vector)[j]) << " ";
-                }
+                }*/
             }catch(NodeNotInPathsException &ex){
                 ASSERT_TRUE(i == 0 || i == 1);
                 EXPECT_EQ(ex.what(), "NodeNotInPathsException: The node used doesn't occur in any path.");
@@ -366,7 +362,7 @@ namespace pathsprefixsumarrays {
 
     }
 
-    TEST_F(PrefixSumArraysTest, printall) {
+    /*TEST_F(PrefixSumArraysTest, printall) {
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
         // Name of the graph examples for testing
         std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
@@ -394,7 +390,7 @@ namespace pathsprefixsumarrays {
             });// end of lambda expression
             std::cout << std::endl << "----------------------" << std::endl;
         }
-    }
+    }*/
 
 
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {

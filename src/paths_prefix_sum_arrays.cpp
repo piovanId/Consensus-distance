@@ -127,26 +127,6 @@ PathsPrefixSumArrays::~PathsPrefixSumArrays() {
         delete psa;
         psa = nullptr;
     }
-
-
-    /*
-     * TO IMPROVE BETTER THE DESTRUCTOR
-     * if(positions_node_1 != nullptr){
-
-        // Deleting memory positions_node_1
-        std::map<size_t, std::vector<size_t> *>::iterator it;
-
-        for (it = positions_node_1->begin(); it != positions_node_1->end(); it++){
-            it->second->clear();
-            it->second->shrink_to_fit();
-            delete it->second;
-            it->second = nullptr;
-        }
-
-        positions_node_1->clear();
-        delete positions_node_1;
-        positions_node_1 = nullptr;
-    }*/
 }
 
 
@@ -215,7 +195,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
     std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
-
 
     return get_all_nodes_distances_in_path(node_1_positions, node_2_positions, path_id);
 }
