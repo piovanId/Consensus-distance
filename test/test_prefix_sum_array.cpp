@@ -301,7 +301,7 @@ namespace pathsprefixsumarrays {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             //testing the outer function
-            ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 14, 0));
+            ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 0, 0));
             temp->get_distance_between_positions_in_path(0, 0, 0);
             if (i > 1) {
                 ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
