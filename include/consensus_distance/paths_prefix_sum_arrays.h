@@ -38,6 +38,15 @@
  */
 
 namespace pathsprefixsumarrays{
+
+class OutOfBoundsPositionInPath : std::out_of_range {
+
+public:
+     OutOfBoundsPositionInPath(const std::string &arg) : out_of_range(arg) {
+
+     }
+
+};
 class PathsPrefixSumArrays {
 
 private:
@@ -60,7 +69,7 @@ private:
      * @return the distance between the two positions.
      */
     size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2,
-                                                      sdsl::sd_vector<>::select_1_type &sdb_sel);
+                                                      sdsl::sd_vector<>::select_1_type &sdb_sel);//todo reverse
 
 
     /**
@@ -71,7 +80,7 @@ private:
      * positions.
      * @return a vector of the positions of a node in the path.
      */
-    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones);
+    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones); //todo reverse
 
 public:
     /**
@@ -132,7 +141,7 @@ public:
      * @param path_id
      * @return the distance.
      */
-    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id);
+    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id); //todo reverse
 
 
     /**

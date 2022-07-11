@@ -85,11 +85,18 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
     // Initialize select operation (see select/rank)
     sdsl::sd_vector<>::select_1_type sdb_sel((*(psa))[path_id]);
 
-    if(pos_node_2 > (*(psa))[path_id]->size() || pos_node_1 > (*(psa))[path_id]->size()){
-        return 0; // You can't compute the distance between two position if at least one of them doesn't exist
-    } else {
+    if(pos_node_2 > (*(psa))[path_id]->size() ){
+        std::string error = "Error in 'get_distance_between_positions_in_path': the second position "+ std::to_string(pos_node_2)+" is outside the boundaries of the path [0:"+std::to_string((*(psa))[path_id]->size())+"]"+"\n";
+        std::cerr << error;
+        throw pathsprefixsumarrays::OutOfBoundsPositionInPath(error);
+
+    } else if( pos_node_1 > (*(psa))[path_id]->size()){
+        std::string error = "Error in 'get_distance_between_positions_in_path': the first position "+ std::to_string(pos_node_1)+" is outside the boundaries of the path [0:"+std::to_string((*(psa))[path_id]->size())+"]"+"\n";
+        std::cerr << error;
+        throw pathsprefixsumarrays::OutOfBoundsPositionInPath(error);
+    }else
         distance = get_distance_between_positions_in_path_aux(pos_node_1, pos_node_2, sdb_sel);
-    }
+
 
     return distance;
 }
