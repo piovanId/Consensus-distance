@@ -240,7 +240,8 @@ namespace pathsprefixsumarrays {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             //testing the outer function
-            ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 0, 0));
+            ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 14, 0));
+            temp->get_distance_between_positions_in_path(0, 0, 0);
             if (i > 1) {
                 ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
                 //testing the aux function
@@ -417,6 +418,48 @@ namespace pathsprefixsumarrays {
 
 
 
+/**
+0th graph:
+2[1],
+
+----------------------
+1th graph:
+2[1], 2[1],
+
+----------------------
+2th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+2[10], 6[1], 10[2], 12[1],
+
+----------------------
+3th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+
+----------------------
+4th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+2[10], 6[1], 10[2], 12[1],
+2[10], 4[1], 6[1], 2[10], 6[1], 6[1], 8[5],
+2[10], 6[1], 6[1], 10[2], 12[1],
+
+----------------------
+5th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+2[10], 6[1], 10[2], 12[1],
+2[10], 4[1], 6[1], 2[10], 6[1], 6[1], 8[5],
+
+----------------------
+*/
+
+
 /* //DEBUG PRINT
 
     TEST_F(PrefixSumArraysTest, printall) {
@@ -448,7 +491,7 @@ namespace pathsprefixsumarrays {
             std::cout << std::endl << "----------------------" << std::endl;
         }
     }
-//DEBUG PRINT */
+//DEBUG PRINT*/
 
 } // End namespace
 int main(int argc, char **argv)  {
