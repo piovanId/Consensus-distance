@@ -113,6 +113,7 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t p
     return node_before_bigger_node_offset - node_1_offset;
 }
 
+
 void PathsPrefixSumArrays::clear() {
     // Deleting memory fast_locate
     if(fast_locate != nullptr){
@@ -134,6 +135,7 @@ void PathsPrefixSumArrays::clear() {
         psa = nullptr;
     }
 }
+
 
 PathsPrefixSumArrays::~PathsPrefixSumArrays() {
     clear();

@@ -42,10 +42,7 @@ namespace pathsprefixsumarrays{
 class OutOfBoundsPositionInPath : std::out_of_range {
 
 public:
-     OutOfBoundsPositionInPath(const std::string &arg) : out_of_range(arg) {
-
-     }
-
+     OutOfBoundsPositionInPath(const std::string &arg) : out_of_range(arg) {}
 };
 class PathsPrefixSumArrays {
 
