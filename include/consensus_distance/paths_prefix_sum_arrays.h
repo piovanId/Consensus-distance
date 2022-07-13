@@ -149,7 +149,7 @@ public:
      * @param path_id id of the path (sequence).
      * @return a vector of size_t distances.
      */
-    std::vector<size_t> *get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
+    std::vector<size_t>* get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
 
 
     /**
