@@ -75,28 +75,33 @@ const std::map<gbwt::size_type, sdsl::sd_vector<>*>* PathsPrefixSumArrays::get_p
 }
 
 
-size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id){
+size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) {
     size_t distance = 0;
 
     // Distance between the same node
-    if(pos_node_1 == pos_node_2)
+    if (pos_node_1 == pos_node_2)
         return distance;
 
     // Initialize select operation (see select/rank)
     sdsl::sd_vector<>::select_1_type sdb_sel((*(psa))[path_id]);
 
-    if(pos_node_2 > (*(psa))[path_id]->size() ){
-        std::string error = "Error in 'get_distance_between_positions_in_path': the second position "+ std::to_string(pos_node_2)+" is outside the boundaries of the path [0:"+std::to_string((*(psa))[path_id]->size())+"]"+"\n";
+    if (pos_node_2 > (*(psa))[path_id]->size()) {
+        std::string error =
+                "Error in 'get_distance_between_positions_in_path': the second position " + std::to_string(pos_node_2) +
+                " is outside the boundaries of the path [0:" + std::to_string((*(psa))[path_id]->size()) + "]" + "\n";
         std::cerr << error;
         throw pathsprefixsumarrays::OutOfBoundsPositionInPath(error);
 
-    } else if( pos_node_1 > (*(psa))[path_id]->size()){
-        std::string error = "Error in 'get_distance_between_positions_in_path': the first position "+ std::to_string(pos_node_1)+" is outside the boundaries of the path [0:"+std::to_string((*(psa))[path_id]->size())+"]"+"\n";
+    } else if (pos_node_1 > (*(psa))[path_id]->size()) {
+        std::string error =
+                "Error in 'get_distance_between_positions_in_path': the first position " + std::to_string(pos_node_1) +
+                " is outside the boundaries of the path [0:" + std::to_string((*(psa))[path_id]->size()) + "]" + "\n";
         std::cerr << error;
         throw pathsprefixsumarrays::OutOfBoundsPositionInPath(error);
-    }else
+    } else {
+     //   std::cout << "qua ci stono arrivato con pos1:"<<std::to_string(pos_node_1)<<" pos2:"<<std::to_string(pos_node_2)<<" path_id:"<<std::to_string(path_id)<<std::endl;
         distance = get_distance_between_positions_in_path_aux(pos_node_1, pos_node_2, sdb_sel);
-
+    }
 
     return distance;
 }

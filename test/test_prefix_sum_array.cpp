@@ -484,7 +484,6 @@ namespace pathsprefixsumarrays {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             //testing the outer function
             ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 0, 0));
-            temp->get_distance_between_positions_in_path(0, 0, 0);
             if (i > 1) {
                 ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
                 //testing the aux function
@@ -492,6 +491,12 @@ namespace pathsprefixsumarrays {
                 sdsl::sd_vector<>::select_1_type sdb_sel(tempsa->at(0));
                 ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
                 ASSERT_EQ(3, temp->get_distance_between_positions_in_path_aux(1, 4, sdb_sel));
+
+             if(i>3) {
+                 ASSERT_EQ(12, temp->get_distance_between_positions_in_path(0, 4, 8));
+                 ASSERT_EQ(14, temp->get_distance_between_positions_in_path(0, 6, 8));
+             }
+
             }
         }
     }
