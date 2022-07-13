@@ -99,7 +99,7 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
         std::cerr << error;
         throw pathsprefixsumarrays::OutOfBoundsPositionInPath(error);
     } else {
-        std::cout << "qua ci stono arrivato con pos1:"<<std::to_string(pos_node_1)<<" pos2:"<<std::to_string(pos_node_2)<<" path_id:"<<std::to_string(path_id)<<std::endl;
+     //   std::cout << "qua ci stono arrivato con pos1:"<<std::to_string(pos_node_1)<<" pos2:"<<std::to_string(pos_node_2)<<" path_id:"<<std::to_string(path_id)<<std::endl;
         distance = get_distance_between_positions_in_path_aux(pos_node_1, pos_node_2, sdb_sel);
     }
 
