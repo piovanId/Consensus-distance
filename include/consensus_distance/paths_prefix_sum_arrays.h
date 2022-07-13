@@ -120,14 +120,14 @@ public:
      * Get fast locate used in Test.
      * @return fast_locate.
      */
-    gbwt::FastLocate* get_fast_locate() const;
+    const gbwt::FastLocate* get_fast_locate() const;
 
 
     /**
      * Get prefix sum arrays.
      * @return a map in which for each path we have the prefix sum array.
      */
-    std::map<gbwt::size_type, sdsl::sd_vector<>*>* get_prefix_sum_arrays() const;
+    const std::map<gbwt::size_type, sdsl::sd_vector<>*>* get_prefix_sum_arrays() const;
 
 
     /**

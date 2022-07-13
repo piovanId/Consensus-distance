@@ -4,7 +4,7 @@
  *  - Andrea Mariotti
  *
  *  TODO:
- *      - CONTROLLARE MEMORY LEAK CON VALGRIND
+ *      - CHECK MEMORY LEAK WITH VALGRIND
  *      - CHECK THE CONSTANT ERROR OF THE THROW THAT DAVIDE SENT YOU
  *      - GO ON WITH THE TESTS
  */
@@ -194,7 +194,12 @@ namespace pathsprefixsumarrays {
         for (auto psa: *prefix_sums_arrays) {
             ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa);
         }
+
+        int gfa_file_index = 0;
+
+        //(*prefix_sums_arrays)[gfa_file_index]->get_prefix_sum_arrays()
     }
+
 
     /**
      * Test the method PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::vector<size_t>* node_1_positions,
