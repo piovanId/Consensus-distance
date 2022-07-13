@@ -75,7 +75,7 @@ const std::map<gbwt::size_type, sdsl::sd_vector<>*>* PathsPrefixSumArrays::get_p
 }
 
 
-size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) {
+size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const {
     size_t distance = 0;
 
     // Distance between the same node
@@ -107,7 +107,7 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
 }
 
 
-size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel){
+size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2, sdsl::sd_vector<>::select_1_type &sdb_sel) const {
     if(pos_node_1 > pos_node_2){
         std::swap(pos_node_1, pos_node_2);
     }
@@ -147,7 +147,7 @@ PathsPrefixSumArrays::~PathsPrefixSumArrays() {
 }
 
 
-std::string PathsPrefixSumArrays::toString_sd_vectors() const{
+std::string PathsPrefixSumArrays::toString_sd_vectors() const {
     std::string temp="";
     auto iterator = (*psa).begin();
 
@@ -173,7 +173,7 @@ std::string PathsPrefixSumArrays::toString_sd_vectors() const{
 }
 
 
-std::string PathsPrefixSumArrays::toString() const{
+std::string PathsPrefixSumArrays::toString() const {
     std::string temp="";
     auto iterator = (*psa).begin();
 
@@ -203,7 +203,7 @@ std::string PathsPrefixSumArrays::toString() const{
 
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                             gbwt::node_type node_2,
-                                                                            size_t path_id){
+                                                                            size_t path_id) const {
     // If the path doesn't exist
     if (psa->find(path_id) == psa->end()) {
         return new std::vector<size_t>();
@@ -221,7 +221,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 }
 
 
-std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones){
+std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const {
     auto node_visits = fast_locate->decompressSA(node);
 
     std::vector<size_t>* node_positions = new std::vector<size_t>();
@@ -242,7 +242,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 
 
 // TODO: it could be helpful know at which path every distances belongs to
-std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) {
+std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const {
     std::vector<size_t> *distances = new std::vector<size_t>();
 
     std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
@@ -304,7 +304,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 }
 
 
-std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node){
+std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node) const {
     auto node_visits = fast_locate->decompressSA(node);
 
     std::map<size_t,std::vector<size_t>*> *distances_in_paths = new std::map<size_t,std::vector<size_t>*>();
@@ -332,7 +332,7 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
 
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::vector<size_t>* node_1_positions,
                                                                            std::vector<size_t>* node_2_positions,
-                                                                           size_t path_id){
+                                                                           size_t path_id) const{
     std::vector<size_t>* distances = new std::vector<size_t>();
 
     if(node_1_positions->empty() || node_2_positions->empty() || psa->find(path_id) == psa->end()) {

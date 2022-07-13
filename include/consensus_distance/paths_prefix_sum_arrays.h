@@ -66,7 +66,7 @@ private:
      * @return the distance between the two positions.
      */
     size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2,
-                                                      sdsl::sd_vector<>::select_1_type &sdb_sel);//todo reverse
+                                                      sdsl::sd_vector<>::select_1_type &sdb_sel) const;//todo reverse
 
 
     /**
@@ -77,7 +77,7 @@ private:
      * positions.
      * @return a vector of the positions of a node in the path.
      */
-    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones); //todo reverse
+    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const; //todo reverse
 
 public:
     /**
@@ -138,7 +138,7 @@ public:
      * @param path_id
      * @return the distance.
      */
-    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id); //todo reverse
+    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const; //todo reverse
 
 
     /**
@@ -149,7 +149,7 @@ public:
      * @param path_id id of the path (sequence).
      * @return a vector of size_t distances.
      */
-    std::vector<size_t> *get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id);
+    std::vector<size_t> *get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
 
 
     /**
@@ -158,7 +158,7 @@ public:
      * @param node_2
      * @return a vector with all the distance between two nodes.
      */
-    std::vector<size_t>* get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2);
+    std::vector<size_t>* get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const;
 
 
     /**
@@ -167,7 +167,7 @@ public:
      * @return a map where the key is the path id (sequence id) and the value is a pointer to a vector of positions in
      * that path.
      */
-    std::map<size_t,std::vector<size_t>*>* get_all_node_positions(gbwt::node_type node);
+    std::map<size_t,std::vector<size_t>*>* get_all_node_positions(gbwt::node_type node) const;
 
 
     /**
@@ -179,7 +179,7 @@ public:
      */
     std::vector<size_t>* get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
                                                                                 std::vector<size_t>* node_2_positions,
-                                                                                size_t path_id);
+                                                                                size_t path_id) const;
 };
-}// fine del namespace
+}// end of namespace pathsprefixsumarrays
 #endif //CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H
