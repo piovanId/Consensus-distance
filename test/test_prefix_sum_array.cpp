@@ -669,8 +669,12 @@ namespace pathsprefixsumarrays {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             size_t path_id=6;
             auto psa=(*temp).get_prefix_sum_arrays();
-            size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
-            
+            size_t ones;
+
+            if(psa->find(path_id) != psa->end()){
+                ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id)))(((*psa).at(path_id))->size());
+            }
+
         }
     }
 /**
