@@ -50,6 +50,7 @@ private:
     friend class PrefixSumArraysTest;
     FRIEND_TEST(PrefixSumArraysTest, get_distance_between_positions_in_path);
     FRIEND_TEST(PrefixSumArraysTest, get_all_nodes_distances);
+    FRIEND_TEST(PrefixSumArraysTest, get_positions_of_a_node_in_path);
 
 
     std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // prefix sum arrays (seq_id, prefix sum array)
@@ -75,7 +76,7 @@ private:
      * @param node
      * @param ones the number of ones inside the sd_vector prefix sum array representation. It is needed to compute the
      * positions.
-     * @return a vector of the positions of a node in the path.
+     * @return a non ordered vector of the positions of a node in the path.
      */
     std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const; //todo reverse
 

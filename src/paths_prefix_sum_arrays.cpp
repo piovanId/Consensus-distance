@@ -235,6 +235,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
         if(fast_locate->seqId(node_visits[i]) == path_id){
             node_positions->push_back(ones - fast_locate->seqOffset(node_visits[i]) - 1);
         }
+
     }
 
     return node_positions;
