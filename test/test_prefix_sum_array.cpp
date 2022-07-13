@@ -659,8 +659,15 @@ namespace pathsprefixsumarrays {
 
     }
 
-
-
+    TEST_F(PrefixSumArraysTest,get_positions_of_a_node_in_path){
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            size_t path_id=6;
+            auto psa=(*temp).get_prefix_sum_arrays();
+            size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+            
+        }
+    }
 /**
 0th graph:
 2[1],
