@@ -212,7 +212,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
     // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
     size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
 
-
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
     std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
@@ -223,11 +222,12 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
 std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const {
     auto node_visits = fast_locate->decompressSA(node);
-
+    bool reverse  = false;
     std::vector<size_t>* node_positions = new std::vector<size_t>();
 
     // If the node is 0 is not in the path || no node visits || path_id doesn't exist in the psa
-    if(node == 0 || node_visits.empty() || psa->find(path_id) == psa->end()){
+
+    if(node == 0 || node_visits.empty() || (path_id%2==0 && psa->find(path_id) == psa->end() )|| ( path_id%2!= 0 && psa->find(path_id-1) == psa->end() )){
         return node_positions;
     }
 
@@ -235,7 +235,6 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
         if(fast_locate->seqId(node_visits[i]) == path_id){
             node_positions->push_back(ones - fast_locate->seqOffset(node_visits[i]) - 1);
         }
-
     }
 
     return node_positions;
@@ -262,6 +261,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
         std::vector<size_t> *distances_in_path;
 
         if((*positions_node_2).find(key)  != (*positions_node_2).end()) {
+            //se il path_ley è dispari modifico le posizioni togliendo ogni posizione da (ones-1) e abbasso di 1 la key
             distances_in_path = get_all_nodes_distances_in_path((*positions_node_1)[key],
                                                                 (*positions_node_2)[key],
                                                                 key);

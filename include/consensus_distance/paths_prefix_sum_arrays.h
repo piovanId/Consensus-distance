@@ -69,7 +69,6 @@ private:
     size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2,
                                                       sdsl::sd_vector<>::select_1_type &sdb_sel) const;//todo reverse
 
-
     /**
      * Get all the positions of a node in a path.
      * @param path_id it's the sequence id (not GBWTGraph representation).
@@ -80,7 +79,11 @@ private:
      */
     std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const; //todo reverse
 
+
 public:
+
+
+
     /**
      * Default constructor.
      */

@@ -105,17 +105,55 @@ namespace pathsprefixsumarrays {
                 // Accessing VALUE from element pointed by it.
                 size_t ones;
 
-                if(psa->find(path_id) != psa->end()){
-                    ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id)))(((*psa).at(path_id))->size());
-                }
-                std::vector<size_t>* node_positions = prefix_sum_array->get_positions_of_a_node_in_path(path_id, node, ones);
 
-                ASSERT_EQ(params[i][test_path_index],*node_positions);
+
+                if(psa->find(path_id) != psa->end()  && (path_id % 2) == 0 ){
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id)))(((*psa).at(path_id))->size());
+                    std::vector<size_t>* node_positions = prefix_sum_array->get_positions_of_a_node_in_path(path_id, node, ones);
+                    std::cout << "file:"<< std::to_string(i)<<" path_id:"<<std::to_string(path_id)<<" ";
+                    ASSERT_EQ(params[i][test_path_index],*node_positions);
+                }
+
                 // Increment the Iterator to point to next entry
                 iterator++;
                 test_path_index++;
             }
         }
+
+
+        void ASSERT_NODE_POSITIONS_IN_PATH_DISP(PathsPrefixSumArrays* prefix_sum_array,
+                                           std::vector<std::vector<std::vector<size_t>>> &params,
+                                           gbwt::node_type node,
+                                           int i){
+            auto psa=(*prefix_sum_array).get_prefix_sum_arrays();
+
+            auto iterator = (*psa).begin();
+            int test_path_index=0;
+            while (iterator != (*psa).end())
+            {
+                size_t  path_id = iterator->first+1;
+
+                // Accessing VALUE from element pointed by it.
+                size_t ones;
+
+
+                 if((psa->find(path_id-1)!= psa->end() && (path_id % 2) != 0 )){
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id-1)))(((*psa).at(path_id-1))->size());
+                    std::vector<size_t>* node_positions = prefix_sum_array->get_positions_of_a_node_in_path(path_id, node, ones);
+                    std::cout << "file:"<< std::to_string(i)<< " path_id:"<<std::to_string(path_id)<<" ";
+
+                    ASSERT_EQ(params[i][test_path_index],*node_positions);
+                }
+
+                // Increment the Iterator to point to next entry
+                iterator++;
+                test_path_index++;
+            }
+        }
+
+
+
+
 
 
     };
@@ -731,15 +769,99 @@ namespace pathsprefixsumarrays {
                  {{2},{1},{2},{1}},
                  {{2},{1},{2}},
                  {{2},{1},{2},{1},{4,2,5},{1,2}},
-                 {{2},{1},{2},{1},{4,2,5}}}
+                 {{2},{1},{2},{1},{4,2,5}}},
+                //node 7
+                {{{}},
+                 {{}},
+                 {{},{},{},{}},
+                 {{},{},{}},
+                 {{},{},{},{},{},{}},
+                 {{},{},{},{},{}}},
+                //node 13
+                {{{}},
+                 {{}},
+                 {{},{},{},{}},
+                 {{},{},{}},
+                 {{},{},{},{},{},{}},
+                 {{},{},{},{},{}}},
+                //node 1
+                {{{}},
+                 {{}},
+                 {{},{},{},{}},
+                 {{},{},{}},
+                 {{},{},{},{},{},{}},
+                 {{},{},{},{},{}}}
         };
-        std::vector<size_t> node_ids ={2,12,15,0,6};
+
+        std::vector<std::vector<std::vector<std::vector<size_t>>>> check_disp = {
+
+                //node 7
+                {{{}},
+                 {{}},
+                 {{2},{1},{1},{2}},
+                 {{2},{1},{1}},
+                 {{2},{1},{1},{2},{4,2,1},{3,2}},
+                 {{2},{1},{1},{2},{4,2,1}}},
+                //node 4
+                {{{}},
+                 {{}},
+                 {{},{},{},{}},
+                 {{},{},{}},
+                 {{},{},{},{},{},{}},
+                 {{},{},{},{},{}}},
+                 //node 2
+                {{{}},
+                 {{}},
+                 {{},{},{},{}},
+                 {{},{},{}},
+                 {{},{},{},{},{},{}},
+                 {{},{},{},{},{}}},
+                //node 3
+                {{{0}},
+                 {{0,1}},
+                 {{4},{2},{3},{3}},
+                 {{4},{2},{3}},
+                 {{4},{2},{3},{3},{6,3},{4}},
+                 {{4},{2},{3},{3},{6,3}}},
+                //node 13
+                {{{}},
+                 {{}},
+                 {{0},{},{},{0}},
+                 {{0},{},{}},
+                 {{0},{},{},{0},{},{0}},
+                 {{0},{},{},{0},{}}},
+        };
+
+
+        std::vector<size_t> node_ids ={2,12,15,0,6,7,13,1};
         for (int check_index = 0; check_index < check.size(); ++check_index) {
 
             for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
                 auto psa=(*temp).get_prefix_sum_arrays();
                 ASSERT_NODE_POSITIONS_IN_PATH(temp,check[check_index],node_ids[check_index],i);
+            }
+
+        }
+
+        std::vector<size_t> node_ids_disp ={7,4,2,3,13};
+        for (int check_index = 0; check_index < check_disp.size(); ++check_index) {
+
+            for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+                auto psa=(*temp).get_prefix_sum_arrays();
+                ASSERT_NODE_POSITIONS_IN_PATH_DISP(temp,check_disp[check_index],node_ids_disp[check_index],i);
+            }
+
+        }
+
+        std::vector<size_t> node_ids_out ={0,17,2};
+        for (int check_index = 0; check_index < check_disp.size(); ++check_index) {
+
+            for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+                auto psa=(*temp).get_prefix_sum_arrays();
+                ASSERT_NODE_POSITIONS_IN_PATH_DISP(temp,check_disp[check_index],node_ids_disp[check_index],i);
             }
 
         }
@@ -822,6 +944,35 @@ namespace pathsprefixsumarrays {
 } // End namespace
 int main(int argc, char **argv)  {
     std::cout << "MAIN RUN ALL TESTS." << std::endl;
+
+  /*  //begin debug
+    auto gfa_parse = gbwtgraph::gfa_to_gbwt("../test/cyclic_graph_odd_paths.gfa");
+    const gbwt::GBWT& index = *(gfa_parse.first);
+    gbwtgraph::GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
+
+    pathsprefixsumarrays::PathsPrefixSumArrays *prefixSumArrays = new pathsprefixsumarrays::PathsPrefixSumArrays(graph);
+    gbwt::FastLocate*  localfastlocate = new gbwt::FastLocate(*graph.index);
+
+    auto temp =localfastlocate->decompressSA(7);
+
+    for (int i = 0; i < temp.size(); ++i) {
+        std::cout << std::to_string(temp[i])<<" "<<std::to_string(localfastlocate->seqId(temp[i]))<<" - ";
+    }
+    auto psa = prefixSumArrays->get_prefix_sum_arrays();
+    size_t path_id=9;
+    size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id-1)))(((*psa).at(path_id-1))->size());
+
+
+    auto positions = prefixSumArrays->get_positions_of_a_node_in_path(9,7,ones);//privato
+    std::cout <<std::endl;
+    for (int i = 0; i < positions->size(); ++i) {
+        std::cout << std::to_string((*positions)[i])<<" ";
+    }
+    //end debug*/
+
+
+
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+   return RUN_ALL_TESTS();
+    return 0;
 }
