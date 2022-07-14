@@ -90,11 +90,11 @@ namespace pathsprefixsumarrays {
             gfa_parses = nullptr;
         }
 
-        void ASSERT_NODE_POSITIONS_IN_PATH(PathsPrefixSumArrays* prefix_sum_array,
+        void ASSERT_NODE_POSITIONS_IN_PATH_EVEN(PathsPrefixSumArrays* paths_prefix_sum_arrays,
                                            std::vector<std::vector<std::vector<size_t>>> &params,
                                            gbwt::node_type node,
                                            int i){
-            auto psa=(*prefix_sum_array).get_prefix_sum_arrays();
+            auto psa=(*paths_prefix_sum_arrays).get_prefix_sum_arrays();
 
             auto iterator = (*psa).begin();
             int test_path_index=0;
@@ -109,8 +109,7 @@ namespace pathsprefixsumarrays {
 
                 if(psa->find(path_id) != psa->end()  && (path_id % 2) == 0 ){
                     ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id)))(((*psa).at(path_id))->size());
-                    std::vector<size_t>* node_positions = prefix_sum_array->get_positions_of_a_node_in_path(path_id, node, ones);
-                    std::cout << "file:"<< std::to_string(i)<<" path_id:"<<std::to_string(path_id)<<" ";
+                    std::vector<size_t>* node_positions = paths_prefix_sum_arrays->get_positions_of_a_node_in_path(path_id, node, ones);
                     ASSERT_EQ(params[i][test_path_index],*node_positions);
                 }
 
@@ -121,11 +120,11 @@ namespace pathsprefixsumarrays {
         }
 
 
-        void ASSERT_NODE_POSITIONS_IN_PATH_DISP(PathsPrefixSumArrays* prefix_sum_array,
+        void ASSERT_NODE_POSITIONS_IN_PATH_EVEN_ODD(PathsPrefixSumArrays* paths_prefix_sum_arrays,
                                            std::vector<std::vector<std::vector<size_t>>> &params,
                                            gbwt::node_type node,
                                            int i){
-            auto psa=(*prefix_sum_array).get_prefix_sum_arrays();
+            auto psa=(*paths_prefix_sum_arrays).get_prefix_sum_arrays();
 
             auto iterator = (*psa).begin();
             int test_path_index=0;
@@ -139,8 +138,7 @@ namespace pathsprefixsumarrays {
 
                  if((psa->find(path_id-1)!= psa->end() && (path_id % 2) != 0 )){
                     ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id-1)))(((*psa).at(path_id-1))->size());
-                    std::vector<size_t>* node_positions = prefix_sum_array->get_positions_of_a_node_in_path(path_id, node, ones);
-                    std::cout << "file:"<< std::to_string(i)<< " path_id:"<<std::to_string(path_id)<<" ";
+                    std::vector<size_t>* node_positions = paths_prefix_sum_arrays->get_positions_of_a_node_in_path(path_id, node, ones);
 
                     ASSERT_EQ(params[i][test_path_index],*node_positions);
                 }
@@ -151,11 +149,16 @@ namespace pathsprefixsumarrays {
             }
         }
 
-
-
-
-
-
+        void ASSERT_NODE_POSITIONS_WITH_WRONG_PATH(PathsPrefixSumArrays* paths_prefix_sum_arrays,
+                                                   gbwt::node_type node,
+                                                   size_t path_id,
+                                                   int gfa_file_index){
+            size_t fake_ones = 42;
+            auto positions = (*prefix_sums_arrays)[gfa_file_index]->get_positions_of_a_node_in_path(path_id,
+                                                                                                    node,
+                                                                                                    fake_ones);
+            ASSERT_EQ(positions->empty(), true);
+        }
     };
 
 
@@ -185,6 +188,10 @@ namespace pathsprefixsumarrays {
     };
 
 
+    /**
+     * This structure is used to shrink the code and store parameters to perform different tests in the
+     * ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS method.
+     */
     struct parameters_test_graph_vectors{
         std::vector<size_t> positions_node_1;  // First node
         std::vector<size_t> positions_node_2;  // Second node
@@ -246,7 +253,6 @@ namespace pathsprefixsumarrays {
                           distances->at(params[index_test].index_distance_test));
         }
     }
-
 
     /**
      * Test the constructors
@@ -546,6 +552,7 @@ namespace pathsprefixsumarrays {
 
     }
 
+
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
@@ -567,6 +574,7 @@ namespace pathsprefixsumarrays {
             }
         }
     }
+
 
     TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
         size_t A = 2;
@@ -650,7 +658,6 @@ namespace pathsprefixsumarrays {
     }
 
 
-
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {
 
         std::vector<std::vector<std::vector<size_t>>> check = {{{0}},
@@ -730,6 +737,7 @@ namespace pathsprefixsumarrays {
 //DEBUG PRINT */
 
     }
+
 
     TEST_F(PrefixSumArraysTest,get_positions_of_a_node_in_path){
 
@@ -839,7 +847,7 @@ namespace pathsprefixsumarrays {
             for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
                 auto psa=(*temp).get_prefix_sum_arrays();
-                ASSERT_NODE_POSITIONS_IN_PATH(temp,check[check_index],node_ids[check_index],i);
+                ASSERT_NODE_POSITIONS_IN_PATH_EVEN(temp,check[check_index],node_ids[check_index],i);
             }
 
         }
@@ -850,7 +858,7 @@ namespace pathsprefixsumarrays {
             for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
                 auto psa=(*temp).get_prefix_sum_arrays();
-                ASSERT_NODE_POSITIONS_IN_PATH_DISP(temp,check_disp[check_index],node_ids_disp[check_index],i);
+                ASSERT_NODE_POSITIONS_IN_PATH_EVEN_ODD(temp,check_disp[check_index],node_ids_disp[check_index],i);
             }
 
         }
@@ -861,9 +869,31 @@ namespace pathsprefixsumarrays {
             for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
                 auto psa=(*temp).get_prefix_sum_arrays();
-                ASSERT_NODE_POSITIONS_IN_PATH_DISP(temp,check_disp[check_index],node_ids_disp[check_index],i);
+                ASSERT_NODE_POSITIONS_IN_PATH_EVEN_ODD(temp,check_disp[check_index],node_ids_disp[check_index],i);
             }
 
+        }
+
+
+        // Non existing nodes and non existing paths tests
+        std::vector<std::pair<size_t,  gbwt::node_type>> test = {{2,17},
+                                                                 {1, 17},
+                                                                 {3, 17},
+                                                                 {12, 17},
+                                                                 {13, 17},
+                                                                 {6, 17},
+                                                                 {20, 20},
+                                                                 {20, 0},
+                                                                 {20, 12},
+                                                                 {20, 10}
+                                                                };
+
+        for(int gfa_file_index=0; gfa_file_index <  prefix_sums_arrays->size(); ++gfa_file_index){
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[gfa_file_index];
+
+            for(int test_index = 0; test_index < test.size(); ++test_index){
+                ASSERT_NODE_POSITIONS_WITH_WRONG_PATH(temp,  test[test_index].first,test[test_index].second, gfa_file_index);
+            }
         }
     }
 /**
@@ -945,34 +975,6 @@ namespace pathsprefixsumarrays {
 int main(int argc, char **argv)  {
     std::cout << "MAIN RUN ALL TESTS." << std::endl;
 
-  /*  //begin debug
-    auto gfa_parse = gbwtgraph::gfa_to_gbwt("../test/cyclic_graph_odd_paths.gfa");
-    const gbwt::GBWT& index = *(gfa_parse.first);
-    gbwtgraph::GBWTGraph graph(*(gfa_parse.first), *(gfa_parse.second));
-
-    pathsprefixsumarrays::PathsPrefixSumArrays *prefixSumArrays = new pathsprefixsumarrays::PathsPrefixSumArrays(graph);
-    gbwt::FastLocate*  localfastlocate = new gbwt::FastLocate(*graph.index);
-
-    auto temp =localfastlocate->decompressSA(7);
-
-    for (int i = 0; i < temp.size(); ++i) {
-        std::cout << std::to_string(temp[i])<<" "<<std::to_string(localfastlocate->seqId(temp[i]))<<" - ";
-    }
-    auto psa = prefixSumArrays->get_prefix_sum_arrays();
-    size_t path_id=9;
-    size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id-1)))(((*psa).at(path_id-1))->size());
-
-
-    auto positions = prefixSumArrays->get_positions_of_a_node_in_path(9,7,ones);//privato
-    std::cout <<std::endl;
-    for (int i = 0; i < positions->size(); ++i) {
-        std::cout << std::to_string((*positions)[i])<<" ";
-    }
-    //end debug*/
-
-
-
     ::testing::InitGoogleTest(&argc, argv);
-   return RUN_ALL_TESTS();
-    return 0;
+    return RUN_ALL_TESTS();
 }
