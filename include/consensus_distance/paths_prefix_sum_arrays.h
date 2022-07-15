@@ -39,11 +39,30 @@
 
 namespace pathsprefixsumarrays{
 
-class OutOfBoundsPositionInPath : std::out_of_range {
+// Exceptions
+class OutOfBoundsPositionInPathException : std::out_of_range {
 
 public:
-     OutOfBoundsPositionInPath(const std::string &arg) : out_of_range(arg) {}
+    //TODO: test that has to be called
+    OutOfBoundsPositionInPathException(const std::string &arg) : out_of_range(arg) {}
+
+    const char * what() {
+        return std::out_of_range::what();
+    }
 };
+
+class PathNotInGraphException : std::invalid_argument {
+public:
+
+    PathNotInGraphException(const std::string &arg) : std::invalid_argument(arg) {}
+
+    const char * what() {
+        return std::invalid_argument::what();
+    }
+};
+
+
+// Class
 class PathsPrefixSumArrays {
 
 private:
@@ -77,7 +96,7 @@ private:
      * positions.
      * @return a non ordered vector of the positions of a node in the path.
      */
-    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const; //todo reverse
+    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const;
 
 
 public:

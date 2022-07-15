@@ -77,29 +77,64 @@ const std::map<gbwt::size_type, sdsl::sd_vector<>*>* PathsPrefixSumArrays::get_p
 
 size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const {
     size_t distance = 0;
+    size_t ones;
+    sdsl::sd_vector<>::select_1_type sdb_sel;
+
+    bool reversed_path = false;
 
     // Distance between the same node
     if (pos_node_1 == pos_node_2)
         return distance;
 
-    // Initialize select operation (see select/rank)
-    sdsl::sd_vector<>::select_1_type sdb_sel((*(psa))[path_id]);
 
-    if (pos_node_2 > (*(psa))[path_id]->size()) {
+
+    if((path_id % 2 == 0 && psa->find(path_id) == psa->end()) || (path_id % 2 != 0 && psa->find(path_id - 1) == psa->end())){
+        std::string error = "Error in 'get_distance_between_positions_in_path': the path_id " + std::to_string(path_id)
+                            + " doesn't exist in the graph.\n";
+
+        throw pathsprefixsumarrays::PathNotInGraphException(error);
+    }
+
+
+    // If the path is reversed (odd) we don't have it memorized, so we use the even one
+    if (path_id % 2 != 0 && psa->find(path_id - 1) != psa->end()) {
+        reversed_path = true;
+        --path_id;
+
+        // Compute ones == compute number of nodes in the path
+        ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+
+        //TODO: try to find a way to avoid duplicated code
+        //TODO: try to memorize this for every path and see if it's faster or not and how much memory it consumes with big graphs
+        if(pos_node_1 < ones && pos_node_2 < ones){
+            pos_node_1 = ones - pos_node_1 - 1;
+            pos_node_2 = ones - pos_node_2 - 1;
+        }
+    }
+
+    // Compute ones == compute number of nodes in the path
+    if(!reversed_path)
+        ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+
+    // Initialize select operation (see select/rank)
+    sdb_sel = sdsl::sd_vector<>::select_1_type((*(psa))[path_id]);
+
+
+    if (pos_node_2 >= ones) {
         std::string error =
                 "Error in 'get_distance_between_positions_in_path': the second position " + std::to_string(pos_node_2) +
-                " is outside the boundaries of the path [0:" + std::to_string((*(psa))[path_id]->size()) + "]" + "\n";
-        std::cerr << error;
-        throw pathsprefixsumarrays::OutOfBoundsPositionInPath(error);
+                " is outside the boundaries of the path [0:" + std::to_string(ones - 1) + "]" + "\n";
 
-    } else if (pos_node_1 > (*(psa))[path_id]->size()) {
+        throw pathsprefixsumarrays::OutOfBoundsPositionInPathException(error);
+
+    } else if (pos_node_1 >= ones) {
         std::string error =
                 "Error in 'get_distance_between_positions_in_path': the first position " + std::to_string(pos_node_1) +
-                " is outside the boundaries of the path [0:" + std::to_string((*(psa))[path_id]->size()) + "]" + "\n";
-        std::cerr << error;
-        throw pathsprefixsumarrays::OutOfBoundsPositionInPath(error);
+                " is outside the boundaries of the path [0:" + std::to_string(ones - 1) + "]" + "\n";
+
+        throw pathsprefixsumarrays::OutOfBoundsPositionInPathException(error);
+
     } else {
-     //   std::cout << "qua ci stono arrivato con pos1:"<<std::to_string(pos_node_1)<<" pos2:"<<std::to_string(pos_node_2)<<" path_id:"<<std::to_string(path_id)<<std::endl;
         distance = get_distance_between_positions_in_path_aux(pos_node_1, pos_node_2, sdb_sel);
     }
 
