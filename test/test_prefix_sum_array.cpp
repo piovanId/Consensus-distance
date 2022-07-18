@@ -602,7 +602,7 @@ namespace pathsprefixsumarrays {
      *                                                                        gbwt::node_type node_2,
      *                                                                        size_t path_id )
      */
-    TEST_F(PrefixSumArraysTest, GetAllNodeDistanceInAPathNodeInInputVersion) {
+    TEST_F(PrefixSumArraysTest, get_all_nodes_distances_in_path_node_IDs) {
         /*
          * All possible nodes in the test files are:
          *      In the more nodes graphs:
