@@ -86,7 +86,7 @@ private:
      * @return the distance between the two positions.
      */
     size_t get_distance_between_positions_in_path_aux(size_t pos_node_1, size_t pos_node_2,
-                                                      sdsl::sd_vector<>::select_1_type &sdb_sel) const;//todo reverse
+                                                      sdsl::sd_vector<>::select_1_type &sdb_sel) const;
 
     /**
      * Get all the positions of a node in a path.
@@ -161,7 +161,7 @@ public:
      * @param path_id
      * @return the distance.
      */
-    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const; //todo reverse
+    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const; // niente hai fatto
 
 
     /**
@@ -172,7 +172,7 @@ public:
      * @param path_id id of the path (sequence).
      * @return a vector of size_t distances.
      */
-    std::vector<size_t>* get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
+    std::vector<size_t>* get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const; // niente hai fatto
 
 
     /**
@@ -185,7 +185,7 @@ public:
 
 
     /**
-     * Get all node positions in every path that visits the node.
+     * Get all node positions in every path that visits the node. both forward and reverse.
      * @param node
      * @return a map where the key is the path id (sequence id) and the value is a pointer to a vector of positions in
      * that path.
@@ -202,7 +202,7 @@ public:
      */
     std::vector<size_t>* get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
                                                                                 std::vector<size_t>* node_2_positions,
-                                                                                size_t path_id) const;
+                                                                                size_t path_id) const; // niente hai fatto
 };
 }// end of namespace pathsprefixsumarrays
 #endif //CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H

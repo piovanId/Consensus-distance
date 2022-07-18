@@ -239,13 +239,18 @@ std::string PathsPrefixSumArrays::toString() const {
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                             gbwt::node_type node_2,
                                                                             size_t path_id) const {
+
+
     // If the path doesn't exist
-    if (psa->find(path_id) == psa->end()) {
+    if (psa->find(path_id) == psa->end() ||( path_id%2 != 0 && psa->find(path_id-1) == psa->end())) {
         return new std::vector<size_t>();
     }
-
-    // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
-    size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+    size_t ones;
+    if (path_id%2==0) {
+        // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
+         ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+    }else
+        ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id-1]))(((*psa)[path_id-1])->size());
 
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
@@ -261,7 +266,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
     std::vector<size_t>* node_positions = new std::vector<size_t>();
 
     // If the node is 0 is not in the path || no node visits || path_id doesn't exist in the psa
-
+    // todo node_visits.empty()  should not be needed
     if(node == 0 || node_visits.empty() || (path_id%2==0 && psa->find(path_id) == psa->end() )|| ( path_id%2!= 0 && psa->find(path_id-1) == psa->end() )){
         return node_positions;
     }
@@ -343,26 +348,30 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node) const {
     auto node_visits = fast_locate->decompressSA(node);
 
-    std::map<size_t,std::vector<size_t>*> *distances_in_paths = new std::map<size_t,std::vector<size_t>*>();
+    std::map<size_t,std::vector<size_t>*> *node_positions = new std::map<size_t,std::vector<size_t>*>();
 
     if(node == 0 || node_visits.empty()){
-        return distances_in_paths;
+        return node_positions;
     }
 
     for (int i = 0; i < node_visits.size() ; ++i) {
         gbwt::size_type path_id =fast_locate->seqId(node_visits[i]); // Sequence id
 
         // Todo: we could optimize this operation by memorizing the ones, try to find out if it is a good way.
-        size_t ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
-
-        if((*distances_in_paths)[path_id] == nullptr){
-            (*distances_in_paths)[path_id] = new std::vector<size_t>();
+        size_t ones;
+        if(path_id%2==0){
+             ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+        } else{
+             ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id-1]))(((*psa)[path_id-1])->size());
         }
-
-        ((*distances_in_paths)[path_id])->push_back(ones - fast_locate->seqOffset(node_visits[i]) - 1);
+        //initialize che map if it's not been initialized before;
+        if((*node_positions)[path_id] == nullptr){
+            (*node_positions)[path_id] = new std::vector<size_t>();
+        }
+        ((*node_positions)[path_id])->push_back(ones - fast_locate->seqOffset(node_visits[i]) - 1);
 
     }
-    return distances_in_paths;
+    return node_positions;
 }
 
 
@@ -371,7 +380,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
                                                                            size_t path_id) const{
     std::vector<size_t>* distances = new std::vector<size_t>();
 
-    if(node_1_positions->empty() || node_2_positions->empty() || psa->find(path_id) == psa->end()) {
+    if(node_1_positions->empty() || node_2_positions->empty() || (psa->find(path_id) == psa->end() || (path_id%2!=0 && psa->find(path_id-1) == psa->end() ))) {
         return distances;
     }
 

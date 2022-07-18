@@ -255,6 +255,28 @@ namespace pathsprefixsumarrays {
     }
 
     /**
+ * Used to remove duplicated code from the test GetAllNodeDistanceInAPathVectorInInputVersion, given the params compute
+ * all the distance between two vector of positions of two nodes and assert the number of compute distances and the distances.
+ * Test the cases where a OutOfBoundsPositionInPathException is thrown.
+ * @param psa the one created in the constructor of the fixture class PrefixSumArraysTest.
+ * @param params is a vector of structures parameters_test_graph_vectors.
+ * @param gfa_file_index index of the gfa_file in the vector gfa_files_paths defined in the constructor of PrefixSumArraysTest.
+ */
+    void ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(std::vector<PathsPrefixSumArrays*> const psa,
+                                                                 std::vector<parameters_test_graph_vectors> params,
+                                                                 int gfa_file_index){
+        int number_of_tests_on_graph = params.size();
+        for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
+
+            EXPECT_THROW((*psa[gfa_file_index]).
+                    get_all_nodes_distances_in_path(&params[index_test].positions_node_1,
+                                                    &params[index_test].positions_node_2,
+                                                    params[index_test].path_id),OutOfBoundsPositionInPathException);
+        }
+    }
+
+
+    /**
      * Test the constructors
      */
     TEST_F(PrefixSumArraysTest, CreationPrefixSumArrayTest) {
@@ -298,28 +320,48 @@ namespace pathsprefixsumarrays {
          */
         int gfa_file_index = 0;
 
-        parameters_test_graph_vectors parameters_first_graph = {{0}, {0}, 0, 0, 0, 0};
-        std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>(
+        std::vector<parameters_test_graph_vectors> parameters_first_graph_OutOfBounds ={ {{0}, {420000000}, 0, 0, 0, 0},
+                                                                                         {{420000000}, {420000000}, 0, 0, 0, 0},
+                // {{420000000}, {0}, 0, 0, 0, 0},
+                //   {{}, {0}, 0, 0, 0, 0},
+                //     {{0}, {}, 0, 0, 0, 0},
+                // {{2342346}, {}, 0, 0, 0, 0},
+
+
+
+        };
+
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_first_graph_OutOfBounds, gfa_file_index);
+
+
+        std::vector<parameters_test_graph_vectors> parameters_first_graph ={ {{0}, {0}, 0, 0, 0, 0} };
+       /* std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>(
                 (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(&parameters_first_graph.positions_node_1,
                                                                                          &parameters_first_graph.positions_node_2,
-                                                                                         parameters_first_graph.path_id));
+                                                                                         parameters_first_graph.path_id));*/
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
+
+
 
         // only one distance computable because there is only one path of length 1
-        ASSERT_EQ(parameters_first_graph.assert_length_distance, distances->size());
+       // ASSERT_EQ(parameters_first_graph.assert_length_distance, distances->size());
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
          */
         gfa_file_index = 1;
 
-        parameters_test_graph_vectors parameters_second_graph = {{0, 1}, {0, 1}, 1, 0, 0, 0};
+        std::vector<parameters_test_graph_vectors>  parameters_second_graph = {{{0, 1}, {0, 1}, 1, 0, 0, 0}};
 
-        distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(&parameters_second_graph.positions_node_1,
+      /*  distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(&parameters_second_graph.positions_node_1,
                                                                                                  &parameters_second_graph.positions_node_2,
-                                                                                                 parameters_second_graph.path_id));
-        // 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
+                                                                                                 parameters_second_graph.path_id));*/
+
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameters_second_graph, gfa_file_index);
+
+        /*// 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
         ASSERT_EQ(parameters_second_graph.assert_length_distance, distances->size());
-        ASSERT_EQ(parameters_second_graph.assert_distance, distances->at(parameters_second_graph.index_distance_test));
+        ASSERT_EQ(parameters_second_graph.assert_distance, distances->at(parameters_second_graph.index_distance_test));*/
 
         /**
          * Acyclic graph, even paths (4), all distances
