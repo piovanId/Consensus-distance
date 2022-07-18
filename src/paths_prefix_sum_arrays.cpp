@@ -380,7 +380,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
                                                                            size_t path_id) const{
     std::vector<size_t>* distances = new std::vector<size_t>();
 
-    if(node_1_positions->empty() || node_2_positions->empty() || (psa->find(path_id) == psa->end() || (path_id%2!=0 && psa->find(path_id-1) == psa->end() ))) {
+    if(node_1_positions->empty() || node_2_positions->empty() || (path_id%2==0 && psa->find(path_id) == psa->end()) || (path_id%2!=0 && psa->find(path_id-1) == psa->end() )) {
         return distances;
     }
 

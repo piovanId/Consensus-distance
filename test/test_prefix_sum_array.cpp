@@ -325,29 +325,24 @@ namespace pathsprefixsumarrays {
                 {{420000000}, {420000000}, 0, 0, 0, 0},
                 {{420000000}, {0}, 0, 0, 0, 0},
 
-//                   {{}, {0}, 0, 0, 0, 0},
-                //     {{0}, {}, 0, 0, 0, 0},
-               //  {{2342346}, {}, 0, 0, 0, 0},
+                {{420000000}, {0}, 0, 0, 1, 0},
+                {{420000000}, {420000000}, 0, 0, 1, 0},
+                {{0}, {420000000}, 0, 0, 1, 0},
         };
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_first_graph_OutOfBounds, gfa_file_index);
 
 
+        std::vector<parameters_test_graph_vectors> parameters_first_graph ={ {{0}, {0}, 0, 0, 0, 0},
+                                                                             {{}, {0}, 0, 0, 0, 0},
+                                                                             {{0}, {}, 0, 0, 0, 0},
+                                                                             {{2342346}, {}, 0, 0, 0, 0},
+                                                                             {{}, {2342346}, 0, 0, 0, 0},
 
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-        std::cout << std::endl;
-
-
-
-        std::vector<parameters_test_graph_vectors> parameters_first_graph ={ {{0}, {0}, 0, 0, 0, 0} };
+                                                                             {{0}, {0}, 0, 0, 1, 0},
+                                                                             {{}, {0}, 0, 0, 1, 0},
+                                                                             {{0}, {}, 0, 0, 1, 0},
+                                                                             {{}, {2342346}, 0, 0, 1, 0}
+                                                                             };
        /* std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>(
                 (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(&parameters_first_graph.positions_node_1,
                                                                                          &parameters_first_graph.positions_node_2,
@@ -364,13 +359,39 @@ namespace pathsprefixsumarrays {
          */
         gfa_file_index = 1;
 
-        std::vector<parameters_test_graph_vectors>  parameters_second_graph = {{{0, 1}, {0, 1}, 1, 0, 0, 0}};
+        std::vector<parameters_test_graph_vectors>  parameters_second_graph = {{{0, 1}, {0, 1}, 1, 0, 0, 0},
+                                                                                {{0}, {0}, 0, 0, 0, 0},
+                                                                                {{}, {0}, 0, 0, 0, 0},
+                                                                                {{0}, {}, 0, 0, 0, 0},
+                                                                                {{2342346}, {}, 0, 0, 0, 0},
+                                                                                {{}, {2342346}, 0, 0, 0, 0},
 
-      /*  distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(&parameters_second_graph.positions_node_1,
-                                                                                                 &parameters_second_graph.positions_node_2,
-                                                                                                 parameters_second_graph.path_id));*/
+                                                                                {{1}, {1}, 0, 0, 1, 0},
+                                                                               {{0, 1}, {0, 1}, 1, 0, 1,0 },
+                                                                               {{}, {1}, 0, 0, 1, 0},
+                                                                                {{1}, {}, 0, 0, 1, 0},
+                                                                                {{}, {2342346}, 0, 0, 1, 0}};
+
+
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameters_second_graph, gfa_file_index);
+
+        std::vector<parameters_test_graph_vectors> parameters_second_graph_OutOfBounds ={
+                {{0}, {420000000}, 0, 0, 0, 0},
+                {{420000000}, {420000000}, 0, 0, 0, 0},
+                {{420000000}, {0}, 0, 0, 0, 0},
+                {{420000000}, {1}, 0, 0, 0, 1},
+                {{0, 2346}, {1}, 1, 0, 1,0 },
+                {{0}, {1,2346}, 1, 0, 0,0 },
+                {{0}, {1,2346}, 1, 0, 1,0 },
+                {{0}, {2346,1}, 1, 0, 1,0 },
+                {{420000000}, {420000000}, 0, 0, 0, 1},
+                {{1}, {420000000}, 0, 0, 0, 1},
+        };
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_first_graph_OutOfBounds, gfa_file_index);
+
+
+
 
         /*// 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
         ASSERT_EQ(parameters_second_graph.assert_length_distance, distances->size());
@@ -441,6 +462,13 @@ namespace pathsprefixsumarrays {
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameter_fifth_graph_vector, gfa_file_index);
 
+        try{
+            std::vector<parameters_test_graph_vectors> parameters_first_graph ={ {{1,15}, {0}, 0, 0, 0, 0}};
+            ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
+        }catch (...){
+            std::cout<< std::endl<<"ohlelle ohllala vfaccela vede faccela tocca";
+
+        }
 
         /**
          * Cyclic graph, even paths (3), all distances
