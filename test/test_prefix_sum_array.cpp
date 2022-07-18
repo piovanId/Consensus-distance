@@ -320,18 +320,31 @@ namespace pathsprefixsumarrays {
          */
         int gfa_file_index = 0;
 
-        std::vector<parameters_test_graph_vectors> parameters_first_graph_OutOfBounds ={ {{0}, {420000000}, 0, 0, 0, 0},
-                                                                                         {{420000000}, {420000000}, 0, 0, 0, 0},
-                // {{420000000}, {0}, 0, 0, 0, 0},
-                //   {{}, {0}, 0, 0, 0, 0},
+        std::vector<parameters_test_graph_vectors> parameters_first_graph_OutOfBounds ={
+                {{0}, {420000000}, 0, 0, 0, 0},
+                {{420000000}, {420000000}, 0, 0, 0, 0},
+                {{420000000}, {0}, 0, 0, 0, 0},
+
+//                   {{}, {0}, 0, 0, 0, 0},
                 //     {{0}, {}, 0, 0, 0, 0},
-                // {{2342346}, {}, 0, 0, 0, 0},
-
-
-
+               //  {{2342346}, {}, 0, 0, 0, 0},
         };
-
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_first_graph_OutOfBounds, gfa_file_index);
+
+
+
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+        std::cout << std::endl;
+
 
 
         std::vector<parameters_test_graph_vectors> parameters_first_graph ={ {{0}, {0}, 0, 0, 0, 0} };

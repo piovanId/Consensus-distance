@@ -412,9 +412,22 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
     do{
 
         if(node_1_positions->at(pivot_1) == node_2_positions->at(pivot_2)){ // because if they are equal you don't have to compute two times the distances
-            if(pivot_2 == node_2_positions->size() - 1)
-               exit=true;
+            if(pivot_2 == node_2_positions->size() - 1) {
+                exit = true;
+                size_t ones;
+                if (path_id % 2 == 0) {
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+                } else
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id - 1]))(((*psa)[path_id - 1])->size());
+                if (node_1_positions->at(pivot_1) >= ones || node_2_positions->at(pivot_2) >= ones) {
+                    std::string error =
+                            "Error in 'get_all_nodes_distances_in_path': position " +
+                            std::to_string(node_2_positions->at(pivot_2)) +
+                            " is outside the boundaries of the path [0:" + std::to_string(ones - 1) + "]" + "\n";
 
+                    throw pathsprefixsumarrays::OutOfBoundsPositionInPathException(error);
+                }
+            }
             ++ pivot_2;
         }
 
@@ -437,6 +450,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
 
 
         while(!exit && j < end){
+
             if(iterate_on_node_2_positions) {
                 (*distances).push_back(PathsPrefixSumArrays::get_distance_between_positions_in_path(node_1_positions->at(i),
                                                                                                     node_2_positions->at(j),
@@ -448,7 +462,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
             }
             ++ j;
         }
-    }while(pivot_1 < node_1_positions->size() && pivot_2 < node_2_positions->size());
+    }while(pivot_1 < node_1_positions->size() && pivot_2 < node_2_positions->size() && !exit);
 
     return distances;
 }
