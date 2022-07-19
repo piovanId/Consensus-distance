@@ -108,7 +108,7 @@ private:
      */
     std::vector<size_t>* get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
                                                           std::vector<size_t>* node_2_positions,
-                                                          size_t path_id) const; // niente hai fatto
+                                                          size_t path_id) const;
 
 public:
 
@@ -172,7 +172,7 @@ public:
      * @param path_id
      * @return the distance.
      */
-    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const; // niente hai fatto
+    size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const;
 
 
     /**
@@ -183,7 +183,7 @@ public:
      * @param path_id id of the path (sequence).
      * @return a vector of size_t distances.
      */
-    std::vector<size_t>* get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const; // niente hai fatto
+    std::vector<size_t>* get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
 
 
     /**

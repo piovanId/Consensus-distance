@@ -920,10 +920,6 @@ namespace pathsprefixsumarrays {
         size_t A = 2;
         size_t B = 6;
 
-        // print everything
-
-
-
         std::vector<std::vector<size_t>> check = {{},
                                                   {},
                                                   {1, 0, 1, 0},
@@ -952,13 +948,8 @@ namespace pathsprefixsumarrays {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             auto distance_vector = temp->get_all_nodes_distances(A, B);
             ASSERT_EQ((*distance_vector), check.at(i));
-/*
-            std::cout <<std::endl;
-            for (int j = 0; j < distance_vector->size(); ++j) {
-                std::cout << std::to_string((*distance_vector)[j]) << " ";
-            }
-*/
         }
+
         A = 12;
         B = 6;
         check = {{},
@@ -989,12 +980,77 @@ namespace pathsprefixsumarrays {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             auto distance_vector = temp->get_all_nodes_distances(A, B);
             ASSERT_EQ((*distance_vector), check.at(i));
+        }
+
+        // Reversed paths
+        A = 3;
+        B = 7;
+        check = {{},
+                 {},
+                 {1, 0, 1, 0},
+                 {1, 0, 1},
+                 {1, 0, 1, 0, 1, 13, 0, 12, 0, 1, 1, 0},
+                 { 1, 0, 1, 0, 1, 13, 0, 12, 0, 1 }
+                 };
+
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
             /*std::cout <<std::endl;
             for (int j = 0; j < distance_vector->size(); ++j) {
                 std::cout << std::to_string((*distance_vector)[j]) << " ";
             }*/
         }
 
+        A = 3;
+        B = 3;
+        check = {{},
+                 {0},
+                 {},
+                 {},
+                 {2},
+                 {2}};
+
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
+        }
+
+        A = 13;
+        B = 7;
+        check = {{},
+                 {},
+                 {2,2},
+                 {2},
+                 {2,2,2,3},
+                 {2,2}};
+
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
+        }
+
+        A = 3;
+        B = 13;
+        check = {{},
+                 {},
+                 {4,3},
+                 {4},
+                 {4,3,4},
+                 {4,3}};
+
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto distance_vector = temp->get_all_nodes_distances(A, B);
+            ASSERT_EQ((*distance_vector), check.at(i));
+        }
     }
 
 
