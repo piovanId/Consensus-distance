@@ -242,9 +242,12 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
 
     // If the path doesn't exist
-    if (psa->find(path_id) == psa->end() ||( path_id%2 != 0 && psa->find(path_id-1) == psa->end())) {
-        return new std::vector<size_t>();
+    if ((path_id%2 == 0 && psa->find(path_id) == psa->end()) ||(path_id%2 != 0 && psa->find(path_id-1) == psa->end())) {
+        std::string error = "Error in 'get_all_nodes_distances_in_path': the inserted path " + std::to_string(path_id) +
+                " doesn't exist inside the graph.";
+        throw PathNotInGraphException(error);
     }
+
     size_t ones;
     if (path_id%2==0) {
         // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
