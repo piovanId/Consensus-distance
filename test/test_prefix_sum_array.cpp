@@ -277,6 +277,19 @@ namespace pathsprefixsumarrays {
                                                         params[index_test].path_id),OutOfBoundsPositionInPathException);
             }
         }
+
+        void ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES_OF_POSITIONS_OutOfBoundsPositionInPathException(std::vector<PathsPrefixSumArrays*> const psa,
+                                                                                                        std::vector<parameters_test_graph> params,
+                                                                                                        int gfa_file_index){
+            int number_of_tests_on_graph = params.size();
+            for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
+
+                EXPECT_THROW((*psa[gfa_file_index]).
+                        get_all_nodes_distances_in_path(params[index_test].n1,
+                                                        params[index_test].n2,
+                                                        params[index_test].path_id),OutOfBoundsPositionInPathException);
+            }
+        }
     };
 
     /**
@@ -304,7 +317,7 @@ namespace pathsprefixsumarrays {
      *                                                                     std::vector<size_t>* node_2_positions,
      *                                                                     size_t path_id)
      */
-    TEST_F(PrefixSumArraysTest, get_all_node_distance_in_a_path_vector){
+    TEST_F(PrefixSumArraysTest, get_all_node_distances_in_a_path_vector){
         /*
          * All possible nodes in the test files are:
          *      In the more nodes graphs:
@@ -594,7 +607,7 @@ namespace pathsprefixsumarrays {
         };
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_sixth_graph_OutOfBounds, gfa_file_index);
 
-    }
+    } //todo: put a throw in the function if the path doesn't exist and test
 
 
     /**
@@ -620,28 +633,32 @@ namespace pathsprefixsumarrays {
          * One node acyclic graph, one path (0), all distances between 2 and 2
          */
         int gfa_file_index = 0;
-        parameters_test_graph parameters_first_graph = {2, 2, 0, 0, 0, 0};
-        std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>(
-                (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameters_first_graph.n1,
-                                                                                         parameters_first_graph.n2,
-                                                                                         parameters_first_graph.path_id));
+        std::vector<parameters_test_graph> parameters_first_graph = {
+                                                                    {2, 2, 0, 0, 0, 0},
+                                                                    {3, 3, 0, 0, 1, 0},
+                                                                    {2, 9, 0, 0, 0, 0},
+                                                                    {7, 3, 0, 0, 1, 0}
+                                                                    };
 
         // only one distance computable because there is only one path of length 1
-        ASSERT_EQ(parameters_first_graph.assert_length_distance, distances->size());
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
         EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(0, (size_t) 0, 2), PathNotInGraphException);
+
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
          */
         gfa_file_index = 1;
-        parameters_test_graph parameters_second_graph = {2, 2, 1, 0, 0, 0};
+        std::vector<parameters_test_graph> parameters_second_graph = {{2, 2, 1, 0, 0, 0},
+                                                                      {3, 3, 1, 0, 1, 0},
+                                                                      {2, 9, 0, 0, 0, 0},
+                                                                      {7, 3, 0, 0, 1, 0}
+                                                                      };
 
-        distances.reset((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(parameters_second_graph.n1,
-                                                                                                 parameters_second_graph.n2,
-                                                                                                 parameters_second_graph.path_id));
         // 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
-        ASSERT_EQ(parameters_second_graph.assert_length_distance, distances->size());
-        ASSERT_EQ(parameters_second_graph.assert_distance, distances->at(parameters_second_graph.index_distance_test));
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_second_graph, gfa_file_index);
+
+
         EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(0, 2, 2), PathNotInGraphException);
         EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(0, 2, 3), PathNotInGraphException);
         EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 0, 3), PathNotInGraphException);
@@ -657,7 +674,10 @@ namespace pathsprefixsumarrays {
         gfa_file_index = 2;
         std::vector<parameters_test_graph> parameter_third_graph_vector = {{2, 10, 1, 2, 0, 0},
                                                                             {2, 12, 1, 4, 0, 0},
-                                                                            {2, 12, 1, 3, 6, 0}};
+                                                                            {2, 12, 1, 3, 6, 0},
+                                                                            {7, 13, 1, 2, 7, 0},
+                                                                            {3, 13, 1, 3, 7, 0},
+                                                                            {1, 1, 0, 0, 7, 0}};
 
 
 
@@ -684,7 +704,11 @@ namespace pathsprefixsumarrays {
                                                                            {8, 2, 1, 1, 2, 0},
                                                                            {16,16,0,0,0,0},
                                                                            {2,5,0,0,2,0},
-                                                                           {6,2,1,1,0,0}};
+                                                                           {6,2,1,1,0,0},
+                                                                           {3, 9, 1, 1, 3, 0},
+                                                                           {9, 3, 1, 1, 3, 0},
+                                                                           {9, 3, 1, 2, 5, 0},
+                                                                           {5, 7, 1, 0, 5, 0}};
 
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fourth_graph_vector, gfa_file_index);
@@ -703,16 +727,18 @@ namespace pathsprefixsumarrays {
 
         gfa_file_index = 4;
         std::vector<parameters_test_graph> parameter_fifth_graph_vector = {{2, 10, 1, 2, 10, 0},
-                                                                            {2, 6, 6, 1, 8, 0},
-                                                                            {2, 6, 6, 12, 8, 1},
-                                                                            {2, 6, 6, 13, 8, 2},
-                                                                            {2, 6, 6, 0, 8, 3},
-                                                                            {6, 2, 6, 0, 8, 4},
-                                                                            {6, 2, 6, 1, 8, 5},
-                                                                            {2, 8, 2, 14, 8, 0},
-                                                                            {2, 8, 2, 2, 8, 1},
-                                                                            {2, 19, 0, 0, 8, 0},
-                                                                            };
+                                                                           {2, 6, 6, 1, 8, 0},
+                                                                           {2, 6, 6, 12, 8, 1},
+                                                                           {2, 6, 6, 13, 8, 2},
+                                                                           {2, 6, 6, 0, 8, 3},
+                                                                           {6, 2, 6, 0, 8, 4},
+                                                                           {6, 2, 6, 1, 8, 5},
+                                                                           {2, 8, 2, 14, 8, 0},
+                                                                           {2, 8, 2, 2, 8, 1},
+                                                                           {2, 19, 0, 0, 8, 0},
+                                                                           {9, 3, 2, 2, 9, 0},
+                                                                           {9, 3, 2, 14, 9, 1},
+                                                                           {9, 9, 0, 0, 9, 0}};
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fifth_graph_vector, gfa_file_index);
         EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 12), PathNotInGraphException);
@@ -738,8 +764,10 @@ namespace pathsprefixsumarrays {
                                                                            {6, 2, 6, 1, 8, 5},
                                                                            {2, 8, 2, 14, 8, 0},
                                                                            {2, 8, 2, 2, 8, 1},
-                                                                           {2, 19, 0, 0, 8, 0}
-        };
+                                                                           {2, 19, 0, 0, 8, 0},
+                                                                           {9, 9, 0, 0, 9, 0},
+                                                                           {3, 5, 2, 0, 9, 1},
+                                                                           {3, 5, 2, 1, 9, 0}};
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_sixth_graph_vector, gfa_file_index);
         EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 12), PathNotInGraphException);
