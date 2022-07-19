@@ -62,6 +62,17 @@ public:
 };
 
 
+class NotExistentDistanceException : std::invalid_argument {
+public:
+
+    NotExistentDistanceException(const std::string &arg) : std::invalid_argument(arg) {}
+
+    const char * what() {
+        return std::invalid_argument::what();
+    }
+};
+
+
 // Class
 class PathsPrefixSumArrays {
 
@@ -73,9 +84,9 @@ private:
     FRIEND_TEST(PrefixSumArraysTest, get_all_node_distance_in_a_path_vector);
 
 
-    std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // prefix sum arrays (seq_id, prefix sum array)
+    std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // Prefix sum arrays (seq_id, prefix sum array)
 
-    gbwt::FastLocate *fast_locate; // it is needed to perform select operation on sd_vector
+    gbwt::FastLocate *fast_locate; // It is needed to perform select operation on sd_vector
 
 
     /**
@@ -101,18 +112,24 @@ private:
 
     /**
      * Get all distances between two nodes in a path. Each nodes can occur several time in a path in different positions.
-     * @param node_1_positions positions of node_1 inside the path (sequence)
-     * @param node_2_positions positions of node_1 inside the path (sequence)
+     *
+     * This function calls get_distance_between_positions_in_path which raises NotExistentDistanceException if the two
+     * positions in input are the same. This function shouldn't call that function with two equal positions.
+     *
+     * @param node_1_positions positions of node_1 inside the path (sequence) forward or reverse.
+     * @param node_2_positions positions of node_1 inside the path (sequence) forward or reverse.
      * @param path_id
-     * @return a vector of all the distances between the two nodes in a path.
+     * @throws OutOfBoundsPositionInPathException when in the parameters there is at least one positions that doesn't
+     * exist in the path_id (in reverse or in forward direction).
+     * @return a vector of all the distances between the two nodes in a path. The returned vector is empty if one of the
+     * two vectors in input is empty or if the path_id doesn't exist. If the two vectors are equals it returns all the
+     * distances between the not equal positions.
      */
     std::vector<size_t>* get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
                                                           std::vector<size_t>* node_2_positions,
                                                           size_t path_id) const;
 
 public:
-
-
 
     /**
      * Default constructor.
@@ -170,7 +187,11 @@ public:
      * @param pos_node_1
      * @param pos_node_2
      * @param path_id
-     * @return the distance.
+     * @throws NotExistentDistanceException if the two positions in input are equal. If that is the case, is raised before
+     * all the other exceptions.
+     * @throws PathNotInGraphException if the path_id doesn't exist in the graph (in reverse or in forward direction).
+     * @throws OutOfBoundsPositionInPathException if at least one of the two positions is not in the path.
+     * @return the distance. If the two positions are consecutive returns 0.
      */
     size_t get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const;
 
@@ -181,6 +202,7 @@ public:
      * @param node_1 id of the node.
      * @param node_2 id of the node.
      * @param path_id id of the path (sequence).
+     * @throws PathNotInGraphException if the path_id doesn't exist in the graph (in reverse or in forward direction).
      * @return a vector of size_t distances.
      */
     std::vector<size_t>* get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
@@ -188,9 +210,14 @@ public:
 
     /**
      * Get all node distance between two nodes.
+     *
+     * This function calls get_all_nodes_distances_in_path which can raise PathNotInGraphException if the path_id in input
+     * doesn't exist in the graph. It shouldn't happen but it something to keep in mind.
+     *
      * @param node_1
      * @param node_2
-     * @return a vector with all the distance between two nodes.
+     * @return a vector with all the distance between two nodes. If the two nodes haven't any path in common can return
+     * an empty vector.
      */
     std::vector<size_t>* get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const;
 

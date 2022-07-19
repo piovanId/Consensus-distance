@@ -786,11 +786,11 @@ namespace pathsprefixsumarrays {
         /**
          * reverse paths (existing, non existing with existing positions and not existing ones)
          */
-         // TODO: REMOVE DUPLICATED CODE,
+        // TODO: REMOVE DUPLICATED CODE,
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             //testing the outer function
-            ASSERT_EQ(0, temp->get_distance_between_positions_in_path(0, 0, 0));
+            EXPECT_THROW(temp->get_distance_between_positions_in_path(0, 0, 0), NotExistentDistanceException);
             if (i > 1) {
                 ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
                 //testing the aux function
@@ -799,10 +799,10 @@ namespace pathsprefixsumarrays {
                 ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
                 ASSERT_EQ(3, temp->get_distance_between_positions_in_path_aux(1, 4, sdb_sel));
 
-                 if(i>3) {
-                     ASSERT_EQ(12, temp->get_distance_between_positions_in_path(0, 4, 8));
-                     ASSERT_EQ(14, temp->get_distance_between_positions_in_path(0, 6, 8));
-                 }
+                if(i>3) {
+                    ASSERT_EQ(12, temp->get_distance_between_positions_in_path(0, 4, 8));
+                    ASSERT_EQ(14, temp->get_distance_between_positions_in_path(0, 6, 8));
+                }
             }
 
             // Non existing path, with existing and non existing nodes in the path
@@ -822,9 +822,9 @@ namespace pathsprefixsumarrays {
 
             try {
                 temp->get_distance_between_positions_in_path(16, 16, 16);
-            }catch(PathNotInGraphException &ex){
+            }catch(NotExistentDistanceException &ex){
                 std::string s(ex.what());
-                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the path_id 16 doesn't exist in the graph.\n"));
+                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the distance between two equal positions (16, 16) doesn't exist.\n"));
             }
 
             try {

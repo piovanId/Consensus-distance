@@ -83,8 +83,11 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
     bool reversed_path = false;
 
     // Distance between the same node
-    if (pos_node_1 == pos_node_2)
-        return distance;
+    if (pos_node_1 == pos_node_2){
+        std::string msg_exception = "Error in 'get_distance_between_positions_in_path': the distance between two equal positions (" +
+                std::to_string(pos_node_1) + ", " + std::to_string(pos_node_2) + ") doesn't exist.\n";
+        throw NotExistentDistanceException(msg_exception);
+    }
 
 
 
@@ -382,7 +385,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
                                                                            std::vector<size_t>* node_2_positions,
                                                                            size_t path_id) const{
     std::vector<size_t>* distances = new std::vector<size_t>();
-//todo throwa se il path non esiste
+
     if(node_1_positions->empty() || node_2_positions->empty() || (path_id%2==0 && psa->find(path_id) == psa->end()) || (path_id%2!=0 && psa->find(path_id-1) == psa->end() )) {
         return distances;
     }
