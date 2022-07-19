@@ -5,8 +5,6 @@
  *
  *  TODO:
  *      - CHECK MEMORY LEAK WITH VALGRIND
- *      - CHECK THE CONSTANT ERROR OF THE THROW THAT DAVIDE SENT YOU
- *      - GO ON WITH THE TESTS
  */
 
 // Standard
@@ -109,7 +107,9 @@ namespace pathsprefixsumarrays {
                                                         "../test/acyclic_graph_even_paths.gfa",
                                                         "../test/acyclic_graph_odd_paths.gfa",
                                                         "../test/cyclic_graph_even_paths.gfa",
-                                                        "../test/cyclic_graph_odd_paths.gfa"};
+                                                        "../test/cyclic_graph_odd_paths.gfa",
+                                                        "../test/cyclic_graph_different_orientation_in_path.gfa"
+            };
 
             // Creating vector of prefix sum array for each graph
             for (int i = 0; i < gfa_files_paths.size(); ++i) {
@@ -134,6 +134,11 @@ namespace pathsprefixsumarrays {
             gfa_parses->clear();
             gfa_parses = nullptr;
         }
+
+        /**
+         * AUX FUNCTIONS FOR TESTS
+         */
+
 
         void ASSERT_NODE_POSITIONS_IN_PATH_EVEN(PathsPrefixSumArrays* paths_prefix_sum_arrays,
                                            std::vector<std::vector<std::vector<size_t>>> &params,
@@ -291,6 +296,12 @@ namespace pathsprefixsumarrays {
             }
         }
     };
+
+
+    /**
+     * START OF TESTS
+     */
+
 
     /**
      * Test the constructors
@@ -607,7 +618,63 @@ namespace pathsprefixsumarrays {
         };
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_sixth_graph_OutOfBounds, gfa_file_index);
 
-    } //todo: put a throw in the function if the path doesn't exist and test
+        /**
+        *6th graph:
+            2[10], 5[1], 6[1], 11[2], 12[1],
+            3[10], 7[1], 9[5],
+            2[10], 4[1], 6[1], 8[5],
+            3[10], 6[1], 10[2], 13[1],
+            2[10], 4[1], 7[1], 2[10], 6[1], 6[1], 8[5],
+         */
+
+        gfa_file_index = 6;
+        std::vector<parameters_test_graph_vectors> parameter_seventh_graph_vector = {{{0}, {1}, 1, 0, 2, 0},
+                                                                                     {{0}, {0}, 0, 0, 2, 0},
+                                                                                     {{1}, {1}, 0, 0, 2, 0},
+                                                                                     {{0}, {2}, 1, 1, 2, 0},
+                                                                                     {{0}, {2}, 1, 1, 0, 0},
+                                                                                     {{0}, {3}, 1, 2, 0, 0},
+                                                                                     {{3}, {0}, 1, 2, 0, 0},
+                                                                                     {{2}, {0,3}, 2, 1, 8, 0},
+                                                                                     {{2}, {0,3}, 2, 0, 8, 1},
+                                                                                     {{0,3}, {0,3}, 1, 2, 8, 0},
+                                                                                     {{0,3}, {6}, 2, 14, 8, 0},
+                                                                                     {{0,3}, {6}, 2, 2, 8, 1},         //    {{0}, {3}, 1, 2, 8, 0},            //    {{0}, {6}, 1, 14, 8, 0},
+                                                                                     //reverse
+                                                                                     {{0}, {5}, 1, 13, 9, 0},
+                                                                                     {{5}, {0}, 1, 13, 9, 0},
+                                                                                     {{4}, {0}, 1, 12, 9, 0},
+                                                                                     {{0}, {4}, 1, 12, 9, 0},
+                                                                                     {{0}, {3}, 1, 3, 1, 0},
+                                                                                     {{0}, {2}, 1, 1, 3, 0},
+                                                                                     {{2}, {2}, 0, 0, 3, 0},
+
+
+        };
+
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameter_seventh_graph_vector, gfa_file_index);
+
+
+        std::vector<parameters_test_graph_vectors> parameters_seventh_graph_OutOfBounds ={
+                {{0}, {420000000}, 0, 0, 0, 0},
+                {{420000000}, {420000000}, 0, 0, 0, 0},
+                {{420000000}, {0}, 0, 0, 0, 0},
+                {{420000000}, {1}, 0, 0, 0, 1},
+                {{0, 2346}, {1}, 1, 0, 1,0 },
+                {{0}, {1,2346}, 1, 0, 0,0 },
+                {{0}, {1,2346}, 1, 0, 1,0 },
+                {{0}, {2346,1}, 1, 0, 1,0 },
+                {{420000000}, {420000000}, 0, 0, 1, 0},
+                {{1}, {420000000}, 0, 0, 1, 0},
+                {{3,4}, {420000000}, 0, 0, 4, 0},
+                {{1,2,4}, {420000000}, 0, 0, 9, 0},
+                {{420000000}, {1,2,4}, 0, 0, 9, 0},
+
+
+        };
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_seventh_graph_OutOfBounds, gfa_file_index);
+
+    }
 
 
     /**
@@ -642,7 +709,8 @@ namespace pathsprefixsumarrays {
 
         // only one distance computable because there is only one path of length 1
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(0, (size_t) 0, 2), PathNotInGraphException);
+        size_t param0 = 0; // needed since c++ confuses 0 with a nullptr and the function result ambiguous
+        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(param0, param0, 2), PathNotInGraphException);
 
 
         /**
@@ -915,7 +983,14 @@ namespace pathsprefixsumarrays {
         }
     }
 
-
+    /*6th graph:
+    2[10], 5[1], 6[1], 11[2], 12[1],
+    3[10], 7[1], 9[5],
+    2[10], 4[1], 6[1], 8[5],
+    3[10], 6[1], 10[2], 13[1],
+    2[10], 4[1], 7[1], 2[10], 6[1], 6[1], 8[5],
+    1 0 1 12 13 0 1
+    */
     TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
         size_t A = 2;
         size_t B = 6;
@@ -925,7 +1000,8 @@ namespace pathsprefixsumarrays {
                                                   {1, 0, 1, 0},
                                                   {1, 0, 1},
                                                   {1, 0, 1, 0, 1, 12, 13, 0, 0, 1, 0, 1},
-                                                  {1, 0, 1, 0, 1, 12, 13, 0, 0, 1}};
+                                                  {1, 0, 1, 0, 1, 12, 13, 0, 0, 1},
+                                                  {1, 0, 1, 12, 13, 0, 1 }};
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
@@ -941,7 +1017,8 @@ namespace pathsprefixsumarrays {
                  {4,3},
                  {4},
                  {4,3,4},
-                 {4,3}};
+                 {4,3},
+                 {4, 3}};
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
@@ -950,6 +1027,9 @@ namespace pathsprefixsumarrays {
             ASSERT_EQ((*distance_vector), check.at(i));
         }
 
+
+
+
         A = 12;
         B = 6;
         check = {{},
@@ -957,7 +1037,8 @@ namespace pathsprefixsumarrays {
                  {2,2},
                  {2},
                  {2,2,3,2},
-                 {2,2}};
+                 {2,2},
+                 {2}};
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
@@ -972,6 +1053,7 @@ namespace pathsprefixsumarrays {
                  {0},
                  {},
                  {},
+                 {2},
                  {2},
                  {2}};
 
@@ -990,7 +1072,8 @@ namespace pathsprefixsumarrays {
                  {1, 0, 1, 0},
                  {1, 0, 1},
                  {1, 0, 1, 0, 1, 13, 0, 12, 0, 1, 1, 0},
-                 { 1, 0, 1, 0, 1, 13, 0, 12, 0, 1 }
+                 { 1, 0, 1, 0, 1, 13, 0, 12, 0, 1 },
+                 { 1, 0, 1, 1, 13, 0, 12 }
                  };
 
 
@@ -998,10 +1081,7 @@ namespace pathsprefixsumarrays {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             auto distance_vector = temp->get_all_nodes_distances(A, B);
             ASSERT_EQ((*distance_vector), check.at(i));
-            /*std::cout <<std::endl;
-            for (int j = 0; j < distance_vector->size(); ++j) {
-                std::cout << std::to_string((*distance_vector)[j]) << " ";
-            }*/
+
         }
 
         A = 3;
@@ -1010,6 +1090,7 @@ namespace pathsprefixsumarrays {
                  {0},
                  {},
                  {},
+                 {2},
                  {2},
                  {2}};
 
@@ -1027,7 +1108,8 @@ namespace pathsprefixsumarrays {
                  {2,2},
                  {2},
                  {2,2,2,3},
-                 {2,2}};
+                 {2,2},
+                 {2}};
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
@@ -1043,7 +1125,8 @@ namespace pathsprefixsumarrays {
                  {4,3},
                  {4},
                  {4,3,4},
-                 {4,3}};
+                 {4,3},
+                 {4, 3}};
 
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
@@ -1055,7 +1138,7 @@ namespace pathsprefixsumarrays {
 
 
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {
-
+/*
         std::vector<std::vector<std::vector<size_t>>> check = {{{0}},
                                                                {{0,1}},
                                                                {{0},{0},{0},{0}},
@@ -1130,11 +1213,11 @@ namespace pathsprefixsumarrays {
             }
         }
         std::cout << std::endl;
-//DEBUG PRINT */
-
+//DEBUG PRINT
+*/
     }
 
-
+/*
     TEST_F(PrefixSumArraysTest,get_positions_of_a_node_in_path){
 
 
@@ -1291,7 +1374,7 @@ namespace pathsprefixsumarrays {
                 ASSERT_NODE_POSITIONS_WITH_WRONG_PATH(temp,  test[test_index].first,test[test_index].second, gfa_file_index);
             }
         }
-    }
+    }*/
 /**
 0th graph:
 2[1],
@@ -1334,8 +1417,7 @@ namespace pathsprefixsumarrays {
 */
 
 
-/* //DEBUG PRINT
-
+/*
     TEST_F(PrefixSumArraysTest, printall) {
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
         // Name of the graph examples for testing
@@ -1344,7 +1426,9 @@ namespace pathsprefixsumarrays {
                                                     "../test/acyclic_graph_even_paths.gfa",
                                                     "../test/acyclic_graph_odd_paths.gfa",
                                                     "../test/cyclic_graph_even_paths.gfa",
-                                                    "../test/cyclic_graph_odd_paths.gfa"};
+                                                    "../test/cyclic_graph_odd_paths.gfa",
+                                                    "../test/cyclic_graph_different_orientation_in_path.gfa"
+        };
         // Creating vector of prefix sum array for each graph
         for (int i = 0; i < gfa_files_paths.size(); ++i) {
             (*gfa_parses).push_back(std::move(gbwtgraph::gfa_to_gbwt(gfa_files_paths[i])));
@@ -1364,8 +1448,7 @@ namespace pathsprefixsumarrays {
             });// end of lambda expression
             std::cout << std::endl << "----------------------" << std::endl;
         }
-    }
-//DEBUG PRINT*/
+    }*/
 
 } // End namespace
 int main(int argc, char **argv)  {
