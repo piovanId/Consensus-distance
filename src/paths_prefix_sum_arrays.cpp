@@ -260,7 +260,24 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt
 
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::vector<size_t>* node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
+
+    // start debug
+    /*std::cout << "Posizioni node_1 " + std::to_string(node_1) + ":";
+    for(int i=0; i < node_1_positions->size(); ++i){
+        std::cout << " " << (*node_1_positions)[i];
+    }
+    std::cout << std::endl;*/
+    // end debug
+
     std::vector<size_t>* node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
+
+    // start debug
+    /*std::cout << "Posizioni node_2 " + std::to_string(node_2) + ":";
+    for(int i=0; i < node_2_positions->size(); ++i){
+        std::cout << " " << (*node_2_positions)[i];
+    }
+    std::cout << std::endl;*/
+    // end debug
 
     return get_all_nodes_distances_in_path(node_1_positions, node_2_positions, path_id);
 }

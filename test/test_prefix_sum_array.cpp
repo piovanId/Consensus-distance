@@ -885,7 +885,7 @@ namespace pathsprefixsumarrays {
         }
 
         /**
-         * Cyclic graph with
+         * Cyclic graph, nodes with opposite direction compared to the path
          * Path: 0 - Nodes:  2 5 6 11 12
          * Path: 2 - Nodes:  3 7 9
          * Path: 4 - Nodes:  2 4 6 8
@@ -893,7 +893,40 @@ namespace pathsprefixsumarrays {
          * Path: 8 - Nodes:  2 4 7 2 6 6 8
          */
 
+        gfa_file_index = 6;
 
+        std::vector<parameters_test_graph> parameter_seventh_graph_vector = {
+                // Forward path
+                {2, 6, 1, 1, 0, 0},
+                {5, 5, 0, 0, 0, 0},
+                {5, 6, 1, 0, 0, 0},
+                {5, 12, 1, 3, 0, 0},
+                {2, 7, 2, 1, 8, 0},
+                {2, 7, 2, 0, 8, 1},
+                {5, 7, 0, 0, 8, 0},
+                {3, 13, 1, 3, 6, 0},
+
+                // Reverse path
+                {3, 7, 1, 1, 1, 0},
+                {6, 6, 0, 0, 1, 0},
+                {4, 7, 1, 0, 1, 0},
+                {4, 13, 1, 3, 1, 0},
+                {3, 6, 2, 0, 9, 0},
+                {3, 6, 2, 1, 9, 1},
+                {4, 6, 0, 0, 9, 0},
+                {2, 12, 1, 3, 7, 0},
+                {8, 8, 0, 0, 8, 0},
+                {2, 4, 2, 1, 8, 1},
+                {2, 4, 2, 0, 8, 0},
+        };
+        ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_seventh_graph_vector, gfa_file_index);
+
+        try{
+            (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13);
+        }catch(PathNotInGraphException ex){
+            std::string msg_exception = std::string(ex.what());
+            ASSERT_EQ(msg_exception, std::string("Error in 'get_all_nodes_distances_in_path': the inserted path 13 doesn't exist inside the graph."));
+        }
     }
 
 
