@@ -864,6 +864,7 @@ namespace pathsprefixsumarrays {
             size_t assert_distance; // Value of the expected distance
             parameters_test_positions_and_path par;
             size_t end_position_in_path; // Last accessible position of the path
+            bool is_second_position_exception = false; // TRUE if the exception that could be raised is on the second position
         };
 
         std::vector<parameters_test_positions_and_path> params_path_exception = {
@@ -917,22 +918,37 @@ namespace pathsprefixsumarrays {
 
 
         std::vector<parameters_test_graph_get_distance_between_positions_in_path> params = {
-                // Forward existing path, with non existing nodes in the path on the second position (exception test)
-                {2, 0, {0,5,0}, 4},
-                {3, 0, {0,4,2}, 2},
-                {2, 0, {2,5,0}, 4},
-                {2, 0, {2,16,0}, 4},
+                // Forward existing path, with non existing nodes in the path on the second position
+                // Exception on the second position
+                {2, 0, {0,5,0}, 4, true},
+                {3, 0, {0,4,2}, 2, true},
+                {2, 0, {2,5,0}, 4, true},
+                {2, 0, {2,16,0}, 4, true},
+                // Exception on the first position
+                {2, 0, {5,0,0}, 4, false},
+                {3, 0, {4,0,2}, 2, false},
+                {2, 0, {5,2,0}, 4, false},
+                {2, 0, {16,2,0}, 4, false},
+
 
                 // Reverse existing path, with non existing nodes in the path on the second position (exception test)
-                {5, 0, {0,7,9}, 6},
-                {5, 0, {0,37,9}, 6},
-                {5, 0, {3,37,9}, 6},
-                {5, 0, {3,7,9}, 6},
+                // Exception on the second position
+                {5, 0, {0,7,9}, 6, true},
+                {5, 0, {0,37,9}, 6, true},
+                {5, 0, {3,37,9}, 6, true},
+                {5, 0, {3,7,9}, 6, true},
+                // Exception on the first position
+                {5, 0, {7,0,9}, 6, false},
+                {5, 0, {37,0,9}, 6, false},
+                {5, 0, {37,3,9}, 6, false},
+                {5, 0, {7,3,9}, 6, false},
+
 
                 // Existing path, with existing nodes in the path
                 {2, 2, {2,4,0}, 0},
                 {2, 4, {0,4,0}, 0},
                 {2, 0, {0,1,0}, 0},
+
 
                 // Reverse path cyclic
                 {5, 12, {0,4,9}, 0},
@@ -940,10 +956,39 @@ namespace pathsprefixsumarrays {
                 {5, 1, {1,3,1}, 0},
                 {5, 0, {1,2,1}, 0},
 
+
                 // Reverse path acyclic
                 {3,0, {1,2,1}, 0},
                 {3,2, {1,4,1}, 0},
-                };
+
+
+                // Nodes in opposite direction from the direction of the path
+                // Exception second position
+                {6, 0, {0, 16, 8}, 6, true},
+                {6, 0, {2, 16, 8}, 6, true},
+                // Exception first position
+                {6, 0, {16, 0, 8}, 6, false},
+                {6, 0, {16, 2, 8}, 6, false},
+                // No Exception forward path, reversed nodes inside
+                {6, 0, {0, 1, 0}, 0},
+                {6, 0, {1, 2, 0}, 0},
+                {6, 0, {1, 2, 8}, 0},
+                {6, 0, {2, 3, 0}, 0},
+                {6, 14, {0, 6, 8}, 0},
+                {6, 1, {0, 2, 8}, 0},
+                {6, 11, {2, 5, 8}, 0},
+                {6, 11, {5, 2, 8}, 0},
+                // No Exception forward path, reversed nodes inside
+                {6, 0, {3, 4, 1}, 0},
+                {6, 0, {2, 3, 0}, 0},
+                {6, 0, {5, 4, 8}, 0},
+                {6, 0, {1, 2, 0}, 0},
+                {6, 14, {0, 6, 8}, 0},
+                {6, 1, {4, 6, 8}, 0},
+                {6, 11, {1, 4, 8}, 0},
+                {6, 11, {4, 1, 8}, 0}
+        };
+        
         for(int test_index = 0; test_index < params.size(); ++test_index){
             try {
                 ASSERT_EQ(params[test_index].assert_distance,(*prefix_sums_arrays)[params[test_index].gfa_file_index]
@@ -952,10 +997,16 @@ namespace pathsprefixsumarrays {
                                                          params[test_index].par.path_id));
             }catch(OutOfBoundsPositionInPathException &ex){
                 std::string s(ex.what());
+                if(params[test_index].is_second_position_exception){
+                    ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position " +
+                                             std::to_string(params[test_index].par.pos_node_2) + " is outside the boundaries of the path [0:" +
+                                             std::to_string(params[test_index].end_position_in_path)+ "]\n"));
+                }else{
+                    ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the first position " +
+                                             std::to_string(params[test_index].par.pos_node_1) + " is outside the boundaries of the path [0:" +
+                                             std::to_string(params[test_index].end_position_in_path)+ "]\n"));
+                }
 
-                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position " +
-                                         std::to_string(params[test_index].par.pos_node_2) + " is outside the boundaries of the path [0:" +
-                                         std::to_string(params[test_index].end_position_in_path)+ "]\n"));
             }
         }
     }
