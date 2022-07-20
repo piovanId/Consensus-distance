@@ -207,6 +207,13 @@ namespace pathsprefixsumarrays {
             ASSERT_EQ(positions->empty(), true);
         }
 
+
+        /**
+         * Used to remove duplicated code from the test TEST_F(PrefixSumArraysTest, get_all_nodes_distances_in_path_node_IDs)
+         * given the params compute all the distance between two nodes while asserting that is raised a PathNotInGraphException.
+         * @param params is a vector of structures parameters_test_graph.
+         * @param gfa_file_index index of the gfa_file in the vector gfa_files_paths defined in the constructor of PrefixSumArraysTest.
+         */
         void ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH(std::vector <parameters_test_graph> params, int gfa_file_index){
             for(int test_index = 0; test_index < params.size(); ++test_index){
                 EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(params[test_index].n1,
@@ -218,8 +225,8 @@ namespace pathsprefixsumarrays {
 
 
         /**
-         * Used to remove duplicated code from the test GetAllNodeDistanceInAPathNodeInInputVersion, given the params compute
-         * all the distance between two nodes and assert the number of compute distances and the distances.
+         * Used to remove duplicated code from the test TEST_F(PrefixSumArraysTest, get_all_nodes_distances_in_path_node_IDs)
+         * given the params compute all the distance between two nodes and assert the number of compute distances and the distances.
          * @param psa the one created in the constructor of the fixture class PrefixSumArraysTest.
          * @param params is a vector of structures parameters_test_graph.
          * @param gfa_file_index index of the gfa_file in the vector gfa_files_paths defined in the constructor of PrefixSumArraysTest.
@@ -244,8 +251,9 @@ namespace pathsprefixsumarrays {
 
 
         /**
-         * Used to remove duplicated code from the test GetAllNodeDistanceInAPathVectorInInputVersion, given the params compute
-         * all the distance between two vector of positions of two nodes and assert the number of compute distances and the distances.
+         * Used to remove duplicated code from the test TEST_F(PrefixSumArraysTest, get_all_node_distances_in_a_path_vector),
+         * given the params compute all the distance between two vector of positions of two nodes and assert the number
+         * of compute distances and the distances.
          * @param psa the one created in the constructor of the fixture class PrefixSumArraysTest.
          * @param params is a vector of structures parameters_test_graph_vectors.
          * @param gfa_file_index index of the gfa_file in the vector gfa_files_paths defined in the constructor of PrefixSumArraysTest.
@@ -268,10 +276,11 @@ namespace pathsprefixsumarrays {
             }
         }
 
+
         /**
-         * Used to remove duplicated code from the test GetAllNodeDistanceInAPathVectorInInputVersion, given the params compute
-         * all the distance between two vector of positions of two nodes and assert the number of compute distances and the distances.
-         * Test the cases where a OutOfBoundsPositionInPathException is thrown.
+         * Used to remove duplicated code from the test TEST_F(PrefixSumArraysTest, get_all_node_distances_in_a_path_vector),
+         * given the params compute all the distance between two vector of positions of two nodes and assert the number
+         * of compute distances and the distances. Test the cases where a OutOfBoundsPositionInPathException is thrown.
          * @param psa the one created in the constructor of the fixture class PrefixSumArraysTest.
          * @param params is a vector of structures parameters_test_graph_vectors.
          * @param gfa_file_index index of the gfa_file in the vector gfa_files_paths defined in the constructor of PrefixSumArraysTest.
@@ -289,6 +298,15 @@ namespace pathsprefixsumarrays {
             }
         }
 
+
+        /**
+         * Used to remove duplicated code from the test TEST_F(PrefixSumArraysTest, get_all_node_distances_in_a_path_vector),
+         * given the params compute all the distance between two vector of positions of two nodes and assert the number
+         * of compute distances and the distances. Test the cases where a OutOfBoundsPositionInPathException is thrown.
+         * @param psa the one created in the constructor of the fixture class PrefixSumArraysTest.
+         * @param params is a vector of structures parameters_test_graph.
+         * @param gfa_file_index index of the gfa_file in the vector gfa_files_paths defined in the constructor of PrefixSumArraysTest.
+         */
         void ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES_OF_POSITIONS_OutOfBoundsPositionInPathException(std::vector<PathsPrefixSumArrays*> const psa,
                                                                                                         std::vector<parameters_test_graph> params,
                                                                                                         int gfa_file_index){
@@ -335,7 +353,7 @@ namespace pathsprefixsumarrays {
      *                                                                     size_t path_id)
      */
     TEST_F(PrefixSumArraysTest, get_all_node_distances_in_a_path_vector){
-        /*
+        /**
          * All possible nodes in the test files are:
          *      In the more nodes graphs:
          *          2 = AGTCATACGG
@@ -376,16 +394,7 @@ namespace pathsprefixsumarrays {
                                                                              {{0}, {}, 0, 0, 1, 0},
                                                                              {{}, {2342346}, 0, 0, 1, 0}
                                                                              };
-       /* std::unique_ptr<std::vector<size_t>> distances = std::unique_ptr<std::vector<size_t>>(
-                (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(&parameters_first_graph.positions_node_1,
-                                                                                         &parameters_first_graph.positions_node_2,
-                                                                                         parameters_first_graph.path_id));*/
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
-
-
-
-        // only one distance computable because there is only one path of length 1
-       // ASSERT_EQ(parameters_first_graph.assert_length_distance, distances->size());
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
@@ -422,13 +431,6 @@ namespace pathsprefixsumarrays {
                 {{1}, {420000000}, 0, 0, 1, 0},
         };
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_second_graph_OutOfBounds, gfa_file_index);
-
-
-
-
-        /*// 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
-        ASSERT_EQ(parameters_second_graph.assert_length_distance, distances->size());
-        ASSERT_EQ(parameters_second_graph.assert_distance, distances->at(parameters_second_graph.index_distance_test));*/
 
         /**
          * Acyclic graph, even paths (4), all distances
@@ -625,35 +627,38 @@ namespace pathsprefixsumarrays {
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_sixth_graph_OutOfBounds, gfa_file_index);
 
         /**
-        *6th graph:
-            2[10], 5[1], 6[1], 11[2], 12[1],
-            3[10], 7[1], 9[5],
-            2[10], 4[1], 6[1], 8[5],
-            3[10], 6[1], 10[2], 13[1],
-            2[10], 4[1], 7[1], 2[10], 6[1], 6[1], 8[5],
+         * Cyclic graph with reversed nodes in paths.
+         * 2[10], 5[1], 6[1], 11[2], 12[1],
+         * 3[10], 7[1], 9[5],
+         * 2[10], 4[1], 6[1], 8[5],
+         * 3[10], 6[1], 10[2], 13[1],
+         * 2[10], 4[1], 7[1], 2[10], 6[1], 6[1], 8[5],
          */
 
         gfa_file_index = 6;
-        std::vector<parameters_test_graph_vectors> parameter_seventh_graph_vector = {{{0}, {1}, 1, 0, 2, 0},
-                                                                                     {{0}, {0}, 0, 0, 2, 0},
-                                                                                     {{1}, {1}, 0, 0, 2, 0},
-                                                                                     {{0}, {2}, 1, 1, 2, 0},
-                                                                                     {{0}, {2}, 1, 1, 0, 0},
-                                                                                     {{0}, {3}, 1, 2, 0, 0},
-                                                                                     {{3}, {0}, 1, 2, 0, 0},
-                                                                                     {{2}, {0,3}, 2, 1, 8, 0},
-                                                                                     {{2}, {0,3}, 2, 0, 8, 1},
-                                                                                     {{0,3}, {0,3}, 1, 2, 8, 0},
-                                                                                     {{0,3}, {6}, 2, 14, 8, 0},
-                                                                                     {{0,3}, {6}, 2, 2, 8, 1},         //    {{0}, {3}, 1, 2, 8, 0},            //    {{0}, {6}, 1, 14, 8, 0},
-                                                                                     //reverse
-                                                                                     {{0}, {5}, 1, 13, 9, 0},
-                                                                                     {{5}, {0}, 1, 13, 9, 0},
-                                                                                     {{4}, {0}, 1, 12, 9, 0},
-                                                                                     {{0}, {4}, 1, 12, 9, 0},
-                                                                                     {{0}, {3}, 1, 3, 1, 0},
-                                                                                     {{0}, {2}, 1, 1, 3, 0},
-                                                                                     {{2}, {2}, 0, 0, 3, 0},
+        std::vector<parameters_test_graph_vectors> parameter_seventh_graph_vector = {
+                // Forward path
+                {{0}, {1}, 1, 0, 2, 0},
+                {{0}, {0}, 0, 0, 2, 0},
+                {{1}, {1}, 0, 0, 2, 0},
+                {{0}, {2}, 1, 1, 2, 0},
+                {{0}, {2}, 1, 1, 0, 0},
+                {{0}, {3}, 1, 2, 0, 0},
+                {{3}, {0}, 1, 2, 0, 0},
+                {{2}, {0,3}, 2, 1, 8, 0},
+                {{2}, {0,3}, 2, 0, 8, 1},
+                {{0,3}, {0,3}, 1, 2, 8, 0},
+                {{0,3}, {6}, 2, 14, 8, 0},
+                {{0,3}, {6}, 2, 2, 8, 1},
+
+                // Reverse path
+                {{0}, {5}, 1, 13, 9, 0},
+                {{5}, {0}, 1, 13, 9, 0},
+                {{4}, {0}, 1, 12, 9, 0},
+                {{0}, {4}, 1, 12, 9, 0},
+                {{0}, {3}, 1, 3, 1, 0},
+                {{0}, {2}, 1, 1, 3, 0},
+                {{2}, {2}, 0, 0, 3, 0},
 
 
         };
@@ -679,7 +684,6 @@ namespace pathsprefixsumarrays {
 
         };
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_seventh_graph_OutOfBounds, gfa_file_index);
-
     }
 
 
@@ -689,19 +693,6 @@ namespace pathsprefixsumarrays {
      *                                                                        size_t path_id )
      */
     TEST_F(PrefixSumArraysTest, get_all_nodes_distances_in_path_node_IDs) {
-        /*
-         * All possible nodes in the test files are:
-         *      In the more nodes graphs:
-         *          2 = AGTCATACGG
-         *          4 = C
-         *          6 = G
-         *          8 = AAAA
-         *          10 = AG
-         *          12 = T
-         *      In the one node graphs:
-         *          2 = G
-         */
-
         /**
          * One node acyclic graph, one path (0), all distances between 2 and 2
          */
