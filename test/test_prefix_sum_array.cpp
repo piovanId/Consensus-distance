@@ -78,9 +78,6 @@ namespace pathsprefixsumarrays {
     };
 
 
-
-
-
     class PrefixSumArraysTest : public ::testing::Test {
 
     protected:
@@ -710,11 +707,14 @@ namespace pathsprefixsumarrays {
          */
         int gfa_file_index = 0;
         std::vector<parameters_test_graph> parameters_first_graph = {
-                                                                    {2, 2, 0, 0, 0, 0},
-                                                                    {3, 3, 0, 0, 1, 0},
-                                                                    {2, 9, 0, 0, 0, 0},
-                                                                    {7, 3, 0, 0, 1, 0}
-                                                                    };
+                // Forward path
+                {2, 2, 0, 0, 0, 0},
+                {2, 9, 0, 0, 0, 0},
+
+                // Reverse path
+                {7, 3, 0, 0, 1, 0},
+                {3, 3, 0, 0, 1, 0}
+        };
 
         // only one distance computable because there is only one path of length 1
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
@@ -724,17 +724,24 @@ namespace pathsprefixsumarrays {
          * One node cyclic graph, one path (0), all distances between 2 and 2
          */
         gfa_file_index = 1;
-        std::vector<parameters_test_graph> parameters_second_graph = {{2, 2, 1, 0, 0, 0},
-                                                                      {3, 3, 1, 0, 1, 0},
-                                                                      {2, 9, 0, 0, 0, 0},
-                                                                      {7, 3, 0, 0, 1, 0}
-                                                                      };
+        std::vector<parameters_test_graph> parameters_second_graph = {
+                // Forward path
+                {2, 2, 1, 0, 0, 0},
+                {2, 9, 0, 0, 0, 0},
+
+                // Reverse path
+                {7, 3, 0, 0, 1, 0},
+                {3, 3, 1, 0, 1, 0},
+        };
 
         // 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_second_graph, gfa_file_index);
 
         std::vector<parameters_test_graph> params = {
+                // Forward path
                 {0, 2, 0, 0, 2, 0},
+
+                // Reverse path
                 {0, 2, 0, 0, 3, 0},
                 {2, 0, 0, 0, 3, 0}
         };
@@ -750,12 +757,17 @@ namespace pathsprefixsumarrays {
          */
 
         gfa_file_index = 2;
-        std::vector<parameters_test_graph> parameter_third_graph_vector = {{2, 10, 1, 2, 0, 0},
-                                                                            {2, 12, 1, 4, 0, 0},
-                                                                            {2, 12, 1, 3, 6, 0},
-                                                                            {7, 13, 1, 2, 7, 0},
-                                                                            {3, 13, 1, 3, 7, 0},
-                                                                            {1, 1, 0, 0, 7, 0}};
+        std::vector<parameters_test_graph> parameter_third_graph_vector = {
+                // Forward path
+                {2, 10, 1, 2, 0, 0},
+                {2, 12, 1, 4, 0, 0},
+                {2, 12, 1, 3, 6, 0},
+
+                // Reverse path
+                {7, 13, 1, 2, 7, 0},
+                {3, 13, 1, 3, 7, 0},
+                {1, 1, 0, 0, 7, 0}
+        };
 
 
 
@@ -771,21 +783,26 @@ namespace pathsprefixsumarrays {
          * Path: 4 - Nodes:  2 4 6 8
          */
         gfa_file_index = 3;
-        std::vector<parameters_test_graph> parameter_fourth_graph_vector = {{2, 10, 1, 2, 0, 0},
-                                                                           {2, 10, 0, 0, 2, 0},
-                                                                           {2, 10, 0, 0, 4, 0},
-                                                                           {2,16,0,0,0,0},
-                                                                           {16,2,0,0,0,0},
-                                                                           {8, 4, 0, 0, 0, 0},
-                                                                           {2, 8, 1, 1, 2, 0},
-                                                                           {8, 2, 1, 1, 2, 0},
-                                                                           {16,16,0,0,0,0},
-                                                                           {2,5,0,0,2,0},
-                                                                           {6,2,1,1,0,0},
-                                                                           {3, 9, 1, 1, 3, 0},
-                                                                           {9, 3, 1, 1, 3, 0},
-                                                                           {9, 3, 1, 2, 5, 0},
-                                                                           {5, 7, 1, 0, 5, 0}};
+        std::vector<parameters_test_graph> parameter_fourth_graph_vector = {
+                // Forward path
+                {2, 10, 1, 2, 0, 0},
+                {2, 10, 0, 0, 2, 0},
+                {2, 10, 0, 0, 4, 0},
+                {2,16,0,0,0,0},
+                {16,2,0,0,0,0},
+                {8, 4, 0, 0, 0, 0},
+                {2, 8, 1, 1, 2, 0},
+                {8, 2, 1, 1, 2, 0},
+                {16,16,0,0,0,0},
+                {2,5,0,0,2,0},
+                {6,2,1,1,0,0},
+
+                // Reverse path
+                {3, 9, 1, 1, 3, 0},
+                {9, 3, 1, 1, 3, 0},
+                {9, 3, 1, 2, 5, 0},
+                {5, 7, 1, 0, 5, 0}
+        };
 
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fourth_graph_vector, gfa_file_index);
@@ -803,19 +820,24 @@ namespace pathsprefixsumarrays {
          */
 
         gfa_file_index = 4;
-        std::vector<parameters_test_graph> parameter_fifth_graph_vector = {{2, 10, 1, 2, 10, 0},
-                                                                           {2, 6, 6, 1, 8, 0},
-                                                                           {2, 6, 6, 12, 8, 1},
-                                                                           {2, 6, 6, 13, 8, 2},
-                                                                           {2, 6, 6, 0, 8, 3},
-                                                                           {6, 2, 6, 0, 8, 4},
-                                                                           {6, 2, 6, 1, 8, 5},
-                                                                           {2, 8, 2, 14, 8, 0},
-                                                                           {2, 8, 2, 2, 8, 1},
-                                                                           {2, 19, 0, 0, 8, 0},
-                                                                           {9, 3, 2, 2, 9, 0},
-                                                                           {9, 3, 2, 14, 9, 1},
-                                                                           {9, 9, 0, 0, 9, 0}};
+        std::vector<parameters_test_graph> parameter_fifth_graph_vector = {
+                // Forward path
+                {2, 10, 1, 2, 10, 0},
+                {2, 6, 6, 1, 8, 0},
+                {2, 6, 6, 12, 8, 1},
+                {2, 6, 6, 13, 8, 2},
+                {2, 6, 6, 0, 8, 3},
+                {6, 2, 6, 0, 8, 4},
+                {6, 2, 6, 1, 8, 5},
+                {2, 8, 2, 14, 8, 0},
+                {2, 8, 2, 2, 8, 1},
+                {2, 19, 0, 0, 8, 0},
+
+                // Reverse path
+                {9, 3, 2, 2, 9, 0},
+                {9, 3, 2, 14, 9, 1},
+                {9, 9, 0, 0, 9, 0}
+        };
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fifth_graph_vector, gfa_file_index);
         ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{2,4,0,0,12,0},
@@ -833,29 +855,45 @@ namespace pathsprefixsumarrays {
 
 
         gfa_file_index = 5;
-        std::vector<parameters_test_graph> parameter_sixth_graph_vector = {{2, 6, 6, 1, 8, 0},
-                                                                           {2, 6, 6, 12, 8, 1},
-                                                                           {2, 6, 6, 13, 8, 2},
-                                                                           {2, 6, 6, 0, 8, 3},
-                                                                           {6, 2, 6, 0, 8, 4},
-                                                                           {6, 2, 6, 1, 8, 5},
-                                                                           {2, 8, 2, 14, 8, 0},
-                                                                           {2, 8, 2, 2, 8, 1},
-                                                                           {2, 19, 0, 0, 8, 0},
-                                                                           {9, 9, 0, 0, 9, 0},
-                                                                           {3, 5, 2, 0, 9, 1},
-                                                                           {3, 5, 2, 1, 9, 0}};
+        std::vector<parameters_test_graph> parameter_sixth_graph_vector = {
+                // Forward path
+                {2, 6, 6, 1, 8, 0},
+                {2, 6, 6, 12, 8, 1},
+                {2, 6, 6, 13, 8, 2},
+                {2, 6, 6, 0, 8, 3},
+                {6, 2, 6, 0, 8, 4},
+                {6, 2, 6, 1, 8, 5},
+                {2, 8, 2, 14, 8, 0},
+                {2, 8, 2, 2, 8, 1},
+                {2, 19, 0, 0, 8, 0},
+
+                // Reverse path
+                {9, 9, 0, 0, 9, 0},
+                {3, 5, 2, 0, 9, 1},
+                {3, 5, 2, 1, 9, 0}
+        };
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_sixth_graph_vector, gfa_file_index);
         ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{2,4,0,0,12,0},
                                                        {2,4,0,0,13,0}}, gfa_file_index);
 
-       try{
+        try{
             (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13);
         }catch(PathNotInGraphException ex){
             std::string msg_exception = std::string(ex.what());
             ASSERT_EQ(msg_exception, std::string("Error in 'get_all_nodes_distances_in_path': the inserted path 13 doesn't exist inside the graph."));
         }
+
+        /**
+         * Cyclic graph with
+         * Path: 0 - Nodes:  2 5 6 11 12
+         * Path: 2 - Nodes:  3 7 9
+         * Path: 4 - Nodes:  2 4 6 8
+         * Path: 6 - Nodes:  2 6 10 13
+         * Path: 8 - Nodes:  2 4 7 2 6 6 8
+         */
+
+
     }
 
 
