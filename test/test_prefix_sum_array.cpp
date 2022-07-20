@@ -210,6 +210,15 @@ namespace pathsprefixsumarrays {
             ASSERT_EQ(positions->empty(), true);
         }
 
+        void ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH(std::vector <parameters_test_graph> params, int gfa_file_index){
+            for(int test_index = 0; test_index < params.size(); ++test_index){
+                EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(params[test_index].n1,
+                                                                                                      params[test_index].n2,
+                                                                                                      params[test_index].path_id),
+                                                                                                      PathNotInGraphException);
+            }
+        }
+
 
         /**
          * Used to remove duplicated code from the test GetAllNodeDistanceInAPathNodeInInputVersion, given the params compute
@@ -709,9 +718,7 @@ namespace pathsprefixsumarrays {
 
         // only one distance computable because there is only one path of length 1
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
-        size_t param0 = 0; // needed since c++ confuses 0 with a nullptr and the function result ambiguous
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(param0, param0, 2), PathNotInGraphException);
-
+        ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{0,0,0,0,2,0}}, gfa_file_index);
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
@@ -726,10 +733,13 @@ namespace pathsprefixsumarrays {
         // 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_second_graph, gfa_file_index);
 
+        std::vector<parameters_test_graph> params = {
+                {0, 2, 0, 0, 2, 0},
+                {0, 2, 0, 0, 3, 0},
+                {2, 0, 0, 0, 3, 0}
+        };
 
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(0, 2, 2), PathNotInGraphException);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(0, 2, 3), PathNotInGraphException);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 0, 3), PathNotInGraphException);
+        ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH(params, gfa_file_index);
 
         /**
          * Acyclic graph, even paths (4), all distances
@@ -750,9 +760,8 @@ namespace pathsprefixsumarrays {
 
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_third_graph_vector, gfa_file_index);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 8), PathNotInGraphException);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 9), PathNotInGraphException);
-
+        ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{2,4,0,0,8,0},
+                                                       {2,4,0,0,9,0}}, gfa_file_index);
 
 
         /**
@@ -780,8 +789,8 @@ namespace pathsprefixsumarrays {
 
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fourth_graph_vector, gfa_file_index);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 8), PathNotInGraphException);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 9), PathNotInGraphException);
+        ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{2,4,0,0,8,0},
+                                                       {2,4,0,0,9,0}}, gfa_file_index);
 
         /**
          * Cyclic graph, even paths (3), all distances
@@ -809,8 +818,8 @@ namespace pathsprefixsumarrays {
                                                                            {9, 9, 0, 0, 9, 0}};
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_fifth_graph_vector, gfa_file_index);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 12), PathNotInGraphException);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13), PathNotInGraphException);
+        ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{2,4,0,0,12,0},
+                                                       {2,4,0,0,13,0}}, gfa_file_index);
 
 
         /**
@@ -838,8 +847,8 @@ namespace pathsprefixsumarrays {
                                                                            {3, 5, 2, 1, 9, 0}};
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_sixth_graph_vector, gfa_file_index);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 12), PathNotInGraphException);
-        EXPECT_THROW((*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13), PathNotInGraphException);
+        ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{2,4,0,0,12,0},
+                                                       {2,4,0,0,13,0}}, gfa_file_index);
 
        try{
             (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13);
@@ -988,7 +997,7 @@ namespace pathsprefixsumarrays {
                 {6, 11, {1, 4, 8}, 0},
                 {6, 11, {4, 1, 8}, 0}
         };
-        
+
         for(int test_index = 0; test_index < params.size(); ++test_index){
             try {
                 ASSERT_EQ(params[test_index].assert_distance,(*prefix_sums_arrays)[params[test_index].gfa_file_index]
