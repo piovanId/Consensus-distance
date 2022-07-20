@@ -158,7 +158,8 @@ namespace pathsprefixsumarrays {
                     ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id)))(((*psa).at(path_id))->size());
                     std::vector<size_t>* node_positions = paths_prefix_sum_arrays->get_positions_of_a_node_in_path(path_id, node, ones);
                     ASSERT_EQ(params[i][test_path_index],*node_positions);
-                }
+                }else
+                    std::cout<< "nontrovoilpath      ";
 
                 // Increment the Iterator to point to next entry
                 iterator++;
@@ -1323,6 +1324,35 @@ namespace pathsprefixsumarrays {
             }
         }
 
+        check = {{{},{}},   //0
+                 {{},{}},   //1
+                 {{},{2},{},{1},{},{1},{},{2}},   //2
+                 {{},{2},{},{1},{},{1}},   //3
+                 {{},{2},{},{1},{},{1},{},{2},{},{4,2,1},{},{3,2}},   //4
+                 {{},{2},{},{1},{},{1},{},{2},{},{4,2,1}},   //5
+                 {{},{2},{1},{},{},{1},{},{2},{2},{2,1}}};  //6
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto positions = temp->get_all_node_positions(7);
+            auto iterator = (*positions).begin();
+            // Iterate over the map using Iterator till end.
+            int j=0;
+            while (iterator != (*positions).end())
+            {
+               /*  // debug print
+                 std::cout<<"i:"<<std::to_string(i)<<" key:"<<std::to_string(iterator->first)<<" value:";
+                 for (int k = 0; k <(*iterator->second).size() ; ++k) {
+                     std::cout<<std::to_string(  (*iterator->second)[k])<<", ";
+                 }
+                 std::cout<<std::endl;*/
+                ASSERT_EQ((*iterator->second),check[i][iterator->first]);
+
+                // Increment the Iterator to point to next entry
+                iterator++;
+                j++;
+            }
+        }
     /* //START DEBUG PRINT
          for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             std::cout << "\n\n$psa"<<std::to_string(i);
@@ -1352,7 +1382,6 @@ namespace pathsprefixsumarrays {
 
     }
 
-/*
     TEST_F(PrefixSumArraysTest,get_positions_of_a_node_in_path){
 
 
@@ -1363,95 +1392,65 @@ namespace pathsprefixsumarrays {
                  {{0},{0},{0},{0}},
                  {{0},{0},{0}},
                  {{0},{0},{0},{0},{0,3},{0}},
-                 {{0},{0},{0},{0},{0,3}}},
-                //node: 12
+                 {{0},{0},{0},{0},{0,3}},
+                 {{0},{},{0},{},{0,3}}},
+                //node 12
                 {{{}},
                  {{}},
                  {{4},{},{},{3}},
                  {{4},{},{}},
                  {{4},{},{},{3},{},{4}},
-                 {{4},{},{},{3},{}}},
+                 {{4},{},{},{3},{}},
+                 {{4},{},{},{},{}}},
                  //node:15
                 {{{}},
                  {{}},
                  {{},{},{},{}},
                  {{},{},{}},
                  {{},{},{},{},{},{}},
-                 {{},{},{},{},{}}},
+                 {{},{},{},{},{}},
+                 {{},{},{},{},{}},
+                },
                  // node: 0;
-                {{{}},
-                 {{}},
-                 {{},{},{},{}},
-                 {{},{},{}},
-                 {{},{},{},{},{},{}},
-                 {{},{},{},{},{}}},
-                 // node 6;
-                {{{}},
-                 {{}},
-                 {{2},{1},{2},{1}},
-                 {{2},{1},{2}},
-                 {{2},{1},{2},{1},{4,2,5},{1,2}},
-                 {{2},{1},{2},{1},{4,2,5}}},
-                //node 7
-                {{{}},
-                 {{}},
-                 {{},{},{},{}},
-                 {{},{},{}},
-                 {{},{},{},{},{},{}},
-                 {{},{},{},{},{}}},
-                //node 13
-                {{{}},
-                 {{}},
-                 {{},{},{},{}},
-                 {{},{},{}},
-                 {{},{},{},{},{},{}},
-                 {{},{},{},{},{}}},
-                //node 1
-                {{{}},
-                 {{}},
-                 {{},{},{},{}},
-                 {{},{},{}},
-                 {{},{},{},{},{},{}},
-                 {{},{},{},{},{}}}
-        };
-
-        std::vector<std::vector<std::vector<std::vector<size_t>>>> check_disp = {
-
-                //node 7
-                {{{}},
-                 {{}},
-                 {{2},{1},{1},{2}},
-                 {{2},{1},{1}},
-                 {{2},{1},{1},{2},{4,2,1},{3,2}},
-                 {{2},{1},{1},{2},{4,2,1}}},
-                //node 4
-                {{{}},
-                 {{}},
-                 {{},{},{},{}},
-                 {{},{},{}},
-                 {{},{},{},{},{},{}},
-                 {{},{},{},{},{}}},
-                 //node 2
-                {{{}},
-                 {{}},
-                 {{},{},{},{}},
-                 {{},{},{}},
-                 {{},{},{},{},{},{}},
-                 {{},{},{},{},{}}},
-                //node 3
-                {{{0}},
-                 {{0,1}},
-                 {{4},{2},{3},{3}},
-                 {{4},{2},{3}},
-                 {{4},{2},{3},{3},{6,3},{4}},
-                 {{4},{2},{3},{3},{6,3}}},
-                //node 13
-                {{{}},
-                 {{}},
-                 {{0},{},{},{0}},
-                 {{0},{},{}},
-                 {{0},{},{},{0},{},{0}},
-                 {{0},{},{},{0},{}}},
+                 {{{}},
+                   {{}},
+                   {{},{},{},{}},
+                   {{},{},{}},
+                   {{},{},{},{},{},{}},
+                   {{},{},{},{},{}},
+                   {{},{},{},{},{}}},
+                   // node 6;
+                  {{{}},
+                   {{}},
+                   {{2},{1},{2},{1}},
+                   {{2},{1},{2}},
+                   {{2},{1},{2},{1},{4,2,5},{1,2}},
+                   {{2},{1},{2},{1},{4,2,5}},
+                   {{2},{},{2},{1},{4,5}}},
+                 //node 7
+                  {{{}},
+                   {{}},
+                   {{},{},{},{}},
+                   {{},{},{}},
+                   {{},{},{},{},{},{}},
+                   {{},{},{},{},{}},
+                   {{},{1},{},{},{2}}},
+                  //node 13
+                  {{{}},
+                   {{}},
+                   {{},{},{},{}},
+                   {{},{},{}},
+                   {{},{},{},{},{},{}},
+                   {{},{},{},{},{}},
+                   {{},{},{},{3},{}}},
+                 //node 1
+                  {{{}},
+                   {{}},
+                   {{},{},{},{}},
+                   {{},{},{}},
+                   {{},{},{},{},{},{}},
+                   {{},{},{},{},{}},
+                   {{},{},{},{},{}}}
         };
 
 
@@ -1466,10 +1465,57 @@ namespace pathsprefixsumarrays {
 
         }
 
+
+        std::vector<std::vector<std::vector<std::vector<size_t>>>> check_disp = {
+
+                //node 7
+                {{{}},
+                        {{}},
+                        {{2},{1},{1},{2}},
+                        {{2},{1},{1}},
+                        {{2},{1},{1},{2},{4,2,1},{3,2}},
+                        {{2},{1},{1},{2},{4,2,1}},
+                        {{2},{},{1},{2},{2,1}}},
+                //node 4
+                {{{}},
+                        {{}},
+                        {{},{},{},{}},
+                        {{},{},{}},
+                        {{},{},{},{},{},{}},
+                        {{},{},{},{},{}},
+                        {{3},{},{},{},{}}},
+                //node 2
+                {{{}},
+                        {{}},
+                        {{},{},{},{}},
+                        {{},{},{}},
+                        {{},{},{},{},{},{}},
+                        {{},{},{},{},{}},
+                        {{},{2},{},{3},{}}},
+                  //node 3
+                  {{{0}},
+                          {{0,1}},
+                          {{4},{2},{3},{3}},
+                          {{4},{2},{3}},
+                          {{4},{2},{3},{3},{6,3},{4}},
+                          {{4},{2},{3},{3},{6,3}},
+                          {{4},{},{3},{},{6,3}}},
+                  //node 13
+                  {{{}},
+                          {{}},
+                          {{0},{},{},{0}},
+                          {{0},{},{}},
+                          {{0},{},{},{0},{},{0}},
+                          {{0},{},{},{0},{}},
+                          {{0},{},{},{},{}}}
+        };
+
+
+
         std::vector<size_t> node_ids_disp ={7,4,2,3,13};
         for (int check_index = 0; check_index < check_disp.size(); ++check_index) {
 
-            for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            for (int i = 0; i < prefix_sums_arrays->size()-1; ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
                 auto psa=(*temp).get_prefix_sum_arrays();
                 ASSERT_NODE_POSITIONS_IN_PATH_EVEN_ODD(temp,check_disp[check_index],node_ids_disp[check_index],i);
@@ -1477,7 +1523,7 @@ namespace pathsprefixsumarrays {
 
         }
 
-        std::vector<size_t> node_ids_out ={0,17,2};
+      /*  std::vector<size_t> node_ids_out ={0,17,2};
         for (int check_index = 0; check_index < check_disp.size(); ++check_index) {
 
             for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
@@ -1486,7 +1532,7 @@ namespace pathsprefixsumarrays {
                 ASSERT_NODE_POSITIONS_IN_PATH_EVEN_ODD(temp,check_disp[check_index],node_ids_disp[check_index],i);
             }
 
-        }
+        }*/
 
 
         // Non existing nodes and non existing paths tests
@@ -1509,7 +1555,8 @@ namespace pathsprefixsumarrays {
                 ASSERT_NODE_POSITIONS_WITH_WRONG_PATH(temp,  test[test_index].first,test[test_index].second, gfa_file_index);
             }
         }
-    }*/
+
+    }
 /**
 0th graph:
 2[1],
