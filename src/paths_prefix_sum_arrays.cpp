@@ -75,7 +75,7 @@ const std::map<gbwt::size_type, sdsl::sd_vector<>*>* PathsPrefixSumArrays::get_p
 }
 
 
-size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const {
+size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1, size_t pos_node_2, size_t path_id) const { // fully tested
     size_t distance = 0;
     size_t ones;
     sdsl::sd_vector<>::select_1_type sdb_sel;
