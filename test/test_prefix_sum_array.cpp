@@ -786,7 +786,6 @@ namespace pathsprefixsumarrays {
         /**
          * reverse paths (existing, non existing with existing positions and not existing ones)
          */
-        // TODO: REMOVE DUPLICATED CODE,
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             //testing the outer function
@@ -835,14 +834,34 @@ namespace pathsprefixsumarrays {
             }
         }
 
+        struct parameters_test_graph_get_distance_between_positions_in_path {
+            size_t gfa_file_index;
+            size_t assert_distance; // Value of the expected distance
+            size_t pos_node_1;
+            size_t pos_node_2;
+            size_t path_id;
+        };
+
+        std::vector<parameters_test_graph_get_distance_between_positions_in_path> params_exception = {
+                // Existing path, with existing and non existing nodes in the path
+                {2,0,0,5,0},
+                };
+        for(int test_index = 0; test_index < params_exception.size(); ++test_index){
+            try {
+                (*prefix_sums_arrays)[params_exception[test_index].gfa_file_index]
+                ->get_distance_between_positions_in_path(params_exception[test_index].pos_node_1,
+                                                         params_exception[test_index].pos_node_2,
+                                                         params_exception[test_index].path_id);
+            }catch(OutOfBoundsPositionInPathException &ex){
+                std::string s(ex.what());
+                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position " +
+                std::to_string(params_exception[test_index].pos_node_2) + " is outside the boundaries of the path [0:4]\n"));
+            }
+        }
+
 
         // Existing path, with existing and non existing nodes in the path
-        try {
-            (*prefix_sums_arrays)[2]->get_distance_between_positions_in_path(0, 5, 0);
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 5 is outside the boundaries of the path [0:4]\n"));
-        }
+
 
         try {
             (*prefix_sums_arrays)[3]->get_distance_between_positions_in_path(0, 4, 2);
