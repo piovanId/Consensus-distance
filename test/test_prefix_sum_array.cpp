@@ -1138,15 +1138,95 @@ namespace pathsprefixsumarrays {
 
 
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {
-/*
-        std::vector<std::vector<std::vector<size_t>>> check = {{{0}},
-                                                               {{0,1}},
-                                                               {{0},{0},{0},{0}},
-                                                               {{0},{0},{0}},
-                                                               {{0},{0},{0},{0},{0,3},{0}},
-                                                               {{0},{0},{0},{0},{0,3}}};
+
+        std::vector<std::vector<std::vector<size_t>>> check = {{{0},{}},
+                                                               {{0,1},{}},
+                                                               {{0},{},{0},{},{0},{},{0},{}},
+                                                               {{0},{},{0},{},{0},{}},
+                                                               {{0},{},{0},{},{0},{},{0},{},{0,3},{},{0},{}},
+                                                               {{0},{},{0},{},{0},{},{0},{},{0,3},{}},
+                                                               {{0},{},{},{2},{0},{},{},{3},{0,3},{}}};
+
+
+
+
+            for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+                PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+                auto positions = temp->get_all_node_positions(2);
+                auto iterator = (*positions).begin();
+               // Iterate over the map using Iterator till end.
+                int j=0;
+                while (iterator != (*positions).end())
+                {
+
+                    ASSERT_EQ((*iterator->second),check[i][iterator->first]);
+
+                    // Increment the Iterator to point to next entry
+                    iterator++;
+                    j++;
+                }
+            }
+
+
+
+        check = {{{},{}},   //0
+                 {{},{}},   //1
+                 {{4},{},{},{},{},{},{3},{}},   //2
+                 {{4},{},{},{},{},{}},   //3
+                 {{4},{},{},{},{},{},{3},{},{},{},{4},{}},   //4
+                 {{4},{},{},{},{},{},{3},{},{},{}},   //5
+                 {{4},{},{},{},{},{},{},{0},{},{}}};  //6
 
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto positions = temp->get_all_node_positions(12);
+            auto iterator = (*positions).begin();
+            // Iterate over the map using Iterator till end.
+            int j=0;
+            while (iterator != (*positions).end())
+            {
+
+                ASSERT_EQ((*iterator->second),check[i][iterator->first]);
+
+                // Increment the Iterator to point to next entry
+                iterator++;
+                j++;
+            }
+        }
+
+        check = {{{},{}},   //0
+                 {{},{}},   //1
+                 {{2},{},{1},{},{2},{},{1},{}},   //2
+                 {{2},{},{1},{},{2},{}},   //3
+                 {{2},{},{1},{},{2},{},{1},{},{4,2,5},{},{1,2},{}},   //4
+                 {{2},{},{1},{},{2},{},{1},{},{4,2,5},{}},   //5
+                 {{2},{},{},{1},{2},{},{1},{},{4,5},{4}}};  //6
+
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
+            auto positions = temp->get_all_node_positions(6);
+            auto iterator = (*positions).begin();
+            // Iterate over the map using Iterator till end.
+            int j=0;
+            while (iterator != (*positions).end())
+            {
+               /* // debug print
+                std::cout<<"i:"<<std::to_string(i)<<" key:"<<std::to_string(iterator->first)<<" value:";
+                for (int k = 0; k <(*iterator->second).size() ; ++k) {
+                    std::cout<<std::to_string(  (*iterator->second)[k])<<", ";
+                }
+                std::cout<<std::endl;*/
+                ASSERT_EQ((*iterator->second),check[i][iterator->first]);
+
+                // Increment the Iterator to point to next entry
+                iterator++;
+                j++;
+            }
+        }
+
+    /* //START DEBUG PRINT
+         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            std::cout << "\n\n$psa"<<std::to_string(i);
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             auto positions = temp->get_all_node_positions(2);
             auto iterator = (*positions).begin();
@@ -1155,54 +1235,7 @@ namespace pathsprefixsumarrays {
             int j=0;
             while (iterator != (*positions).end())
             {
-
-                // Accessing VALUE from element pointed by it.
-                for(int k=0; k< iterator->second->size(); ++k){
-                    ASSERT_TRUE((*iterator->second)[k]==check[i][j][k]);
-                }
-                // Increment the Iterator to point to next entry
-                iterator++;
-                j++;
-            }
-        }
-        check = {{{}},
-                 {{}},
-                 {{4},{3}},
-                 {{4}},
-                 {{4},{3},{4}},
-                 {{4},{3}}};
-
-        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-            auto positions = temp->get_all_node_positions(12);
-            auto iterator = (*positions).begin();
-
-            // Iterate over the map using Iterator till end.
-            int j=0;
-            while (iterator != (*positions).end())
-            {
-                // Accessing VALUE from element pointed by it.
-                for(int k=0; k< iterator->second->size(); ++k){
-                    ASSERT_TRUE((*iterator->second)[k]==check[i][j][k]);
-                }
-                // Increment the Iterator to point to next entry
-                iterator++;
-                j++;
-            }
-        }
-
-/* //DEBUG PRINT
-        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            std::cout << "\n\n$psa"<<std::to_string(i);
-            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-            auto positions = temp->get_all_node_positions(12);
-            auto iterator = (*positions).begin();
-
-            // Iterate over the map using Iterator till end.
-            int j=0;
-            while (iterator != (*positions).end())
-            {
-                std::cout << "\n>" ;
+                std::cout <<"\n" << std::to_string(iterator->first)<<">" ;
                 // Accessing VALUE from element pointed by it.
                 for(int k=0; k< iterator->second->size(); ++k){
                     std::cout << (*iterator->second)[k]<<", ";
@@ -1213,8 +1246,11 @@ namespace pathsprefixsumarrays {
             }
         }
         std::cout << std::endl;
-//DEBUG PRINT
-*/
+
+
+        //END DEBUG PRINT
+    */
+
     }
 
 /*
