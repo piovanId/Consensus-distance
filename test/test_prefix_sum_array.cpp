@@ -851,16 +851,37 @@ namespace pathsprefixsumarrays {
 
 
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
-        /**
-         * reverse paths (existing, non existing with existing positions and not existing ones)
-         */
+
+        // Used to remove duplicated code and shrink the tests in this function
+        struct parameters_test_positions_and_path {
+            size_t pos_node_1;
+            size_t pos_node_2;
+            size_t path_id;
+        };
+
+        struct parameters_test_graph_get_distance_between_positions_in_path {
+            size_t gfa_file_index;
+            size_t assert_distance; // Value of the expected distance
+            parameters_test_positions_and_path par;
+            size_t end_position_in_path; // Last accessible position of the path
+        };
+
+        std::vector<parameters_test_positions_and_path> params_path_exception = {
+                // Non existing paths
+                {16, 0, 16},
+                {0, 16, 16},
+                {0, 2, 16}
+        };
+
+        // Testing on all files existing path, non existing path, distance existance
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             //testing the outer function
             EXPECT_THROW(temp->get_distance_between_positions_in_path(0, 0, 0), NotExistentDistanceException);
             if (i > 1) {
                 ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
-                //testing the aux function
+
+                // Testing auxiliar function used by get_distance_between_positions_in_path
                 auto tempsa = (*temp).psa;
                 sdsl::sd_vector<>::select_1_type sdb_sel(tempsa->at(0));
                 ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
@@ -870,135 +891,72 @@ namespace pathsprefixsumarrays {
                     ASSERT_EQ(12, temp->get_distance_between_positions_in_path(0, 4, 8));
                     ASSERT_EQ(14, temp->get_distance_between_positions_in_path(0, 6, 8));
                 }
+
+                // NotExistingDistanceException
+                try {
+                    temp->get_distance_between_positions_in_path(16, 16, 16);
+                }catch(NotExistentDistanceException &ex){
+                    std::string s(ex.what());
+                    ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the distance between two equal positions (16, 16) doesn't exist.\n"));
+                }
             }
 
             // Non existing path, with existing and non existing nodes in the path
-            try {
-                temp->get_distance_between_positions_in_path(0, 2, 16);
-            }catch(PathNotInGraphException &ex){
-                std::string s(ex.what());
-                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the path_id 16 doesn't exist in the graph.\n"));
-            }
-
-            try {
-                temp->get_distance_between_positions_in_path(0, 16, 16);
-            }catch(PathNotInGraphException &ex){
-                std::string s(ex.what());
-                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the path_id 16 doesn't exist in the graph.\n"));
-            }
-
-            try {
-                temp->get_distance_between_positions_in_path(16, 16, 16);
-            }catch(NotExistentDistanceException &ex){
-                std::string s(ex.what());
-                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the distance between two equal positions (16, 16) doesn't exist.\n"));
-            }
-
-            try {
-                temp->get_distance_between_positions_in_path(16, 0, 16);
-            }catch(PathNotInGraphException &ex){
-                std::string s(ex.what());
-                ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the path_id 16 doesn't exist in the graph.\n"));
+            for(int index_test = 0; index_test < params_path_exception.size(); ++index_test){
+                try {
+                    temp->get_distance_between_positions_in_path(params_path_exception[index_test].pos_node_1,
+                                                                 params_path_exception[index_test].pos_node_2,
+                                                                 params_path_exception[index_test].path_id);
+                }catch(PathNotInGraphException &ex){
+                    std::string s(ex.what());
+                    ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the path_id " +
+                                             std::to_string(params_path_exception[index_test].path_id) + " doesn't exist in the graph.\n"));
+                }
             }
         }
 
-        struct parameters_test_graph_get_distance_between_positions_in_path {
-            size_t gfa_file_index;
-            size_t assert_distance; // Value of the expected distance
-            size_t pos_node_1;
-            size_t pos_node_2;
-            size_t path_id;
-        };
 
-        std::vector<parameters_test_graph_get_distance_between_positions_in_path> params_exception = {
-                // Existing path, with existing and non existing nodes in the path
-                {2,0,0,5,0},
+        std::vector<parameters_test_graph_get_distance_between_positions_in_path> params = {
+                // Forward existing path, with non existing nodes in the path on the second position (exception test)
+                {2, 0, {0,5,0}, 4},
+                {3, 0, {0,4,2}, 2},
+                {2, 0, {2,5,0}, 4},
+                {2, 0, {2,16,0}, 4},
+
+                // Reverse existing path, with non existing nodes in the path on the second position (exception test)
+                {5, 0, {0,7,9}, 6},
+                {5, 0, {0,37,9}, 6},
+                {5, 0, {3,37,9}, 6},
+                {5, 0, {3,7,9}, 6},
+
+                // Existing path, with existing nodes in the path
+                {2, 2, {2,4,0}, 0},
+                {2, 4, {0,4,0}, 0},
+                {2, 0, {0,1,0}, 0},
+
+                // Reverse path cyclic
+                {5, 12, {0,4,9}, 0},
+                {5, 4, {0,4,1}, 0},
+                {5, 1, {1,3,1}, 0},
+                {5, 0, {1,2,1}, 0},
+
+                // Reverse path acyclic
+                {3,0, {1,2,1}, 0},
+                {3,2, {1,4,1}, 0},
                 };
-        for(int test_index = 0; test_index < params_exception.size(); ++test_index){
+        for(int test_index = 0; test_index < params.size(); ++test_index){
             try {
-                (*prefix_sums_arrays)[params_exception[test_index].gfa_file_index]
-                ->get_distance_between_positions_in_path(params_exception[test_index].pos_node_1,
-                                                         params_exception[test_index].pos_node_2,
-                                                         params_exception[test_index].path_id);
+                ASSERT_EQ(params[test_index].assert_distance,(*prefix_sums_arrays)[params[test_index].gfa_file_index]
+                ->get_distance_between_positions_in_path(params[test_index].par.pos_node_1,
+                                                         params[test_index].par.pos_node_2,
+                                                         params[test_index].par.path_id));
             }catch(OutOfBoundsPositionInPathException &ex){
                 std::string s(ex.what());
+
                 ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position " +
-                std::to_string(params_exception[test_index].pos_node_2) + " is outside the boundaries of the path [0:4]\n"));
+                                         std::to_string(params[test_index].par.pos_node_2) + " is outside the boundaries of the path [0:" +
+                                         std::to_string(params[test_index].end_position_in_path)+ "]\n"));
             }
-        }
-
-
-        // Existing path, with existing and non existing nodes in the path
-
-
-        try {
-            (*prefix_sums_arrays)[3]->get_distance_between_positions_in_path(0, 4, 2);
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 4 is outside the boundaries of the path [0:2]\n"));
-        }
-
-        try {
-            (*prefix_sums_arrays)[2]->get_distance_between_positions_in_path(2, 5, 0);
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 5 is outside the boundaries of the path [0:4]\n"));
-        }
-
-        (*prefix_sums_arrays)[2]->get_distance_between_positions_in_path(2, 4, 0);
-        (*prefix_sums_arrays)[2]->get_distance_between_positions_in_path(0, 4, 0);
-        (*prefix_sums_arrays)[2]->get_distance_between_positions_in_path(0, 1, 0);
-
-        try {
-            (*prefix_sums_arrays)[2]->get_distance_between_positions_in_path(2, 16, 0);
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 16 is outside the boundaries of the path [0:4]\n"));
-        }
-
-
-        // Reverse paths test cyclic
-        ASSERT_EQ(12, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(0, 4, 9));
-        ASSERT_EQ(4, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(0, 4, 1));
-        ASSERT_EQ(1, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(1, 3, 1));
-
-        // Reverse paths test acyclic
-        ASSERT_EQ(2, (*prefix_sums_arrays)[3]->get_distance_between_positions_in_path(1, 4, 1));
-
-        // Reverse paths test exception
-        try{
-            ASSERT_EQ(12, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(0, 7, 9));
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 7 is outside the boundaries of the path [0:6]\n"));
-        }
-
-        try{
-            ASSERT_EQ(12, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(0, 37, 9));
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 37 is outside the boundaries of the path [0:6]\n"));
-        }
-
-        try{
-            ASSERT_EQ(12, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(3, 37, 9));
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 37 is outside the boundaries of the path [0:6]\n"));
-        }
-
-        try{
-            ASSERT_EQ(12, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(3, 7, 9));
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 7 is outside the boundaries of the path [0:6]\n"));
-        }
-
-        try{
-            ASSERT_EQ(12, (*prefix_sums_arrays)[5]->get_distance_between_positions_in_path(3, 7, 9));
-        }catch(OutOfBoundsPositionInPathException &ex){
-            std::string s(ex.what());
-            ASSERT_EQ(s, std::string("Error in 'get_distance_between_positions_in_path': the second position 7 is outside the boundaries of the path [0:6]\n"));
         }
     }
 
