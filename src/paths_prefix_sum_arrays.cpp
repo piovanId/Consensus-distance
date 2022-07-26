@@ -97,7 +97,7 @@ const gbwt::FastLocate* PathsPrefixSumArrays::get_fast_locate() const {
     return fast_locate;
 }
 
-const  std::map<gbwt::size_type, std::shared_ptr<sdsl::sd_vector<>>>* PathsPrefixSumArrays::get_prefix_sum_arrays_map() const {
+const  std::map<gbwt::size_type, std::shared_ptr<const sdsl::sd_vector<>>>* PathsPrefixSumArrays::get_prefix_sum_arrays_map() const {
     std::map<gbwt::size_type, std::shared_ptr<sdsl::sd_vector<>>>* map = new std::map<gbwt::size_type, std::shared_ptr<sdsl::sd_vector<>>>();
    // std::cerr<<"index:"<<"prova"<<std::endl;
 
@@ -108,7 +108,7 @@ const  std::map<gbwt::size_type, std::shared_ptr<sdsl::sd_vector<>>>* PathsPrefi
     }else
         return nullptr;
 
-    return map;
+    return reinterpret_cast<const std::map<gbwt::size_type, std::shared_ptr<const sdsl::sd_vector<>>> *>(map);
 }
 
 
