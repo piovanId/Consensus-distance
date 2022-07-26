@@ -180,7 +180,7 @@ public:
      * Get prefix sum arrays.
      * @return a map in which for each path we have the prefix sum array.
      */
-    const std::map<gbwt::size_type, sdsl::sd_vector<>*>* get_prefix_sum_arrays() const;
+    const std::map<gbwt::size_type, std::shared_ptr<sdsl::sd_vector<>>>* get_prefix_sum_arrays_map() const;
 
 
     /**

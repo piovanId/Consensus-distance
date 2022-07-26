@@ -44,7 +44,7 @@ namespace pathsprefixsumarrays {
     void ASSERT_PSA_MEMBERS_NE_NULLPTR(PathsPrefixSumArrays const &psa) {
         // googletest has the assumption that you put the expected value first
         ASSERT_NE(nullptr, psa.get_fast_locate());
-        ASSERT_NE(nullptr, psa.get_prefix_sum_arrays());
+        ASSERT_NE(nullptr, psa.get_prefix_sum_arrays_map());
     }
 
 
@@ -141,10 +141,11 @@ namespace pathsprefixsumarrays {
                                            std::vector<std::vector<std::vector<size_t>>> &params,
                                            gbwt::node_type node,
                                            int i){
-            auto psa=(*paths_prefix_sum_arrays).get_prefix_sum_arrays();
+            auto psa= (*paths_prefix_sum_arrays).get_prefix_sum_arrays_map();
 
             auto iterator = (*psa).begin();
             int test_path_index=0;
+
             while (iterator != (*psa).end())
             {
                 size_t  path_id = iterator->first;
@@ -172,7 +173,7 @@ namespace pathsprefixsumarrays {
                                            std::vector<std::vector<std::vector<size_t>>> &params,
                                            gbwt::node_type node,
                                            int i){
-            auto psa=(*paths_prefix_sum_arrays).get_prefix_sum_arrays();
+            auto psa= (*paths_prefix_sum_arrays).get_prefix_sum_arrays_map();
 
             auto iterator = (*psa).begin();
             int test_path_index=0;
@@ -335,7 +336,7 @@ namespace pathsprefixsumarrays {
         std::unique_ptr<PathsPrefixSumArrays> psa_default = std::unique_ptr<PathsPrefixSumArrays>(
                 new PathsPrefixSumArrays());
         ASSERT_EQ(nullptr, psa_default->get_fast_locate());
-        ASSERT_EQ(nullptr, psa_default->get_prefix_sum_arrays());
+        ASSERT_EQ(nullptr, psa_default->get_prefix_sum_arrays_map());
 
         // The prefix sums array is already been created in the constructor of the test.
         for (auto psa: *prefix_sums_arrays) {
@@ -1455,7 +1456,10 @@ namespace pathsprefixsumarrays {
 
             for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-                auto psa=(*temp).get_prefix_sum_arrays();
+
+                auto psa= (*temp).get_prefix_sum_arrays_map();
+              //  std::cerr<<"index:"<<std::to_string(check_index)<<" i:"<<std::to_string(i)<<" "<<std::to_string(check.size())<<"prova"<<std::endl;
+
                 ASSERT_NODE_POSITIONS_IN_PATH_EVEN(temp,check[check_index],node_ids[check_index],i);
             }
 
@@ -1513,7 +1517,7 @@ namespace pathsprefixsumarrays {
 
             for (int i = 0; i < prefix_sums_arrays->size()-1; ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-                auto psa=(*temp).get_prefix_sum_arrays();
+                auto psa= (*temp).get_prefix_sum_arrays_map();
                 ASSERT_NODE_POSITIONS_IN_PATH_EVEN_ODD(temp,check_disp[check_index],node_ids_disp[check_index],i);
             }
 
@@ -1524,7 +1528,7 @@ namespace pathsprefixsumarrays {
 
             for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-                auto psa=(*temp).get_prefix_sum_arrays();
+                auto psa=(*temp).get_prefix_sum_arrays_map();
                 ASSERT_NODE_POSITIONS_IN_PATH_EVEN_ODD(temp,check_disp[check_index],node_ids_disp[check_index],i);
             }
 
