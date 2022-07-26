@@ -88,6 +88,8 @@ private:
 
     gbwt::FastLocate *fast_locate; // It is needed to perform select operation on sd_vector
 
+    std::vector<std::shared_ptr<sdsl::sd_vector<>>> prefix_sum_arrays; // new data structure
+
 
     /**
      * Compute distance between two node position in a path, it's an auxiliar method used by the public
@@ -231,6 +233,12 @@ public:
     std::map<size_t,std::vector<size_t>*>* get_all_node_positions(gbwt::node_type node) const;
 
 
+    /**
+     * Get the prefix sum array related to the path.
+     * @param path_id
+     * @return prefix sum array as sdsl::sd_vector type.
+     */
+    std::shared_ptr<const sdsl::sd_vector<>> get_prefix_sum_array_of_path(size_t path_id) const;
 };
 }// end of namespace pathsprefixsumarrays
 #endif //CONSENSUS_DISTANCE_PREFIX_SUM_ARRAY_H

@@ -32,6 +32,7 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr), fast_locate(nullptr)
 
 
 PathsPrefixSumArrays::PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph){
+    // TO BE DELETED AFTER REFACTORINGS, START
     // Create the prefix sum array
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
 
@@ -58,6 +59,33 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph){
         }
 
         (*psa)[i] = new sdsl::sd_vector<>(psa_temp);
+    }
+    // TO BE DELETED AFTER REFACTORINGS, END
+
+    // Create prefix sum array new data structure
+    //std::vector<std::shared_ptr<sdsl::sd_vector<>>> prefix_sum_arrays;
+    for(gbwt::size_type i = 0; i < (gbwtGraph.index)->sequences(); i += 2) {
+        // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
+        // is the representation
+        auto path = gbwtGraph.index->extract(i); // Attention: it's the sequence representation
+
+        size_t offset = 0;
+        for(gbwt::size_type j = 0; j < path.size(); ++j) {
+            gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
+            offset += length_of_node;
+        }
+
+
+        sdsl::bit_vector psa_temp(offset+1,0);
+
+        offset =0;
+        for(gbwt::size_type j = 0; j < path.size(); ++j) {
+            gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
+            offset += length_of_node;
+            psa_temp[offset] = 1;
+        }
+
+        prefix_sum_arrays.push_back(std::shared_ptr<sdsl::sd_vector<>>{new sdsl::sd_vector<>(psa_temp)});
     }
 
     // Create the fast locate
@@ -164,6 +192,8 @@ void PathsPrefixSumArrays::clear() {
         fast_locate = nullptr;
     }
 
+
+    // TO BE DELETED AFTER REFACTORINGS, START
     // Delete map memory
     if(psa != nullptr){
         std::map<gbwt::size_type , sdsl::sd_vector<>*>::iterator it;
@@ -177,6 +207,10 @@ void PathsPrefixSumArrays::clear() {
         delete psa;
         psa = nullptr;
     }
+    // TO BE DELETED AFTER REFACTORINGS, END
+
+    // Delete prefix sum array memory
+    prefix_sum_arrays.clear();
 }
 
 
@@ -305,6 +339,9 @@ std::vector<size_t>* PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_
 
 
 // TODO: it could be helpful know at which path every distances belongs to
+/*
+ * put positions in shared ptr and pass them to the function with std::move and delete the code of deleting memory
+ */
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const {
     std::vector<size_t> *distances = new std::vector<size_t>();
 
@@ -398,6 +435,10 @@ std::map<size_t,std::vector<size_t>*>* PathsPrefixSumArrays::get_all_node_positi
 }
 
 
+/*
+ * put smart pointers shared_ptr
+ */
+
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::vector<size_t>* node_1_positions,
                                                                            std::vector<size_t>* node_2_positions,
                                                                            size_t path_id) const{
@@ -489,4 +530,16 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
 
     return distances;
 }
+
+
+std::shared_ptr<const sdsl::sd_vector<>> PathsPrefixSumArrays::get_prefix_sum_array_of_path(size_t path_id) const {
+    if(path_id >= prefix_sum_arrays.size())
+        return nullptr;
+    return prefix_sum_arrays[path_id/2];
+}
+
+
+
+
+
 

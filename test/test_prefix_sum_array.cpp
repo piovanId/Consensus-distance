@@ -38,7 +38,7 @@ namespace pathsprefixsumarrays {
 
 
     /**
-     * Used to remove duplicated code, assert that all the psa memebers are not equal to NULLPTR
+     * Used to remove duplicated code, assert that all the psa memebers are not equal to NULLPTR.
      * @param psa
      */
     void ASSERT_PSA_MEMBERS_NE_NULLPTR(PathsPrefixSumArrays const &psa) {
@@ -341,10 +341,6 @@ namespace pathsprefixsumarrays {
         for (auto psa: *prefix_sums_arrays) {
             ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa);
         }
-
-        int gfa_file_index = 0;
-
-        //(*prefix_sums_arrays)[gfa_file_index]->get_prefix_sum_arrays()
     }
 
 
@@ -1633,9 +1629,32 @@ namespace pathsprefixsumarrays {
     }*/
 
 } // End namespace
+
+std::vector<std::unique_ptr<sdsl::sd_vector<>>> f(){
+    std::vector<std::unique_ptr<sdsl::sd_vector<>>> v;
+    std::unique_ptr<sdsl::sd_vector<>> item = std::unique_ptr<sdsl::sd_vector<>>{new sdsl::sd_vector<>({1,0,1})};
+    v.push_back(std::unique_ptr<sdsl::sd_vector<>>{new sdsl::sd_vector<>({1,0,1})});
+    //v.clear();
+    return v;
+}
+
+/*
+void bar(std::unique_ptr<int> p)
+{
+    // ...
+}
+
+int main()
+{
+    unique_ptr<int> p = foo();
+    bar(p); // error, can't implicitly invoke move constructor on lvalue
+    bar(std::move(p)); // OK but don't use p afterwards
+    return 0;
+}
+ */
+
 int main(int argc, char **argv)  {
     std::cout << "MAIN RUN ALL TESTS." << std::endl;
-
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
