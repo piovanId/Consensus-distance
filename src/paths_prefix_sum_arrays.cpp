@@ -341,6 +341,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
     std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_1 = get_all_node_positions(node_1);
     std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_2 = get_all_node_positions(node_2);
 
+
     if (positions_node_1->empty() || positions_node_2->empty()) {
         return distances;
     }
@@ -355,8 +356,8 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 
         if((*positions_node_2).find(key)  != (*positions_node_2).end()) {
             //se il path_ley è dispari modifico le posizioni togliendo ogni posizione da (ones-1) e abbasso di 1 la key
-            distances_in_path = get_all_nodes_distances_in_path(std::move((*positions_node_1)[key]),
-                                                                std::move((*positions_node_2)[key]),
+            distances_in_path = get_all_nodes_distances_in_path((*positions_node_1)[key],
+                                                                (*positions_node_2)[key],
                                                                 key);
 
             distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
@@ -368,17 +369,20 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 
     }
 
-    // Deleting memory positions_node_1
-    std::map<size_t,std::shared_ptr<std::vector<size_t>>>::iterator it;
 
-    for (it = positions_node_1->begin(); it != positions_node_1->end(); it++){
-        positions_node_1->erase(it);
-    }
 
-    // Deleting memory positions_node_2
-    for (it = positions_node_2->begin(); it != positions_node_2->end(); it++){
-        positions_node_2->erase(it);
-    }
+    // Deleting memory positions_node_1 and positions_node_2
+    positions_node_1->erase(positions_node_1->begin(), positions_node_1->end());
+    positions_node_2->erase(positions_node_2->begin(), positions_node_2->end());
+
+    /*
+     * TODO: help I don't understand why this is not working
+     * auto it = positions_node_1->begin();
+      for (it = positions_node_1->begin(); it != positions_node_1->end(); it++){
+        std::cerr << "Size vettore: " <<  it->second->size() << "\n";
+        (*positions_node_1).erase(it);
+        //positions_node_1->erase(it);
+    }*/
 
     return distances;
 }

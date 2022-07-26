@@ -1093,6 +1093,7 @@ namespace pathsprefixsumarrays {
         size_t A = 2;
         size_t B = 6;
 
+
         std::vector<std::vector<size_t>> check = {{},
                                                   {},
                                                   {1, 0, 1, 0},
@@ -1102,11 +1103,13 @@ namespace pathsprefixsumarrays {
                                                   {1, 0, 1, 12, 13, 0, 1 }};
 
 
+
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
             auto distance_vector = temp->get_all_nodes_distances(A, B);
             ASSERT_EQ((*distance_vector), check.at(i));
         }
+
 
         A = 2;
         B = 12;
@@ -1459,8 +1462,6 @@ namespace pathsprefixsumarrays {
                 PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
 
                 auto psa= (*temp).get_prefix_sum_arrays_map();
-              //  std::cerr<<"index:"<<std::to_string(check_index)<<" i:"<<std::to_string(i)<<" "<<std::to_string(check.size())<<"prova"<<std::endl;
-
                 ASSERT_NODE_POSITIONS_IN_PATH_EVEN(temp,check[check_index],node_ids[check_index],i);
             }
 
@@ -1653,28 +1654,6 @@ namespace pathsprefixsumarrays {
 
 } // End namespace
 
-std::vector<std::unique_ptr<sdsl::sd_vector<>>> f(){
-    std::vector<std::unique_ptr<sdsl::sd_vector<>>> v;
-    std::unique_ptr<sdsl::sd_vector<>> item = std::unique_ptr<sdsl::sd_vector<>>{new sdsl::sd_vector<>({1,0,1})};
-    v.push_back(std::unique_ptr<sdsl::sd_vector<>>{new sdsl::sd_vector<>({1,0,1})});
-    //v.clear();
-    return v;
-}
-
-/*
-void bar(std::unique_ptr<int> p)
-{
-    // ...
-}
-
-int main()
-{
-    unique_ptr<int> p = foo();
-    bar(p); // error, can't implicitly invoke move constructor on lvalue
-    bar(std::move(p)); // OK but don't use p afterwards
-    return 0;
-}
- */
 
 int main(int argc, char **argv)  {
     std::cout << "MAIN RUN ALL TESTS." << std::endl;
