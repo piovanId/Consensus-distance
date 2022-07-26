@@ -1089,7 +1089,7 @@ namespace pathsprefixsumarrays {
     2[10], 4[1], 7[1], 2[10], 6[1], 6[1], 8[5],
     1 0 1 12 13 0 1
     */
-    /*TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
+    TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
         size_t A = 2;
         size_t B = 6;
 
@@ -1233,7 +1233,7 @@ namespace pathsprefixsumarrays {
             ASSERT_EQ((*distance_vector), check.at(i));
         }
     }
-*/
+
 
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {
 
@@ -1557,6 +1557,24 @@ namespace pathsprefixsumarrays {
             }
         }
 
+    }
+
+    TEST_F(PrefixSumArraysTest, get_prefix_sum_array_of_path) {
+        std::vector<std::vector<sdsl::sd_vector<>>> test ={{}
+        };
+        for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+            auto psa = prefix_sums_arrays->at(i);
+            auto c = psa->get_prefix_sum_array_of_path(2).get();
+         //   std::cout <<std::to_string(i)<<": ";
+            if(c!= nullptr) {
+                for (int j = 0; j < (*c).size(); ++j) {
+           //         std::cout << std::to_string((*c)[j]) << " ";
+
+                }
+            }
+       //     std::cout<<std::endl;            std::cout<<std::endl;
+
+        }
     }
 /**
 0th graph:
