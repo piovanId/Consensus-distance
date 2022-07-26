@@ -128,7 +128,7 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
 
 
 
-    if((path_id % 2 == 0 && psa->find(path_id) == psa->end()) || (path_id % 2 != 0 && psa->find(path_id - 1) == psa->end())){
+    if((path_id % 2 == 0 && get_prefix_sum_array_of_path(path_id) == nullptr )|| (path_id % 2 != 0 && get_prefix_sum_array_of_path(path_id-1) == nullptr )){
         std::string error = "Error in 'get_distance_between_positions_in_path': the path_id " + std::to_string(path_id)
                             + " doesn't exist in the graph.\n";
 
@@ -137,12 +137,12 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
 
 
     // If the path is reversed (odd) we don't have it memorized, so we use the even one
-    if (path_id % 2 != 0 && psa->find(path_id - 1) != psa->end()) {
+    if (path_id % 2 != 0 && get_prefix_sum_array_of_path(path_id-1) != nullptr) {
         reversed_path = true;
         --path_id;
 
         // Compute ones == compute number of nodes in the path
-        ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+        ones = sdsl::sd_vector<>::rank_1_type(&(*get_prefix_sum_array_of_path(path_id)))((get_prefix_sum_array_of_path(path_id))->size());
 
         //TODO: try to find a way to avoid duplicated code
         //TODO: try to memorize this for every path and see if it's faster or not and how much memory it consumes with big graphs
@@ -154,10 +154,11 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_n
 
     // Compute ones == compute number of nodes in the path
     if(!reversed_path)
-        ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+        ones = sdsl::sd_vector<>::rank_1_type(&(*get_prefix_sum_array_of_path(path_id)))((get_prefix_sum_array_of_path(path_id))->size());
 
     // Initialize select operation (see select/rank)
-    sdb_sel = sdsl::sd_vector<>::select_1_type((*(psa))[path_id]);
+    //todo capire bene
+    sdb_sel = sdsl::sd_vector<>::select_1_type( get_prefix_sum_array_of_path(path_id).get());
 
 
     if (pos_node_2 >= ones) {
@@ -542,7 +543,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::
 
 
 std::shared_ptr<const sdsl::sd_vector<>> PathsPrefixSumArrays::get_prefix_sum_array_of_path(size_t path_id) const {
-    if(path_id >= prefix_sum_arrays.size())
+    if(path_id/2 >= prefix_sum_arrays.size())
         return nullptr;
     return prefix_sum_arrays[path_id/2];
 }
