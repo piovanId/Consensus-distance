@@ -110,7 +110,7 @@ private:
      * positions.
      * @return a non ordered vector of the positions of a node in the path.
      */
-    std::vector<size_t>* get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const;
+    std::unique_ptr<std::vector<size_t>> get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const;
 
     /**
      * Get all distances between two nodes in a path. Each nodes can occur several time in a path in different positions.
@@ -127,8 +127,8 @@ private:
      * two vectors in input is empty or if the path_id doesn't exist. If the two vectors are equals it returns all the
      * distances between the not equal positions.
      */
-    std::vector<size_t>* get_all_nodes_distances_in_path( std::vector<size_t>* node_1_positions,
-                                                          std::vector<size_t>* node_2_positions,
+    std::unique_ptr<std::vector<size_t>> get_all_nodes_distances_in_path( std::shared_ptr<std::vector<size_t>> node_1_positions,
+                                                          std::shared_ptr<std::vector<size_t>> node_2_positions,
                                                           size_t path_id) const;
 
 public:
@@ -180,7 +180,7 @@ public:
      * Get prefix sum arrays.
      * @return a map in which for each path we have the prefix sum array.
      */
-    const std::map<gbwt::size_type, std::shared_ptr<sdsl::sd_vector<>>>* get_prefix_sum_arrays_map() const;
+    const std::map<gbwt::size_type, std::shared_ptr<const sdsl::sd_vector<>>>* get_prefix_sum_arrays_map() const;
 
 
     /**
@@ -207,7 +207,7 @@ public:
      * @throws PathNotInGraphException if the path_id doesn't exist in the graph (in reverse or in forward direction).
      * @return a vector of size_t distances.
      */
-    std::vector<size_t>* get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
+    std::unique_ptr<std::vector<size_t>> get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
 
 
     /**
@@ -230,7 +230,7 @@ public:
      * @return a map where the key is the path id (sequence id) and the value is a pointer to a vector of positions in
      * that path.
      */
-    std::map<size_t,std::vector<size_t>*>* get_all_node_positions(gbwt::node_type node) const;
+    std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> get_all_node_positions(gbwt::node_type node) const;
 
 
     /**
