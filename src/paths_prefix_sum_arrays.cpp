@@ -33,7 +33,6 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(): fast_locate(nullptr) {}
 
 PathsPrefixSumArrays::PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph){
    
-
     // Create prefix sum array new data structure
     //std::vector<std::shared_ptr<sdsl::sd_vector<>>> prefix_sum_arrays;
     for(gbwt::size_type i = 0; i < (gbwtGraph.index)->sequences(); i += 2) {
