@@ -1561,19 +1561,42 @@ namespace pathsprefixsumarrays {
     }
 
     TEST_F(PrefixSumArraysTest, get_prefix_sum_array_of_path) {
-        std::vector<std::vector<sdsl::sd_vector<>>> test ={{}
+        std::vector<std::vector<sdsl::sd_vector<>* >> tests ={
+                {nullptr,
+                 nullptr,
+                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, })},
+
         };
+
+        std::vector<int> test_paths={2};
+
+        for (int tests_index = 0; tests_index < tests.size(); ++tests_index) {
+
+            for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
+                auto psa = prefix_sums_arrays->at(i);
+                auto prefix_sum_array_of_path = psa->get_prefix_sum_array_of_path(test_paths[tests_index]).get();
+                if(prefix_sum_array_of_path!= nullptr) {
+                    ASSERT_EQ(*tests[tests_index][i],*prefix_sum_array_of_path);
+                } else
+                    ASSERT_EQ(tests[tests_index][i],prefix_sum_array_of_path);
+            }
+        }
+
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             auto psa = prefix_sums_arrays->at(i);
-            auto c = psa->get_prefix_sum_array_of_path(2).get();
-         //   std::cout <<std::to_string(i)<<": ";
+            auto c = psa->get_prefix_sum_array_of_path(7).get();
+            std::cout <<"sdsl::sd_vector<>(sdsl::bit_vector{ ";
             if(c!= nullptr) {
                 for (int j = 0; j < (*c).size(); ++j) {
-           //         std::cout << std::to_string((*c)[j]) << " ";
+                    std::cout << std::to_string((*c)[j]) << ", ";
 
                 }
             }
-       //     std::cout<<std::endl;            std::cout<<std::endl;
+            std::cout<<"}),"<<std::endl;
 
         }
     }

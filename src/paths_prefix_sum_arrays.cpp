@@ -314,7 +314,7 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_positions_of_a_no
 
     // If the node is 0 is not in the path || no node visits || path_id doesn't exist in the psa
     // todo node_visits.empty()  should not be needed
-    if(node == 0 || node_visits.empty() || (path_id%2==0 && psa->find(path_id) == psa->end() )|| ( path_id%2!= 0 && psa->find(path_id-1) == psa->end() )){
+    if(node == 0 || node_visits.empty() || (path_id%2==0 && get_prefix_sum_array_of_path(path_id) == nullptr )|| ( path_id%2!= 0 && get_prefix_sum_array_of_path(path_id-1) == nullptr )){
         return node_positions;
     }
 
@@ -428,7 +428,7 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
                                                                            size_t path_id) const{
     std::unique_ptr<std::vector<size_t>> distances(new std::vector<size_t>());
 
-    if(node_1_positions->empty() || node_2_positions->empty() || (path_id%2==0 && psa->find(path_id) == psa->end()) || (path_id%2!=0 && psa->find(path_id-1) == psa->end() )) {
+    if(node_1_positions->empty() || node_2_positions->empty() || (path_id%2==0 &&get_prefix_sum_array_of_path(path_id)== nullptr) || (path_id%2!=0 && get_prefix_sum_array_of_path(path_id-1)== nullptr )) {
         return distances;
     }
 
@@ -464,9 +464,9 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
                 exit = true;
                 size_t ones;
                 if (path_id % 2 == 0) {
-                    ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*get_prefix_sum_array_of_path(path_id)))((get_prefix_sum_array_of_path(path_id))->size());
                 } else
-                    ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id - 1]))(((*psa)[path_id - 1])->size());
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*get_prefix_sum_array_of_path(path_id-1)))((get_prefix_sum_array_of_path(path_id-1))->size());
                 if (node_1_positions->at(pivot_1) >= ones || node_2_positions->at(pivot_2) >= ones) {
                     std::string error =
                             "Error in 'get_all_nodes_distances_in_path': position " +
@@ -517,7 +517,7 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
 
 
 std::shared_ptr<const sdsl::sd_vector<>> PathsPrefixSumArrays::get_prefix_sum_array_of_path(size_t path_id) const {
-    if(path_id/2 >= prefix_sum_arrays.size())
+    if(path_id%2 != 0 || path_id/2 >= prefix_sum_arrays.size())
         return nullptr;
     return prefix_sum_arrays[path_id/2];
 }
