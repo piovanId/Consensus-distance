@@ -959,8 +959,7 @@ namespace pathsprefixsumarrays {
                 ASSERT_EQ(2, temp->get_distance_between_positions_in_path(0, 3, 0));
 
                 // Testing auxiliar function used by get_distance_between_positions_in_path
-                auto tempsa = (*temp).psa;
-                sdsl::sd_vector<>::select_1_type sdb_sel(tempsa->at(0));
+                sdsl::sd_vector<>::select_1_type sdb_sel(temp->get_prefix_sum_array_of_path(0).get());
                 ASSERT_EQ(1, temp->get_distance_between_positions_in_path_aux(1, 3, sdb_sel));
                 ASSERT_EQ(3, temp->get_distance_between_positions_in_path_aux(1, 4, sdb_sel));
 
@@ -1566,6 +1565,9 @@ namespace pathsprefixsumarrays {
 
     }
 
+    TEST_F(PrefixSumArraysTest, toString_sd_vectors){
+        std::cout<< prefix_sums_arrays->at(2)->toString();
+    }
     TEST_F(PrefixSumArraysTest, get_prefix_sum_array_of_path) {
         std::vector<std::vector<sdsl::sd_vector<>* >> tests ={
                 {nullptr,

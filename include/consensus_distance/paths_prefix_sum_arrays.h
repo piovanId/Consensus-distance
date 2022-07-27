@@ -84,7 +84,7 @@ private:
     FRIEND_TEST(PrefixSumArraysTest, get_all_node_distance_in_a_path_vector);
 
 
-    std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // Prefix sum arrays (seq_id, prefix sum array)
+   // std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // Prefix sum arrays (seq_id, prefix sum array)
 
     gbwt::FastLocate *fast_locate; // It is needed to perform select operation on sd_vector
 

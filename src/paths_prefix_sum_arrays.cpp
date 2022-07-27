@@ -28,39 +28,11 @@ void stamparrei(std::vector<size_t> mauro){
 }
 
 
-PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr), fast_locate(nullptr) {}
+PathsPrefixSumArrays::PathsPrefixSumArrays(): fast_locate(nullptr) {}
 
 
 PathsPrefixSumArrays::PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph){
-    // TO BE DELETED AFTER REFACTORINGS,  START
-    // Create the prefix sum array
-    psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
-
-    // Build prefix sum array for each path (sequence)
-    for(gbwt::size_type i = 0; i < (gbwtGraph.index)->sequences(); i += 2) {
-        // += 2 because the id of the paths is multiple of two, every path has its reverse path and in GBWTGraph this
-        // is the representation
-        auto path = gbwtGraph.index->extract(i); // Attention: it's the sequence representation
-
-        size_t offset = 0;
-        for(gbwt::size_type j = 0; j < path.size(); ++j) {
-            gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
-            offset += length_of_node;
-        }
-
-
-        sdsl::bit_vector psa_temp(offset+1,0);
-
-        offset =0;
-        for(gbwt::size_type j = 0; j < path.size(); ++j) {
-            gbwt::size_type length_of_node = gbwtGraph.get_length( gbwtGraph.node_to_handle(path[j]));
-            offset += length_of_node;
-            psa_temp[offset] = 1;
-        }
-
-        (*psa)[i] = new sdsl::sd_vector<>(psa_temp);
-    }
-    // TO BE DELETED AFTER REFACTORINGS, END
+   
 
     // Create prefix sum array new data structure
     //std::vector<std::shared_ptr<sdsl::sd_vector<>>> prefix_sum_arrays;
@@ -202,21 +174,7 @@ void PathsPrefixSumArrays::clear() {
     }
 
 
-    // TO BE DELETED AFTER REFACTORINGS, START
-    // Delete map memory
-    if(psa != nullptr){
-        std::map<gbwt::size_type , sdsl::sd_vector<>*>::iterator it;
 
-        for (it = psa->begin(); it != psa->end(); it++){
-            delete it->second;
-            it->second = nullptr;
-        }
-
-        psa->clear();
-        delete psa;
-        psa = nullptr;
-    }
-    // TO BE DELETED AFTER REFACTORINGS, END
 
     // Delete prefix sum array memory
     prefix_sum_arrays.clear();
@@ -230,25 +188,23 @@ PathsPrefixSumArrays::~PathsPrefixSumArrays() {
 
 std::string PathsPrefixSumArrays::toString_sd_vectors() const {
     std::string temp="";
-    auto iterator = (*psa).begin();
 
-    // Iterate over the map using Iterator till end.
-    while (iterator != (*psa).end())
+    for (int i = 0; i < prefix_sum_arrays.size(); ++i)
     {
         temp +=  "\n| ";
 
         // Accessing KEY from element pointed by it.
-        temp += std::to_string(iterator->first) + "::\t[";
+        temp += std::to_string(i*2) + "::\t[";
 
         // Accessing VALUE from element pointed by it.
-        for(int i=0; i< iterator->second->size(); ++i){
-            temp += std::to_string((*(iterator->second))[i] );
-            if(i!=iterator->second->size()-1)
+        for(int j=0; j< prefix_sum_arrays[i]->size(); ++j){
+            temp += std::to_string((*prefix_sum_arrays[i])[j] );
+            if(j!=prefix_sum_arrays[i]->size()-1)
                 temp += ", ";
         }
         temp += "]";
         // Increment the Iterator to point to next entry
-        iterator++;
+
     }
     return temp;
 }
@@ -257,7 +213,6 @@ std::string PathsPrefixSumArrays::toString_sd_vectors() const {
 std::string PathsPrefixSumArrays::toString() const {
     std::string temp="";
 
-    auto iterator = (*psa).begin();
     for(int half_path_id = 0; half_path_id < prefix_sum_arrays.size(); ++half_path_id){
         temp +=  "\n| ";
         temp += std::to_string(half_path_id * 2) + "::\t[";
