@@ -1569,10 +1569,27 @@ namespace pathsprefixsumarrays {
                  new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
                  new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
                  new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, })},
+                {nullptr,
+                 nullptr,
+                 nullptr,
+                 nullptr,
+                 nullptr,
+                 nullptr,
+                 nullptr,
+                },
+
+                {       new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 1, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, }),
+                }
 
         };
 
-        std::vector<int> test_paths={2};
+        std::vector<int> test_paths={2,7,0};
 
         for (int tests_index = 0; tests_index < tests.size(); ++tests_index) {
 
@@ -1585,11 +1602,11 @@ namespace pathsprefixsumarrays {
                     ASSERT_EQ(tests[tests_index][i],prefix_sum_array_of_path);
             }
         }
-
+/*//start debug print
         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
             auto psa = prefix_sums_arrays->at(i);
-            auto c = psa->get_prefix_sum_array_of_path(7).get();
-            std::cout <<"sdsl::sd_vector<>(sdsl::bit_vector{ ";
+            auto c = psa->get_prefix_sum_array_of_path(0).get();
+            std::cout <<"new sdsl::sd_vector<>(sdsl::bit_vector{ ";
             if(c!= nullptr) {
                 for (int j = 0; j < (*c).size(); ++j) {
                     std::cout << std::to_string((*c)[j]) << ", ";
@@ -1599,6 +1616,7 @@ namespace pathsprefixsumarrays {
             std::cout<<"}),"<<std::endl;
 
         }
+        */ //end debug print
     }
 /**
 0th graph:
