@@ -243,11 +243,14 @@ namespace pathsprefixsumarrays {
                 distances = std::move((*psa[gfa_file_index]).get_all_nodes_distances_in_path(params[index_test].n1,
                                                                                        params[index_test].n2,
                                                                                        params[index_test].path_id));
+
                 ASSERT_EQ(params[index_test].assert_length_distance, distances->size());
                 if (!distances->empty())
                     ASSERT_EQ(params[index_test].assert_distance,
                               distances->at(params[index_test].index_distance_test));
             }
+
+
         }
 
 
@@ -706,9 +709,11 @@ namespace pathsprefixsumarrays {
                 {3, 3, 0, 0, 1, 0}
         };
 
+
         // only one distance computable because there is only one path of length 1
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
         ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{0,0,0,0,2,0}}, gfa_file_index);
+
 
         /**
          * One node cyclic graph, one path (0), all distances between 2 and 2
@@ -723,6 +728,7 @@ namespace pathsprefixsumarrays {
                 {7, 3, 0, 0, 1, 0},
                 {3, 3, 1, 0, 1, 0},
         };
+
 
         // 1 distances because d(1,1)=0 not computed, d(1,2)=0, d(2,2)=0 not computed
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameters_second_graph, gfa_file_index);

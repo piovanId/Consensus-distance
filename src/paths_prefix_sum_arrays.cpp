@@ -32,7 +32,7 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(): psa(nullptr), fast_locate(nullptr)
 
 
 PathsPrefixSumArrays::PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph){
-    // TO BE DELETED AFTER REFACTORINGS, START
+    // TO BE DELETED AFTER REFACTORINGS,  START
     // Create the prefix sum array
     psa = new std::map<gbwt::size_type , sdsl::sd_vector<>*>();
 
@@ -283,21 +283,21 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
 
 
     // If the path doesn't exist
-    if ((path_id%2 == 0 && get_prefix_sum_array_of_path(path_id) == nullptr) ||(path_id%2 != 0 && get_prefix_sum_array_of_path(path_id) == nullptr)) {
+    if ((path_id%2 == 0 && get_prefix_sum_array_of_path(path_id) == nullptr) || (path_id%2 != 0 && get_prefix_sum_array_of_path(path_id - 1) == nullptr)) {
         std::string error = "Error in 'get_all_nodes_distances_in_path': the inserted path " + std::to_string(path_id) +
                 " doesn't exist inside the graph.";
+
         throw PathNotInGraphException(error);
     }
 
     size_t ones;
     if (path_id%2==0) {
          // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
-         ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
-         auto a = get_prefix_sum_array_of_path(path_id);
-         auto b = (*(*psa)[path_id]);
-         ones = sdsl::sd_vector<>::rank_1_type(& (get_prefix_sum_array_of_path(path_id))(get_prefix_sum_array_of_path(path_id)->size());
-    }else
-        ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id-1]))(((*psa)[path_id-1])->size());
+        ones = sdsl::sd_vector<>::rank_1_type(&(*(get_prefix_sum_array_of_path(path_id))))(get_prefix_sum_array_of_path(path_id)->size());
+    }else {
+        ones = sdsl::sd_vector<>::rank_1_type(&(*(get_prefix_sum_array_of_path(path_id - 1))))(get_prefix_sum_array_of_path(path_id - 1)->size());
+    }
+
 
     // Get nodes positions within a path, a node in a loop can occurr several times
     std::unique_ptr<std::vector<size_t>> node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
@@ -337,9 +337,6 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_positions_of_a_no
  */
 std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const {
     std::vector<size_t> *distances = new std::vector<size_t>();
-
-    //std::map<size_t, std::vector<size_t> *> *positions_node_1 = get_all_node_positions(node_1);
-    //std::map<size_t, std::vector<size_t> *> *positions_node_2 = get_all_node_positions(node_2);
 
     std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_1 = get_all_node_positions(node_1);
     std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_2 = get_all_node_positions(node_2);
@@ -406,9 +403,9 @@ std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> PathsPref
         // Todo: we could optimize this operation by memorizing the ones, try to find out if it is a good way.
         size_t ones;
         if(path_id%2==0){
-             ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+            ones = sdsl::sd_vector<>::rank_1_type(&(*(get_prefix_sum_array_of_path(path_id))))(get_prefix_sum_array_of_path(path_id)->size());
         } else{
-             ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id-1]))(((*psa)[path_id-1])->size());
+            ones = sdsl::sd_vector<>::rank_1_type(&(*(get_prefix_sum_array_of_path(path_id - 1))))(get_prefix_sum_array_of_path(path_id - 1)->size());
         }
         //initialize che map if it's not been initialized before;
         if((*node_positions)[path_id] == nullptr){
