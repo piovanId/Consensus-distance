@@ -278,12 +278,12 @@ std::string PathsPrefixSumArrays::toString() const {
 
 
 std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
-                                                                            gbwt::node_type node_2,
-                                                                            size_t path_id) const {
+                                                                                            gbwt::node_type node_2,
+                                                                                            size_t path_id) const {
 
 
     // If the path doesn't exist
-    if ((path_id%2 == 0 && psa->find(path_id) == psa->end()) ||(path_id%2 != 0 && psa->find(path_id-1) == psa->end())) {
+    if ((path_id%2 == 0 && get_prefix_sum_array_of_path(path_id) == nullptr) ||(path_id%2 != 0 && get_prefix_sum_array_of_path(path_id) == nullptr)) {
         std::string error = "Error in 'get_all_nodes_distances_in_path': the inserted path " + std::to_string(path_id) +
                 " doesn't exist inside the graph.";
         throw PathNotInGraphException(error);
@@ -293,6 +293,9 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
     if (path_id%2==0) {
          // Ones: the number of ones in the sd_vector correspond to the number of nodes inside a path
          ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id]))(((*psa)[path_id])->size());
+         auto a = get_prefix_sum_array_of_path(path_id);
+         auto b = (*(*psa)[path_id]);
+         ones = sdsl::sd_vector<>::rank_1_type(& (get_prefix_sum_array_of_path(path_id))(get_prefix_sum_array_of_path(path_id)->size());
     }else
         ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa)[path_id-1]))(((*psa)[path_id-1])->size());
 
