@@ -224,7 +224,8 @@ std::string PathsPrefixSumArrays::toString() const {
 
 std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                                             gbwt::node_type node_2,
-                                                                                            size_t path_id) const {
+                                                                                            size_t path_id,
+                                                                                            bool compute_directed_distance) const {
 
 
     // If the path doesn't exist
@@ -251,7 +252,7 @@ std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
 
     return get_all_nodes_distances_in_path(std::move(node_1_positions),
                                            std::move(node_2_positions),
-                                           path_id);
+                                           path_id, compute_directed_distance);
 }
 
 
@@ -280,7 +281,9 @@ std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_positions_of_a_no
 /*
  * put positions in shared ptr and pass them to the function with std::move and delete the code of deleting memory
  */
-std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const {
+std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1,
+                                                                                   gbwt::node_type node_2,
+                                                                                   bool compute_directed_distance) const {
     std::shared_ptr<std::vector<size_t>> distances(new std::vector<size_t>());
 
     std::shared_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_1 = get_all_node_positions(node_1);
@@ -303,7 +306,8 @@ std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
             //se il path_ley è dispari modifico le posizioni togliendo ogni posizione da (ones-1) e abbasso di 1 la key
             distances_in_path = get_all_nodes_distances_in_path((*positions_node_1)[key],
                                                                 (*positions_node_2)[key],
-                                                                key);
+                                                                key,
+                                                                compute_directed_distance);
 
             distances->insert(distances->end(),distances_in_path->begin(), distances_in_path->end());
         }
@@ -366,7 +370,8 @@ std::shared_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> PathsPref
 
 std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::shared_ptr<std::vector<size_t>> node_1_positions,
                                                                            std::shared_ptr<std::vector<size_t>> node_2_positions,
-                                                                           size_t path_id) const{
+                                                                           size_t path_id,
+                                                                           bool compute_directed_distance) const{
     std::unique_ptr<std::vector<size_t>> distances(new std::vector<size_t>());
 
     if(node_1_positions->empty() || node_2_positions->empty() || (path_id%2==0 &&get_prefix_sum_array_of_path(path_id)== nullptr) || (path_id%2!=0 && get_prefix_sum_array_of_path(path_id-1)== nullptr )) {
@@ -420,7 +425,7 @@ std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
             ++ pivot_2;
         }
 
-        if(!exit&&node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
+        if(!exit && node_1_positions->at(pivot_1) < node_2_positions->at(pivot_2)){
             j = pivot_2;
             end = node_2_positions->size();
             i = pivot_1;
@@ -428,8 +433,12 @@ std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
 
             iterate_on_node_2_positions = true;
         }else if(!exit){
+            if(compute_directed_distance){
+                j = node_1_positions->size();
+            }else{
+                j = pivot_1;
+            }
 
-            j = pivot_1;
             end = node_1_positions->size();
             i = pivot_2;
             ++ pivot_2;

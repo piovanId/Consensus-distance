@@ -121,6 +121,7 @@ private:
      * @param node_1_positions positions of node_1 inside the path (sequence) forward or reverse.
      * @param node_2_positions positions of node_1 inside the path (sequence) forward or reverse.
      * @param path_id
+     * @param compute_directed_distance true if you want to compute directed distance.
      * @throws OutOfBoundsPositionInPathException when in the parameters there is at least one positions that doesn't
      * exist in the path_id (in reverse or in forward direction).
      * @return a vector of all the distances between the two nodes in a path. The returned vector is empty if one of the
@@ -129,7 +130,8 @@ private:
      */
     std::shared_ptr<std::vector<size_t>> get_all_nodes_distances_in_path( std::shared_ptr<std::vector<size_t>> node_1_positions,
                                                           std::shared_ptr<std::vector<size_t>> node_2_positions,
-                                                          size_t path_id) const;
+                                                          size_t path_id,
+                                                          bool compute_directed_distance) const;
 
 public:
 
@@ -204,10 +206,14 @@ public:
      * @param node_1 id of the node.
      * @param node_2 id of the node.
      * @param path_id id of the path (sequence).
+     * @param compute_directed_distance true if you want to compute directed distance
      * @throws PathNotInGraphException if the path_id doesn't exist in the graph (in reverse or in forward direction).
      * @return a vector of size_t distances.
      */
-    std::shared_ptr<std::vector<size_t>> get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
+    std::shared_ptr<std::vector<size_t>> get_all_nodes_distances_in_path( gbwt::node_type node_1,
+                                                                          gbwt::node_type node_2,
+                                                                          size_t path_id,
+                                                                          bool compute_directed_distance) const;
 
 
     /**
@@ -218,10 +224,13 @@ public:
      *
      * @param node_1
      * @param node_2
+     * @param compute_directed_distance true if you want to compute directed distance
      * @return a vector with all the distance between two nodes. If the two nodes haven't any path in common can return
      * an empty vector.
      */
-    std::shared_ptr<std::vector<size_t>> get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const;
+    std::shared_ptr<std::vector<size_t>> get_all_nodes_distances(gbwt::node_type node_1,
+                                                                 gbwt::node_type node_2,
+                                                                 bool compute_directed_distance) const;
 
 
     /**
