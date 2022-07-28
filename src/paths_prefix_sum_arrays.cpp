@@ -60,12 +60,12 @@ PathsPrefixSumArrays::PathsPrefixSumArrays(gbwtgraph::GBWTGraph &gbwtGraph){
     }
 
     // Create the fast locate
-    fast_locate = new gbwt::FastLocate(*gbwtGraph.index);
+    fast_locate.reset(new gbwt::FastLocate(*gbwtGraph.index));
 }
 
 
-const gbwt::FastLocate* PathsPrefixSumArrays::get_fast_locate() const {
-    return fast_locate;
+std::shared_ptr<const gbwt::FastLocate> PathsPrefixSumArrays::get_fast_locate() const {
+    return static_cast<const std::shared_ptr<const gbwt::FastLocate> &>(fast_locate);
 }
 
 const  std::map<gbwt::size_type, std::shared_ptr<const sdsl::sd_vector<>>>* PathsPrefixSumArrays::get_prefix_sum_arrays_map() const {
@@ -166,15 +166,6 @@ size_t PathsPrefixSumArrays::get_distance_between_positions_in_path_aux(size_t p
 
 
 void PathsPrefixSumArrays::clear() {
-    // Deleting memory fast_locate
-    if(fast_locate != nullptr){
-        delete fast_locate;
-        fast_locate = nullptr;
-    }
-
-
-
-
     // Delete prefix sum array memory
     prefix_sum_arrays.clear();
 }
@@ -231,7 +222,7 @@ std::string PathsPrefixSumArrays::toString() const {
 }
 
 
-std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
+std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
                                                                                             gbwt::node_type node_2,
                                                                                             size_t path_id) const {
 
@@ -254,9 +245,9 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
 
 
     // Get nodes positions within a path, a node in a loop can occurr several times
-    std::unique_ptr<std::vector<size_t>> node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
+    std::shared_ptr<std::vector<size_t>> node_1_positions = get_positions_of_a_node_in_path(path_id, node_1, ones);
 
-    std::unique_ptr<std::vector<size_t>> node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
+    std::shared_ptr<std::vector<size_t>> node_2_positions = get_positions_of_a_node_in_path(path_id, node_2, ones);
 
     return get_all_nodes_distances_in_path(std::move(node_1_positions),
                                            std::move(node_2_positions),
@@ -264,10 +255,10 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
 }
 
 
-std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const {
+std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const {
     auto node_visits = fast_locate->decompressSA(node);
     bool reverse  = false;
-    std::unique_ptr<std::vector<size_t>> node_positions(new std::vector<size_t>());
+    std::shared_ptr<std::vector<size_t>> node_positions(new std::vector<size_t>());
 
     // If the node is 0 is not in the path || no node visits || path_id doesn't exist in the psa
     // todo node_visits.empty()  should not be needed
@@ -289,11 +280,11 @@ std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_positions_of_a_no
 /*
  * put positions in shared ptr and pass them to the function with std::move and delete the code of deleting memory
  */
-std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const {
-    std::vector<size_t> *distances = new std::vector<size_t>();
+std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const {
+    std::shared_ptr<std::vector<size_t>> distances(new std::vector<size_t>());
 
-    std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_1 = get_all_node_positions(node_1);
-    std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_2 = get_all_node_positions(node_2);
+    std::shared_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_1 = get_all_node_positions(node_1);
+    std::shared_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> positions_node_2 = get_all_node_positions(node_2);
 
 
     if (positions_node_1->empty() || positions_node_2->empty()) {
@@ -306,7 +297,7 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
     while (iterator != (*positions_node_1).end())
     {
         size_t key = iterator->first; // sequence id
-        std::unique_ptr<std::vector<size_t>> distances_in_path;
+        std::shared_ptr<std::vector<size_t>> distances_in_path;
 
         if((*positions_node_2).find(key)  != (*positions_node_2).end()) {
             //se il path_ley è dispari modifico le posizioni togliendo ogni posizione da (ones-1) e abbasso di 1 la key
@@ -342,10 +333,10 @@ std::vector<size_t>* PathsPrefixSumArrays::get_all_nodes_distances(gbwt::node_ty
 }
 
 
-std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node) const {
+std::shared_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node) const {
     auto node_visits = fast_locate->decompressSA(node);
 
-    std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> node_positions( new std::map<size_t,std::shared_ptr<std::vector<size_t>>>());
+    std::shared_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> node_positions( new std::map<size_t,std::shared_ptr<std::vector<size_t>>>());
 
     if(node == 0 || node_visits.empty()){
         return node_positions;
@@ -373,11 +364,7 @@ std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> PathsPref
 }
 
 
-/*
- * put smart pointers shared_ptr
- */
-
-std::unique_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::shared_ptr<std::vector<size_t>> node_1_positions,
+std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distances_in_path(std::shared_ptr<std::vector<size_t>> node_1_positions,
                                                                            std::shared_ptr<std::vector<size_t>> node_2_positions,
                                                                            size_t path_id) const{
     std::unique_ptr<std::vector<size_t>> distances(new std::vector<size_t>());

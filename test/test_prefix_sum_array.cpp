@@ -157,7 +157,7 @@ namespace pathsprefixsumarrays {
 
                 if(psa->find(path_id) != psa->end()  && (path_id % 2) == 0 ){
                     ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id)))(((*psa).at(path_id))->size());
-                    std::unique_ptr<std::vector<size_t>> node_positions = paths_prefix_sum_arrays->get_positions_of_a_node_in_path(path_id, node, ones);
+                    std::shared_ptr<std::vector<size_t>> node_positions = paths_prefix_sum_arrays->get_positions_of_a_node_in_path(path_id, node, ones);
                     ASSERT_EQ(params[i][test_path_index],*node_positions);
                 }else
                     std::cout<< "nontrovoilpath      ";
@@ -187,7 +187,7 @@ namespace pathsprefixsumarrays {
 
                  if((psa->find(path_id-1)!= psa->end() && (path_id % 2) != 0 )){
                     ones = sdsl::sd_vector<>::rank_1_type(&(*(*psa).at(path_id-1)))(((*psa).at(path_id-1))->size());
-                     std::unique_ptr<std::vector<size_t>> node_positions = paths_prefix_sum_arrays->get_positions_of_a_node_in_path(path_id, node, ones);
+                     std::shared_ptr<std::vector<size_t>> node_positions = paths_prefix_sum_arrays->get_positions_of_a_node_in_path(path_id, node, ones);
 
                     ASSERT_EQ(params[i][test_path_index],*node_positions);
                 }
@@ -239,7 +239,7 @@ namespace pathsprefixsumarrays {
             int number_of_tests_on_graph = params.size();
             for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
 
-                std::unique_ptr<std::vector<size_t>> distances;
+                std::shared_ptr<std::vector<size_t>> distances;
                 distances = std::move((*psa[gfa_file_index]).get_all_nodes_distances_in_path(params[index_test].n1,
                                                                                        params[index_test].n2,
                                                                                        params[index_test].path_id));
@@ -268,7 +268,7 @@ namespace pathsprefixsumarrays {
             int number_of_tests_on_graph = params.size();
             for(int index_test = 0; index_test < number_of_tests_on_graph; ++index_test){
 
-                std::unique_ptr<std::vector<size_t>> distances;
+                std::shared_ptr<std::vector<size_t>> distances;
                 std::unique_ptr<std::vector<size_t>> position1(new std::vector<size_t>(params[index_test].positions_node_1));
                 std::unique_ptr<std::vector<size_t>> position2(new std::vector<size_t>(params[index_test].positions_node_2));
                 distances = std::move((*psa[gfa_file_index]).get_all_nodes_distances_in_path(std::move(position1),
@@ -1565,9 +1565,10 @@ namespace pathsprefixsumarrays {
 
     }
 
-    TEST_F(PrefixSumArraysTest, toString_sd_vectors){
+    /*TEST_F(PrefixSumArraysTest, toString_sd_vectors){
         std::cout<< prefix_sums_arrays->at(2)->toString();
-    }
+    }*/
+
     TEST_F(PrefixSumArraysTest, get_prefix_sum_array_of_path) {
         std::vector<std::vector<sdsl::sd_vector<>* >> tests ={
                 {nullptr,

@@ -86,7 +86,7 @@ private:
 
    // std::map<gbwt::size_type, sdsl::sd_vector<> *>* psa; // Prefix sum arrays (seq_id, prefix sum array)
 
-    gbwt::FastLocate *fast_locate; // It is needed to perform select operation on sd_vector
+    std::shared_ptr<gbwt::FastLocate> fast_locate; // It is needed to perform select operation on sd_vector
 
     std::vector<std::shared_ptr<sdsl::sd_vector<>>> prefix_sum_arrays; // new data structure
 
@@ -110,7 +110,7 @@ private:
      * positions.
      * @return a non ordered vector of the positions of a node in the path.
      */
-    std::unique_ptr<std::vector<size_t>> get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const;
+    std::shared_ptr<std::vector<size_t>> get_positions_of_a_node_in_path(size_t path_id, gbwt::node_type node, size_t &ones) const;
 
     /**
      * Get all distances between two nodes in a path. Each nodes can occur several time in a path in different positions.
@@ -127,7 +127,7 @@ private:
      * two vectors in input is empty or if the path_id doesn't exist. If the two vectors are equals it returns all the
      * distances between the not equal positions.
      */
-    std::unique_ptr<std::vector<size_t>> get_all_nodes_distances_in_path( std::shared_ptr<std::vector<size_t>> node_1_positions,
+    std::shared_ptr<std::vector<size_t>> get_all_nodes_distances_in_path( std::shared_ptr<std::vector<size_t>> node_1_positions,
                                                           std::shared_ptr<std::vector<size_t>> node_2_positions,
                                                           size_t path_id) const;
 
@@ -173,7 +173,7 @@ public:
      * Get fast locate used in Test.
      * @return fast_locate.
      */
-    const gbwt::FastLocate* get_fast_locate() const;
+    std::shared_ptr<const gbwt::FastLocate> get_fast_locate() const;
 
 
     /**
@@ -207,7 +207,7 @@ public:
      * @throws PathNotInGraphException if the path_id doesn't exist in the graph (in reverse or in forward direction).
      * @return a vector of size_t distances.
      */
-    std::unique_ptr<std::vector<size_t>> get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
+    std::shared_ptr<std::vector<size_t>> get_all_nodes_distances_in_path(gbwt::node_type node_1, gbwt::node_type node_2, size_t path_id) const;
 
 
     /**
@@ -221,7 +221,7 @@ public:
      * @return a vector with all the distance between two nodes. If the two nodes haven't any path in common can return
      * an empty vector.
      */
-    std::vector<size_t>* get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const;
+    std::shared_ptr<std::vector<size_t>> get_all_nodes_distances(gbwt::node_type node_1, gbwt::node_type node_2) const;
 
 
     /**
@@ -230,7 +230,7 @@ public:
      * @return a map where the key is the path id (sequence id) and the value is a pointer to a vector of positions in
      * that path.
      */
-    std::unique_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> get_all_node_positions(gbwt::node_type node) const;
+    std::shared_ptr<std::map<size_t,std::shared_ptr<std::vector<size_t>>>> get_all_node_positions(gbwt::node_type node) const;
 
 
     /**
