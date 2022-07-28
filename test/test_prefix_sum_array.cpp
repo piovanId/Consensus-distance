@@ -76,6 +76,7 @@ namespace pathsprefixsumarrays {
         int assert_distance; // Distance value to be tested
         size_t path_id;
         int index_distance_test; // Index of the position in distance vector
+        bool compute_directed_distance;
     };
 
 
@@ -275,7 +276,7 @@ namespace pathsprefixsumarrays {
                 distances = std::move((*psa[gfa_file_index]).get_all_nodes_distances_in_path(std::move(position1),
                                                                                              std::move(position2),
                                                                                              params[index_test].path_id,
-                                                                                             false));
+                                                                                             params[index_test].compute_directed_distance));
                 ASSERT_EQ(params[index_test].assert_length_distance, distances->size());
                 if (!distances->empty())
                     ASSERT_EQ(params[index_test].assert_distance,
@@ -389,17 +390,34 @@ namespace pathsprefixsumarrays {
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_first_graph_OutOfBounds, gfa_file_index);
 
 
-        std::vector<parameters_test_graph_vectors> parameters_first_graph ={ {{0}, {0}, 0, 0, 0, 0},
-                                                                             {{}, {0}, 0, 0, 0, 0},
-                                                                             {{0}, {}, 0, 0, 0, 0},
-                                                                             {{2342346}, {}, 0, 0, 0, 0},
-                                                                             {{}, {2342346}, 0, 0, 0, 0},
+        std::vector<parameters_test_graph_vectors> parameters_first_graph ={
+                // Undirected distance forward path
+                {{0}, {0}, 0, 0, 0, 0, false},
+                {{}, {0}, 0, 0, 0, 0, false},
+                {{0}, {}, 0, 0, 0, 0, false},
+                {{2342346}, {}, 0, 0, 0, 0, false},
+                {{}, {2342346}, 0, 0, 0, 0, false},
 
-                                                                             {{0}, {0}, 0, 0, 1, 0},
-                                                                             {{}, {0}, 0, 0, 1, 0},
-                                                                             {{0}, {}, 0, 0, 1, 0},
-                                                                             {{}, {2342346}, 0, 0, 1, 0}
-                                                                             };
+                // Undirected distance reverse path
+                {{0}, {0}, 0, 0, 1, 0, false},
+                {{}, {0}, 0, 0, 1, 0, false},
+                {{0}, {}, 0, 0, 1, 0, false},
+                {{}, {2342346}, 0, 0, 1, 0, false},
+
+                // Directed distance forward path
+                {{0}, {0}, 0, 0, 0, 0, true},
+                {{}, {0}, 0, 0, 0, 0, true},
+                {{0}, {}, 0, 0, 0, 0, true},
+                {{2342346}, {}, 0, 0, 0, 0, true},
+                {{}, {2342346}, 0, 0, 0, 0, true},
+
+                // Directed distance reverse path
+                {{0}, {0}, 0, 0, 1, 0, true},
+                {{}, {0}, 0, 0, 1, 0, true},
+                {{0}, {}, 0, 0, 1, 0, true},
+                {{}, {2342346}, 0, 0, 1, 0, true}
+        };
+
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameters_first_graph, gfa_file_index);
 
         /**
@@ -407,20 +425,37 @@ namespace pathsprefixsumarrays {
          */
         gfa_file_index = 1;
 
-        std::vector<parameters_test_graph_vectors>  parameters_second_graph = {{{0, 1}, {0, 1}, 1, 0, 0, 0},
-                                                                                {{0}, {0}, 0, 0, 0, 0},
-                                                                                {{}, {0}, 0, 0, 0, 0},
-                                                                                {{0}, {}, 0, 0, 0, 0},
-                                                                                {{2342346}, {}, 0, 0, 0, 0},
-                                                                                {{}, {2342346}, 0, 0, 0, 0},
+        std::vector<parameters_test_graph_vectors>  parameters_second_graph = {
+                // Undirected distance forward path
+                {{0, 1}, {0, 1}, 1, 0, 0, 0, false},
+                {{0}, {0}, 0, 0, 0, 0, false},
+                {{}, {0}, 0, 0, 0, 0, false},
+                {{0}, {}, 0, 0, 0, 0, false},
+                {{2342346}, {}, 0, 0, 0, 0, false},
+                {{}, {2342346}, 0, 0, 0, 0, false},
 
-                                                                                {{1}, {1}, 0, 0, 1, 0},
-                                                                               {{0, 1}, {0, 1}, 1, 0, 1,0 },
-                                                                               {{}, {1}, 0, 0, 1, 0},
-                                                                                {{1}, {}, 0, 0, 1, 0},
-                                                                                {{}, {2342346}, 0, 0, 1, 0}};
+                // Undirected distance reverse path
+                {{1}, {1}, 0, 0, 1, 0, false},
+                {{0, 1}, {0, 1}, 1, 0, 1,0, false},
+                {{}, {1}, 0, 0, 1, 0, false},
+                {{1}, {}, 0, 0, 1, 0, false},
+                {{}, {2342346}, 0, 0, 1, 0, false},
 
+                // Directed distance forward path
+                {{0, 1}, {0, 1}, 1, 0, 0, 0, true},
+                {{0}, {0}, 0, 0, 0, 0, true},
+                {{}, {0}, 0, 0, 0, 0, true},
+                {{0}, {}, 0, 0, 0, 0, true},
+                {{2342346}, {}, 0, 0, 0, 0, true},
+                {{}, {2342346}, 0, 0, 0, 0, true},
 
+                // Directed distance reverse path
+                {{1}, {1}, 0, 0, 1, 0, true},
+                {{0, 1}, {0, 1}, 1, 0, 1,0, true},
+                {{}, {1}, 0, 0, 1, 0, true},
+                {{1}, {}, 0, 0, 1, 0, true},
+                {{}, {2342346}, 0, 0, 1, 0, true}
+        };
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameters_second_graph, gfa_file_index);
 
@@ -436,6 +471,7 @@ namespace pathsprefixsumarrays {
                 {{420000000}, {420000000}, 0, 0, 1, 0},
                 {{1}, {420000000}, 0, 0, 1, 0},
         };
+
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_second_graph_OutOfBounds, gfa_file_index);
 
         /**
@@ -447,35 +483,68 @@ namespace pathsprefixsumarrays {
          */
 
         gfa_file_index = 2;
-        std::vector<parameters_test_graph_vectors> parameter_third_graph_vector = {{{0}, {3}, 1, 2, 0, 0},
-                                                                                   {{0}, {4}, 1, 4, 0, 0},
-                                                                                   {{4}, {0}, 1, 4, 0, 0},
-                                                                                   {{0}, {3}, 1, 3, 6, 0},
+        std::vector<parameters_test_graph_vectors> parameter_third_graph_vector = {
+                // Undirected distance forward path
+                {{0}, {3}, 1, 2, 0, 0, false},
+                {{0}, {4}, 1, 4, 0, 0, false},
+                {{4}, {0}, 1, 4, 0, 0, false},
+                {{0}, {3}, 1, 3, 6, 0, false},
 
-                                                                                   {{0}, {3}, 1, 3, 7, 0},
-                                                                                   {{2}, {3}, 1, 0, 7, 0},
-                                                                                   {{2}, {1}, 1, 0, 7, 0},
-                                                                                   {{0}, {2}, 1, 2, 7, 0},
+                // Undirected distance reverse path
+                {{0}, {3}, 1, 3, 7, 0, false},
+                {{2}, {3}, 1, 0, 7, 0, false},
+                {{2}, {1}, 1, 0, 7, 0, false},
+                {{0}, {2}, 1, 2, 7, 0, false},
 
-                                                                           }; // 2, 12
+                // Directed distance forward path
+                {{0}, {3}, 1, 2, 0, 0, true},
+                {{0}, {4}, 1, 4, 0, 0, true},
+                {{4}, {0}, 0, 0, 0, 0, true},
+                {{0}, {3}, 1, 3, 6, 0, true},
+
+                // Directed distance reverse path
+                {{0}, {3}, 1, 3, 7, 0, true},
+                {{2}, {3}, 1, 0, 7, 0, true},
+                {{2}, {1}, 0, 0, 7, 0, true},
+                {{0}, {2}, 1, 2, 7, 0, true}
+        };
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameter_third_graph_vector, gfa_file_index);
 
 
 
         std::vector<parameters_test_graph_vectors> parameters_third_graph_OutOfBounds ={
-                {{0}, {420000000}, 0, 0, 0, 0},
-                {{420000000}, {420000000}, 0, 0, 0, 0},
-                {{420000000}, {0}, 0, 0, 0, 0},
-                {{420000000}, {1}, 0, 0, 0, 1},
-                {{0, 2346}, {1}, 1, 0, 1,0 },
-                {{0}, {1,2346}, 1, 0, 0,0 },
-                {{0}, {1,2346}, 1, 0, 1,0 },
-                {{0}, {2346,1}, 1, 0, 1,0 },
-                {{420000000}, {420000000}, 0, 0, 1, 0},
-                {{1}, {420000000}, 0, 0, 1, 0},
+                // Undirected distance forward path
+                {{0}, {420000000}, 0, 0, 0, 0, false},
+                {{420000000}, {420000000}, 0, 0, 0, 0, false},
+                {{420000000}, {0}, 0, 0, 0, 0, false},
+                {{420000000}, {1}, 0, 0, 0, 1, false},
+                {{0}, {1,2346}, 1, 0, 0,0, false},
                 {{3,4}, {420000000}, 0, 0, 4, 0},
+
+                // Undirected distance reverse path
+                {{0, 2346}, {1}, 1, 0, 1,0, false},
+                {{0}, {1,2346}, 1, 0, 1,0, false},
+                {{0}, {2346,1}, 1, 0, 1,0, false},
+                {{420000000}, {420000000}, 0, 0, 1, 0, false},
+                {{1}, {420000000}, 0, 0, 1, 0, false},
+
+                // Directed distance forward path
+                {{0}, {420000000}, 0, 0, 0, 0, true},
+                {{420000000}, {420000000}, 0, 0, 0, 0, true},
+                {{420000000}, {0}, 0, 0, 0, 0, true},
+                {{420000000}, {1}, 0, 0, 0, 1, true},
+                {{0}, {1,2346}, 1, 0, 0,0, true},
+                {{3,4}, {420000000}, 0, 0, 4, 0, true},
+
+                // Directed distance reverse path
+                {{0, 2346}, {1}, 1, 0, 1,0, true},
+                {{0}, {1,2346}, 1, 0, 1,0, true},
+                {{0}, {2346,1}, 1, 0, 1,0, true},
+                {{420000000}, {420000000}, 0, 0, 1, 0, true},
+                {{1}, {420000000}, 0, 0, 1, 0, true}
         };
+
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_third_graph_OutOfBounds, gfa_file_index);
 
 
@@ -486,33 +555,57 @@ namespace pathsprefixsumarrays {
          * Path: 4 - Nodes:  2 4 6 8
          */
         gfa_file_index = 3;
-        std::vector<parameters_test_graph_vectors> parameter_fourth_graph_vector = {{{0}, {3}, 1, 2, 0, 0},
-                                                                                    {{0}, {}, 0, 0, 2, 0},
-                                                                                    {{0}, {}, 0, 0, 4, 0},
-                                                                                    {{0},{},0,0,0,0},
-                                                                                    {{},{0},0,0,0,0},
-                                                                                    {{}, {1}, 0, 0, 0, 0},
-                                                                                    {{0}, {2}, 1, 1, 2, 0},
-                                                                                    {{2}, {0}, 1, 1, 2, 0},
-                                                                                    {{},{},0,0,0,0},
-                                                                                    {{},{},0,0,7,0},
-                                                                                    {{},{},0,0,6,0},
-                                                                                    {{0},{},0,0,2,0},
-                                                                                    {{2},{0},1,1,0,0},
-                                                                                    {{2},{1},1,0,3,0},
-                                                                                    {{2},{0},1,1,3,0},
-                                                                                    {{2},{2},0,1,3,0},
-                                                                                    {{0},{0},0,1,3,0},
-                                                                                    {{},{},0,0,7,0},
-                                                                                    {{},{},0,0,3,0},
-                                                                                    {{},{1},0,0,3,0},
-                                                                                    {{1},{},0,0,3,0},
+        std::vector<parameters_test_graph_vectors> parameter_fourth_graph_vector = {
+                // Undirected distance forward path
+                {{0}, {3}, 1, 2, 0, 0, false},
+                {{0}, {}, 0, 0, 2, 0, false},
+                {{0}, {}, 0, 0, 4, 0, false},
+                {{0},{},0,0,0,0, false},
+                {{},{0},0,0,0,0, false},
+                {{}, {1}, 0, 0, 0, 0, false},
+                {{0}, {2}, 1, 1, 2, 0, false},
+                {{2}, {0}, 1, 1, 2, 0, false},
+                {{},{},0,0,0,0, false},
+                {{},{},0,0,6,0, false},
+                {{0},{},0,0,2,0, false},
+                {{2},{0},1,1,0,0, false},
 
+                // Undirected distance reverse path
+                {{},{},0,0,7,0, false},
+                {{2},{1},1,0,3,0, false},
+                {{2},{0},1,1,3,0, false},
+                {{2},{2},0,1,3,0, false},
+                {{0},{0},0,1,3,0, false},
+                {{},{},0,0,7,0, false},
+                {{},{},0,0,3,0, false},
+                {{},{1},0,0,3,0, false},
+                {{1},{},0,0,3,0, false},
 
+                // Directed distance forward path
+                {{0}, {3}, 1, 2, 0, 0, true},
+                {{0}, {}, 0, 0, 2, 0, true},
+                {{0}, {}, 0, 0, 4, 0, true},
+                {{0},{},0,0,0,0, true},
+                {{},{0},0,0,0,0, true},
+                {{}, {1}, 0, 0, 0, 0, true},
+                {{0}, {2}, 1, 1, 2, 0, true},
+                {{2}, {0}, 0, 0, 2, 0, true},
+                {{},{},0,0,0,0, true},
+                {{},{},0,0,6,0, true},
+                {{0},{},0,0,2,0, true},
+                {{2},{0},0,0,0,0, true},
 
-
-        };      //6,2
-
+                // Directed distance reverse path
+                {{},{},0,0,7,0, true},
+                {{2},{1},0,0,3,0, true},
+                {{2},{0},0,0,3,0, true},
+                {{2},{2},0,1,3,0, true},
+                {{0},{0},0,1,3,0, true},
+                {{},{},0,0,7,0, true},
+                {{},{},0,0,3,0, true},
+                {{},{1},0,0,3,0, true},
+                {{1},{},0,0,3,0, true}
+        };
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameter_fourth_graph_vector, gfa_file_index);
 
@@ -530,6 +623,7 @@ namespace pathsprefixsumarrays {
                 {{3,4}, {420000000}, 0, 0, 4, 0},
 
         };
+
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_fourth_graph_OutOfBounds, gfa_file_index);
 
         /**
@@ -543,18 +637,35 @@ namespace pathsprefixsumarrays {
          */
 
         gfa_file_index = 4;
-        std::vector<parameters_test_graph_vectors> parameter_fifth_graph_vector = {{{0}, {3}, 1, 2, 10, 0},
-                                                                                   {{0,3}, {2,4,5}, 6, 1, 8, 0},
-                                                                                   {{0,3}, {2,4,5}, 6, 0, 8, 3},
-                                                                                   {{2,4,5}, {0,3}, 6, 0, 8, 4},
-                                                                                   {{2,4,5}, {0,3}, 6, 1, 8, 5},
-                                                                                   {{0,3}, {6}, 2, 14, 8, 0},
-                                                                                   {{0,3}, {6}, 2, 2, 8, 1},
-                                                                                   {{0,3}, {}, 0, 0, 8, 0},
-                                                                                   {{0}, {4,1,2}, 3, 0, 9, 0},
-                                                                                   {{0}, {4,1,2}, 3, 1, 9, 1},
-                                                                                   {{0}, {4,1,2}, 3, 12, 9, 2},
+        std::vector<parameters_test_graph_vectors> parameter_fifth_graph_vector = {
+                // Undirected distance forward path
+                {{0}, {3}, 1, 2, 10, 0, false},
+                {{0,3}, {2,4,5}, 6, 1, 8, 0, false},
+                {{0,3}, {2,4,5}, 6, 0, 8, 3, false},
+                {{2,4,5}, {0,3}, 6, 0, 8, 4, false},
+                {{2,4,5}, {0,3}, 6, 1, 8, 5, false},
+                {{0,3}, {6}, 2, 14, 8, 0, false},
+                {{0,3}, {6}, 2, 2, 8, 1, false},
+                {{0,3}, {}, 0, 0, 8, 0, false},
 
+                // Undirected distance reverse path
+                {{0}, {4,1,2}, 3, 0, 9, 0, false},
+                {{0}, {4,1,2}, 3, 1, 9, 1, false},
+                {{0}, {4,1,2}, 3, 12, 9, 2, false},
+
+                // Directed distance forward path
+                {{0}, {3}, 1, 2, 10, 0, true},
+                {{0,3}, {2,4,5}, 5, 1, 8, 0, true},
+                {{0,3}, {2,4,5}, 5, 0, 8, 3, true},
+                {{2,4,5}, {0,3}, 1, 0, 8, 0, true},
+                {{0,3}, {6}, 2, 14, 8, 0, true},
+                {{0,3}, {6}, 2, 2, 8, 1, true},
+                {{0,3}, {}, 0, 0, 8, 0, true},
+
+                // Directed distance reverse path
+                {{0}, {4,1,2}, 3, 0, 9, 0, true},
+                {{0}, {4,1,2}, 3, 1, 9, 1, true},
+                {{0}, {4,1,2}, 3, 12, 9, 2, true},
 
 
         };
@@ -578,6 +689,7 @@ namespace pathsprefixsumarrays {
 
 
         };
+
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_fifth_graph_OutOfBounds, gfa_file_index);
 
 
@@ -592,22 +704,42 @@ namespace pathsprefixsumarrays {
          */
 
         gfa_file_index = 5;
-        std::vector<parameters_test_graph_vectors> parameter_sixth_graph_vector = {{{0,3}, {2,4,5}, 6, 1, 8, 0},
-                                                                                   {{0,3}, {2,4,5}, 6, 12, 8, 1},
-                                                                                   {{0,3}, {2,4,5}, 6, 13, 8, 2},
-                                                                                   {{0,3}, {2,4,5}, 6, 0, 8, 3},
-                                                                                   {{2,4,5}, {0,3}, 6, 0, 8, 4},
-                                                                                   {{2,4,5}, {0,3}, 6, 1, 8, 5},
-                                                                                   {{0,3}, {6}, 2, 14, 8, 0},
-                                                                                   {{0,3}, {6}, 2, 2, 8, 1},
-                                                                                   {{0,3}, {}, 0, 0, 8, 0},
+        std::vector<parameters_test_graph_vectors> parameter_sixth_graph_vector = {
+                // Undirected distance forward path
+                {{0,3}, {2,4,5}, 6, 1, 8, 0, false},
+                {{0,3}, {2,4,5}, 6, 12, 8, 1, false},
+                {{0,3}, {2,4,5}, 6, 13, 8, 2, false},
+                {{0,3}, {2,4,5}, 6, 0, 8, 3, false},
+                {{2,4,5}, {0,3}, 6, 0, 8, 4, false},
+                {{2,4,5}, {0,3}, 6, 1, 8, 5, false},
+                {{0,3}, {6}, 2, 14, 8, 0, false},
+                {{0,3}, {6}, 2, 2, 8, 1, false},
+                {{0,3}, {}, 0, 0, 8, 0, false},
 
-                                                                                   {{0}, {2}, 1, 1, 5, 0},
-                                                                                   {{2}, {0}, 1, 1, 5, 0},
-                                                                                   {{2}, {1}, 1, 0, 5, 0},
-                                                                                   {{2}, {2}, 0, 0, 5, 0},
-                                                                                   {{0}, {3}, 1, 2, 5, 0},
+                // Undirected distance reverse path
+                {{0}, {2}, 1, 1, 5, 0, false},
+                {{2}, {0}, 1, 1, 5, 0, false},
+                {{2}, {1}, 1, 0, 5, 0, false},
+                {{2}, {2}, 0, 0, 5, 0, false},
+                {{0}, {3}, 1, 2, 5, 0, false},
 
+                // Directed distance forward path
+                {{0,3}, {2,4,5}, 5, 1, 8, 0, true},
+                {{0,3}, {2,4,5}, 5, 12, 8, 1, true},
+                {{0,3}, {2,4,5}, 5, 13, 8, 2, true},
+                {{0,3}, {2,4,5}, 5, 0, 8, 3, true},
+                {{0,3}, {2,4,5}, 5, 1, 8, 4, true},
+                {{2,4,5}, {0,3}, 1, 0, 8, 0, true},
+                {{0,3}, {6}, 2, 14, 8, 0, true},
+                {{0,3}, {6}, 2, 2, 8, 1, true},
+                {{0,3}, {}, 0, 0, 8, 0, true},
+
+                // Directed distance reverse path
+                {{0}, {2}, 1, 1, 5, 0, true},
+                {{2}, {0}, 0, 0, 5, 0, true},
+                {{2}, {1}, 0, 0, 5, 0, true},
+                {{2}, {2}, 0, 0, 5, 0, true},
+                {{0}, {3}, 1, 2, 5, 0, true}
         };
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameter_sixth_graph_vector, gfa_file_index);
@@ -630,6 +762,7 @@ namespace pathsprefixsumarrays {
 
 
         };
+
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_sixth_graph_OutOfBounds, gfa_file_index);
 
         /**
@@ -643,30 +776,50 @@ namespace pathsprefixsumarrays {
 
         gfa_file_index = 6;
         std::vector<parameters_test_graph_vectors> parameter_seventh_graph_vector = {
-                // Forward path
-                {{0}, {1}, 1, 0, 2, 0},
-                {{0}, {0}, 0, 0, 2, 0},
-                {{1}, {1}, 0, 0, 2, 0},
-                {{0}, {2}, 1, 1, 2, 0},
-                {{0}, {2}, 1, 1, 0, 0},
-                {{0}, {3}, 1, 2, 0, 0},
-                {{3}, {0}, 1, 2, 0, 0},
-                {{2}, {0,3}, 2, 1, 8, 0},
-                {{2}, {0,3}, 2, 0, 8, 1},
-                {{0,3}, {0,3}, 1, 2, 8, 0},
-                {{0,3}, {6}, 2, 14, 8, 0},
-                {{0,3}, {6}, 2, 2, 8, 1},
+                // Undirected distance forward path
+                {{0}, {1}, 1, 0, 2, 0, false},
+                {{0}, {0}, 0, 0, 2, 0, false},
+                {{1}, {1}, 0, 0, 2, 0, false},
+                {{0}, {2}, 1, 1, 2, 0, false},
+                {{0}, {2}, 1, 1, 0, 0, false},
+                {{0}, {3}, 1, 2, 0, 0, false},
+                {{3}, {0}, 1, 2, 0, 0, false},
+                {{2}, {0,3}, 2, 1, 8, 0, false},
+                {{2}, {0,3}, 2, 0, 8, 1, false},
+                {{0,3}, {0,3}, 1, 2, 8, 0, false},
+                {{0,3}, {6}, 2, 14, 8, 0, false},
+                {{0,3}, {6}, 2, 2, 8, 1, false},
 
-                // Reverse path
-                {{0}, {5}, 1, 13, 9, 0},
-                {{5}, {0}, 1, 13, 9, 0},
-                {{4}, {0}, 1, 12, 9, 0},
-                {{0}, {4}, 1, 12, 9, 0},
-                {{0}, {3}, 1, 3, 1, 0},
-                {{0}, {2}, 1, 1, 3, 0},
-                {{2}, {2}, 0, 0, 3, 0},
+                // Undirected distance reverse path
+                {{0}, {5}, 1, 13, 9, 0, false},
+                {{5}, {0}, 1, 13, 9, 0, false},
+                {{4}, {0}, 1, 12, 9, 0, false},
+                {{0}, {4}, 1, 12, 9, 0, false},
+                {{0}, {3}, 1, 3, 1, 0, false},
+                {{0}, {2}, 1, 1, 3, 0, false},
+                {{2}, {2}, 0, 0, 3, 0, false},
 
+                // Directed distance forward path
+                {{0}, {1}, 1, 0, 2, 0, true},
+                {{0}, {0}, 0, 0, 2, 0, true},
+                {{1}, {1}, 0, 0, 2, 0, true},
+                {{0}, {2}, 1, 1, 2, 0, true},
+                {{0}, {2}, 1, 1, 0, 0, true},
+                {{0}, {3}, 1, 2, 0, 0, true},
+                {{3}, {0}, 0, 0, 0, 0, true},
+                {{2}, {0,3}, 1, 0, 8, 0, true},
+                {{0,3}, {0,3}, 1, 2, 8, 0, true},
+                {{0,3}, {6}, 2, 14, 8, 0, true},
+                {{0,3}, {6}, 2, 2, 8, 1, true},
 
+                // Directed distance reverse path
+                {{0}, {5}, 1, 13, 9, 0, true},
+                {{5}, {0}, 0, 0, 9, 0, true},
+                {{4}, {0}, 0, 0, 9, 0, true},
+                {{0}, {4}, 1, 12, 9, 0, true},
+                {{0}, {3}, 1, 3, 1, 0, true},
+                {{0}, {2}, 1, 1, 3, 0, true},
+                {{2}, {2}, 0, 0, 3, 0, true}
         };
 
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS(*prefix_sums_arrays, parameter_seventh_graph_vector, gfa_file_index);
@@ -689,6 +842,7 @@ namespace pathsprefixsumarrays {
 
 
         };
+
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_VECTOR_OF_POSITIONS_OutOfBoundsPositionInPathException(*prefix_sums_arrays,parameters_seventh_graph_OutOfBounds, gfa_file_index);
     }
 
