@@ -351,6 +351,8 @@ namespace pathsprefixsumarrays {
         for (auto psa: *prefix_sums_arrays) {
             ASSERT_PSA_MEMBERS_NE_NULLPTR(*psa);
         }
+
+        //TODO: add more complex tests on the constructor
     }
 
 
@@ -1248,8 +1250,17 @@ namespace pathsprefixsumarrays {
         ASSERT_DISTANCE_BETWEEN_NODES_WITH_WRONG_PATH({{2,4,0,0,12,0, true},
                                                        {2,4,0,0,13,0, true}}, gfa_file_index);
 
+        // Undirected distance
         try{
             (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13, false);
+        }catch(PathNotInGraphException ex){
+            std::string msg_exception = std::string(ex.what());
+            ASSERT_EQ(msg_exception, std::string("Error in 'get_all_nodes_distances_in_path': the inserted path 13 doesn't exist inside the graph."));
+        }
+
+        // Directed distance
+        try{
+            (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13, true);
         }catch(PathNotInGraphException ex){
             std::string msg_exception = std::string(ex.what());
             ASSERT_EQ(msg_exception, std::string("Error in 'get_all_nodes_distances_in_path': the inserted path 13 doesn't exist inside the graph."));
@@ -1318,8 +1329,17 @@ namespace pathsprefixsumarrays {
         };
         ASSERT_PSA_ALL_DISTANCE_BETWEEN_TWO_NODES(*prefix_sums_arrays, parameter_seventh_graph_vector, gfa_file_index);
 
+        // Undirected distance
         try{
             (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13, false);
+        }catch(PathNotInGraphException ex){
+            std::string msg_exception = std::string(ex.what());
+            ASSERT_EQ(msg_exception, std::string("Error in 'get_all_nodes_distances_in_path': the inserted path 13 doesn't exist inside the graph."));
+        }
+
+        // Directed distance
+        try{
+            (*(*prefix_sums_arrays)[gfa_file_index]).get_all_nodes_distances_in_path(2, 4, 13, true);
         }catch(PathNotInGraphException ex){
             std::string msg_exception = std::string(ex.what());
             ASSERT_EQ(msg_exception, std::string("Error in 'get_all_nodes_distances_in_path': the inserted path 13 doesn't exist inside the graph."));
@@ -1487,14 +1507,7 @@ namespace pathsprefixsumarrays {
         }
     }
 
-    /*6th graph:
-    2[10], 5[1], 6[1], 11[2], 12[1],
-    3[10], 7[1], 9[5],
-    2[10], 4[1], 6[1], 8[5],
-    3[10], 6[1], 10[2], 13[1],
-    2[10], 4[1], 7[1], 2[10], 6[1], 6[1], 8[5],
-    1 0 1 12 13 0 1
-    */
+
     TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
         size_t A = 2;
         size_t B = 6;
@@ -1843,12 +1856,6 @@ namespace pathsprefixsumarrays {
             int j=0;
             while (iterator != (*positions).end())
             {
-               /* // debug print
-                std::cout<<"i:"<<std::to_string(i)<<" key:"<<std::to_string(iterator->first)<<" value:";
-                for (int k = 0; k <(*iterator->second).size() ; ++k) {
-                    std::cout<<std::to_string(  (*iterator->second)[k])<<", ";
-                }
-                std::cout<<std::endl;*/
                 ASSERT_EQ((*iterator->second),check[i][iterator->first]);
 
                 // Increment the Iterator to point to next entry
@@ -1873,12 +1880,6 @@ namespace pathsprefixsumarrays {
             int j=0;
             while (iterator != (*positions).end())
             {
-               /*  // debug print
-                 std::cout<<"i:"<<std::to_string(i)<<" key:"<<std::to_string(iterator->first)<<" value:";
-                 for (int k = 0; k <(*iterator->second).size() ; ++k) {
-                     std::cout<<std::to_string(  (*iterator->second)[k])<<", ";
-                 }
-                 std::cout<<std::endl;*/
                 ASSERT_EQ((*iterator->second),check[i][iterator->first]);
 
                 // Increment the Iterator to point to next entry
@@ -1886,33 +1887,6 @@ namespace pathsprefixsumarrays {
                 j++;
             }
         }
-    /* //START DEBUG PRINT
-         for (int i = 0; i < prefix_sums_arrays->size(); ++i) {
-            std::cout << "\n\n$psa"<<std::to_string(i);
-            PathsPrefixSumArrays *temp = (*prefix_sums_arrays)[i];
-            auto positions = temp->get_all_node_positions(2);
-            auto iterator = (*positions).begin();
-
-            // Iterate over the map using Iterator till end.
-            int j=0;
-            while (iterator != (*positions).end())
-            {
-                std::cout <<"\n" << std::to_string(iterator->first)<<">" ;
-                // Accessing VALUE from element pointed by it.
-                for(int k=0; k< iterator->second->size(); ++k){
-                    std::cout << (*iterator->second)[k]<<", ";
-                }
-                // Increment the Iterator to point to next entry
-                iterator++;
-                j++;
-            }
-        }
-        std::cout << std::endl;
-
-
-        //END DEBUG PRINT
-    */
-
     }
 
     TEST_F(PrefixSumArraysTest,get_positions_of_a_node_in_path){
@@ -2154,6 +2128,8 @@ namespace pathsprefixsumarrays {
         }
         */ //end debug print
     }
+
+
 /**
 0th graph:
 2[1],
