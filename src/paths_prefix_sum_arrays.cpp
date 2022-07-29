@@ -435,6 +435,21 @@ std::shared_ptr<std::vector<size_t>> PathsPrefixSumArrays::get_all_nodes_distanc
         }else if(!exit){
             if(compute_directed_distance){
                 j = node_1_positions->size();
+
+                // DUPLICATED CODE MAKE A FUNCTION TO DO IT
+                size_t ones;
+                if (path_id % 2 == 0) {
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*get_prefix_sum_array_of_path(path_id)))((get_prefix_sum_array_of_path(path_id))->size());
+                } else
+                    ones = sdsl::sd_vector<>::rank_1_type(&(*get_prefix_sum_array_of_path(path_id-1)))((get_prefix_sum_array_of_path(path_id-1))->size());
+                if (node_1_positions->at(pivot_1) >= ones || node_2_positions->at(pivot_2) >= ones) {
+                    std::string error =
+                            "Error in 'get_all_nodes_distances_in_path': position " +
+                            std::to_string(node_2_positions->at(pivot_2)) +
+                            " is outside the boundaries of the path [0:" + std::to_string(ones - 1) + "]" + "\n";
+
+                    throw pathsprefixsumarrays::OutOfBoundsPositionInPathException(error);
+                }
             }else{
                 j = pivot_1;
             }
