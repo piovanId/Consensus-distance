@@ -30,6 +30,48 @@
 #include <gtest/gtest.h>
 
 
+/**
+Structure of each tested file: each line is a path, n[l] where n is the id of the node and l is its length.
+
+0th graph:
+2[1],
+
+----------------------
+1th graph:
+2[1], 2[1],
+
+----------------------
+2th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+2[10], 6[1], 10[2], 12[1],
+
+----------------------
+3th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+
+----------------------
+4th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+2[10], 6[1], 10[2], 12[1],
+2[10], 4[1], 6[1], 2[10], 6[1], 6[1], 8[5],
+2[10], 6[1], 6[1], 10[2], 12[1],
+
+----------------------
+5th graph:
+2[10], 4[1], 6[1], 10[2], 12[1],
+2[10], 6[1], 8[5],
+2[10], 4[1], 6[1], 8[5],
+2[10], 6[1], 10[2], 12[1],
+2[10], 4[1], 6[1], 2[10], 6[1], 6[1], 8[5],
+
+----------------------
+*/
 
 /**
  * This namespace contains all the unit tests
@@ -1347,6 +1389,11 @@ namespace pathsprefixsumarrays {
     }
 
 
+    /**
+     * Test the method PathsPrefixSumArrays::get_distance_between_positions_in_path(size_t pos_node_1,
+     *                                                                              size_t pos_node_2,
+     *                                                                              size_t path_id)
+     */
     TEST_F(PrefixSumArraysTest, get_distance_between_positions_in_path) {
 
         // Used to remove duplicated code and shrink the tests in this function
@@ -1508,6 +1555,12 @@ namespace pathsprefixsumarrays {
     }
 
 
+    /**
+     * Test the method PathsPrefixSumArrays::get_all_nodes_distances_in_path( gbwt::node_type node_1,
+                                                                                            gbwt::node_type node_2,
+                                                                                            size_t path_id,
+                                                                                            bool compute_directed_distance)
+     */
     TEST_F(PrefixSumArraysTest, get_all_nodes_distances) {
         size_t A = 2;
         size_t B = 6;
@@ -1783,6 +1836,9 @@ namespace pathsprefixsumarrays {
     }
 
 
+    /**
+     * Test the method PathsPrefixSumArrays::get_all_node_positions(gbwt::node_type node)
+     */
     TEST_F(PrefixSumArraysTest, get_all_node_positions) {
 
         std::vector<std::vector<std::vector<size_t>>> check = {{{0},{}},
@@ -1889,6 +1945,12 @@ namespace pathsprefixsumarrays {
         }
     }
 
+
+    /**
+     * Test the method PathsPrefixSumArrays::get_positions_of_a_node_in_path(size_t path_id,
+     *                                                                      gbwt::node_type node,
+     *                                                                      size_t &ones)
+     */
     TEST_F(PrefixSumArraysTest,get_positions_of_a_node_in_path){
 
 
@@ -2066,26 +2128,26 @@ namespace pathsprefixsumarrays {
 
     }
 
-    /*TEST_F(PrefixSumArraysTest, toString_sd_vectors){
-        std::cout<< prefix_sums_arrays->at(2)->toString();
-    }*/
 
+    /**
+     * Test the method PathsPrefixSumArrays::get_prefix_sum_array_of_path(size_t path_id)
+     */
     TEST_F(PrefixSumArraysTest, get_prefix_sum_array_of_path) {
         std::vector<std::vector<sdsl::sd_vector<>* >> tests ={
                 {nullptr,
-                 nullptr,
-                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
-                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
-                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
-                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
-                 new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, })},
+                        nullptr,
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, }),
+                        new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, })},
                 {nullptr,
-                 nullptr,
-                 nullptr,
-                 nullptr,
-                 nullptr,
-                 nullptr,
-                 nullptr,
+                        nullptr,
+                        nullptr,
+                        nullptr,
+                        nullptr,
+                        nullptr,
+                        nullptr,
                 },
 
                 {       new sdsl::sd_vector<>(sdsl::bit_vector{ 0, 1, }),
@@ -2129,51 +2191,18 @@ namespace pathsprefixsumarrays {
         */ //end debug print
     }
 
-
-/**
-0th graph:
-2[1],
-
-----------------------
-1th graph:
-2[1], 2[1],
-
-----------------------
-2th graph:
-2[10], 4[1], 6[1], 10[2], 12[1],
-2[10], 6[1], 8[5],
-2[10], 4[1], 6[1], 8[5],
-2[10], 6[1], 10[2], 12[1],
-
-----------------------
-3th graph:
-2[10], 4[1], 6[1], 10[2], 12[1],
-2[10], 6[1], 8[5],
-2[10], 4[1], 6[1], 8[5],
-
-----------------------
-4th graph:
-2[10], 4[1], 6[1], 10[2], 12[1],
-2[10], 6[1], 8[5],
-2[10], 4[1], 6[1], 8[5],
-2[10], 6[1], 10[2], 12[1],
-2[10], 4[1], 6[1], 2[10], 6[1], 6[1], 8[5],
-2[10], 6[1], 6[1], 10[2], 12[1],
-
-----------------------
-5th graph:
-2[10], 4[1], 6[1], 10[2], 12[1],
-2[10], 6[1], 8[5],
-2[10], 4[1], 6[1], 8[5],
-2[10], 6[1], 10[2], 12[1],
-2[10], 4[1], 6[1], 2[10], 6[1], 6[1], 8[5],
-
-----------------------
-*/
+    /**
+     * TESTS toString()
+     */
+    /*TEST_F(PrefixSumArraysTest, toString_sd_vectors){
+        std::cout<< prefix_sums_arrays->at(2)->toString_sd_vectors();
+    }*/
+    /*TEST_F(PrefixSumArraysTest, toString){
+        std::cout<< prefix_sums_arrays->at(2)->toString();
+    }*/
 
 
-/*
-    TEST_F(PrefixSumArraysTest, printall) {
+    /*TEST_F(PrefixSumArraysTest, printall) {
         std::unique_ptr<gbwtgraph::GBWTGraph> graph;
         // Name of the graph examples for testing
         std::vector<std::string> gfa_files_paths = {"../test/one_node_acyclic.gfa",
@@ -2203,7 +2232,7 @@ namespace pathsprefixsumarrays {
             });// end of lambda expression
             std::cout << std::endl << "----------------------" << std::endl;
         }
-    }*/
+    }//*/
 
 } // End namespace
 
